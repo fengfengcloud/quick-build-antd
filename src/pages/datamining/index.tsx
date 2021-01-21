@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
-import { Layout, message } from 'antd';
+import { Layout } from 'antd';
 import { getFilterScheme, getModuleInfo } from '../module/modules';
 import UserDefineFilter from '../module/UserDefineFilter';
 import { DataminingModal } from './data';
@@ -91,7 +91,7 @@ const DataminingModule: React.FC = () => {
     if (!state.fromCache) {
       if (state.refreshAllCount > 0) {
         console.log(`需要刷新所有数据，刷新所有的数据`);
-        message.info('refresh all:' + state.refreshAllCount);
+        // message.info('refresh all:' + state.refreshAllCount);
         refreshAllDataminingData(state, dispatch);
       }
     }
@@ -103,7 +103,7 @@ const DataminingModule: React.FC = () => {
       if (state.refreshFilterDataSourceCount > 0) {
         if (state.currSetting.filtersRegionVisible) {
           console.log(`需要刷新所有条件的记录值`);
-          message.info('refresh all filter datasource count:' + state.refreshFilterDataSourceCount);
+          // message.info('refresh all filter datasource count:' + state.refreshFilterDataSourceCount);
           setTimeout(() => {
             refreshFilterCount(state, dispatch);
           }, 600);
@@ -117,8 +117,8 @@ const DataminingModule: React.FC = () => {
     if (!state.fromCache) {
       if (state.currSetting.filtersRegionVisible && state.filterDataSource.length &&
         state.filterDataSource[0].recordnum === -1) {
-        console.log(`需要刷新所有条件的记录值`);
-        message.info('refresh all filter datasource count:' + state.refreshFilterDataSourceCount);
+        // console.log(`需要刷新所有条件的记录值`);
+        // message.info('refresh all filter datasource count:' + state.refreshFilterDataSourceCount);
         refreshFilterCount(state, dispatch);
       }
     }

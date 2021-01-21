@@ -9,7 +9,6 @@ import {
 import { categoryFieldRender } from './categoryFieldRender';
 import CategoryActionButton from './categoryActionButton';
 import { PARENT_ROWID, ROWID } from '../constants';
-import { message } from 'antd';
 import { adjustColumnGroupToggleButton } from './columnUtils';
 import { getSortOrder } from '@/pages/module/grid/sortUtils';
 
@@ -20,7 +19,7 @@ const groupText = '分 组 项 目';
  */
 export const rebuildColumns = (aggregateFields: any, groupColumns: any,
   state: DataminingModal, dispatch: Function): any[] => {
-  message.warn('rebuild  -- columns');
+  // message.warn('rebuild  -- columns');
   let allColumns: any[] = [{
     fixed: 'left',
     isCategory: true,
