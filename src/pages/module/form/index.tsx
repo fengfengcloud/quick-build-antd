@@ -117,11 +117,11 @@ const ModuleForm: React.FC<ModuleFormProps> = ({ moduleInfo, moduleState, dispat
                 : null
             }
             {moduleInfo.moduleLimit.hasaudit && currRecord[primarykey] ? !isAudited(currRecord) ?
-                <Typography.Text type="danger" code >
+                <Typography.Text type="danger" code style={{ fontSize: '12px' }}>
                     <WarningOutlined style={{ marginRight: '4px' }} />
                     未审核
                 </Typography.Text> :
-                <Typography.Text type="secondary" code >
+                <Typography.Text type="secondary" code style={{ fontSize: '12px' }}>
                     <CheckCircleOutlined style={{ marginRight: '4px' }} />
                     已审核
                 </Typography.Text> :
