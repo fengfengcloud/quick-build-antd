@@ -58,7 +58,7 @@
   }
 
   // 每列内容的宽度至少86px,这样表头上有4个汉字和一个排序的图标
-  .dataminingtable tbody tr td.ant-table-cell {
+  .dataminingtable tbody tr td:not(:first-child).ant-table-cell {
     min-width: 86px;
   }
 }
