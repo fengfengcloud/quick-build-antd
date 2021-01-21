@@ -1,0 +1,207 @@
+import React from 'react';
+import { Dispatch } from 'redux';
+import { ModuleModal, ModuleState } from '../data';
+import { getModuleInfo } from '../modules';
+import { currentUser } from 'umi';
+import { Card, message, Modal, Popconfirm, Popover, Space, Steps, Tooltip } from 'antd';
+import { CheckCircleOutlined, CheckOutlined, InfoCircleOutlined, QuestionCircleOutlined, UndoOutlined } from '@ant-design/icons';
+import { deleteSecond, showResultInfo } from '@/utils/utils';
+import request from '@/utils/request';
+
+interface AuditRenderProps {
+    moduleState: ModuleState,
+    dispatch: Dispatch<any>,
+    value: any,
+    record: any,
+    _recno: any,
+    isLink?: boolean,
+    readonly?: boolean,
+}
+
+// 是否审核过了
+export const isAudited = (record: any) => {
+    return !!record['auditingDate'];
+}
+
+// 当前用户可以审核
+export const canAudited = (record: any) => {
+    return !isAudited(record) && (record['auditingUserid'] === currentUser.userid);
+}
+
+// 当前用户可以取消审核
+export const canCancelAudited = (record: any) => {
+    return isAudited(record) && (record['auditingUserid'] === currentUser.userid);
+}
+
+/**
+ * 进行审核操作
+ * @param moduleState 
+ * @param record 
+ * @param dispatch 
+ */
+const executeAudit = (moduleState: ModuleState, record: any, dispatch: Dispatch) => {
+    const { moduleName, formState } = moduleState;
+    dispatch({
+        type: 'modules/formStateChanged',
+        payload: {
+            moduleName,
+            formState: {
+                ...formState,
+                visible: true,
+                formType: 'audit',
+                currRecord: record,
+            },
+        }
+    })
+}
+
+/**
+ * 审核状态   未审核 可审核 已审核 已审核(可取消审核)
+ * @param moduleInfo 
+ * @param record 
+ */
+const getAuditIconClass = (record: any): string => {
+    if (!isAudited(record)) {
+        if (canAudited(record))
+            return 'approveaction x-fa fa-pencil fa-fw';      // 可以启动
+        else
+            return 'actionyellow x-fa fa-exclamation-triangle fa-fw'        //不能启动
+    } else
+        return 'actionblue x-fa fa-check fa-fw'
+}
+
+
+/**
+ * 尚未启动审批流程的，可以启动与不能启动流程的二种情况
+ * @param param0 
+ */
+const getCanStartPopover = ({ moduleState, moduleInfo, record, className, dispatch }:
+    { moduleState: ModuleState, moduleInfo: ModuleModal, record: any, className: string, dispatch: Dispatch }) => {
+    const state = '未审核';
+    const doAudit = () => executeAudit(moduleState, record, dispatch); //startProcess(moduleInfo, record, dispatch);
+    return canAudited(record) ?
+        <Popover content={
+            <span>{state}
+                <span style={{ marginLeft: '12px' }}>
+                    <a onClick={doAudit}>现在审核</a>
+                </span>
+            </span>}>
+            <a onClick={doAudit}><span className={className} ></span></a >
+        </Popover> :
+        <Popover placement="rightTop" trigger='hover'
+            content={<>{state}
+                <span style={{ marginLeft: '12px' }}>{`正在等待 ${record['auditingName']} 进行审核`}</span></>}>
+            <span className={className}></span >
+        </Popover >
+}
+
+export const auditRecord = (record: any, moduleInfo: ModuleModal, dispatch: Dispatch) => {
+    const moduleName = moduleInfo.modulename;
+    request('/api/platform/audit/doaudit.do', {
+        params: {
+            moduleName,
+            recordId: record[moduleInfo.primarykey],
+        }
+    }).then((response) => {
+        if (response.success) {
+            message.success(record[moduleInfo.namefield] + ' 已审核！');
+            showResultInfo(response.resultInfo);
+            dispatch({
+                type: 'modules/refreshRecord',
+                payload: {
+                    moduleName,
+                    recordId: record[moduleInfo.primarykey],
+                },
+            });
+        } else {
+            Modal.warning({
+                okText: '知道了',
+                title: record[moduleInfo.namefield] + ' 审核失败',
+                content: <span dangerouslySetInnerHTML={{ __html: response.msg }}></span>,
+            });
+        }
+    })
+}
+
+export const cancelAudit = (record: any, moduleInfo: ModuleModal, dispatch: Dispatch) => {
+    const moduleName = moduleInfo.modulename;
+    request('/api/platform/audit/cancel.do', {
+        params: {
+            moduleName,
+            recordId: record[moduleInfo.primarykey],
+        }
+    }).then((response) => {
+        if (response.success) {
+            message.success(record[moduleInfo.namefield] + ' 的审核已取消！');
+            showResultInfo(response.resultInfo);
+            dispatch({
+                type: 'modules/refreshRecord',
+                payload: {
+                    moduleName,
+                    recordId: record[moduleInfo.primarykey],
+                },
+            });
+        } else {
+            Modal.warning({
+                okText: '知道了',
+                title: record[moduleInfo.namefield] + ' 取消审核失败',
+                content: <span dangerouslySetInnerHTML={{ __html: response.msg }}></span>,
+            });
+        }
+    })
+}
+
+const MAXTITLELENGTH = 30;          //审批内容的最大长度，超出之后显示一个tooltip
+
+/**
+ * 审核的字段
+ * @param param0 
+ */
+export const auditRenderer: React.FC<AuditRenderProps> = ({ value = [], record,
+    moduleState, dispatch, isLink = true, readonly = false }) => {
+    if (!record) return null;
+    const { moduleName } = moduleState;
+    const moduleInfo = getModuleInfo(moduleName);
+    const className = getAuditIconClass(record);
+    const text = "『" + record[moduleInfo.namefield] + '』';
+    // 流程还没有启动
+    if (!isAudited(record)) {
+        return getCanStartPopover({ moduleState, moduleInfo, record, className, dispatch });
+    }
+    const remark = record['auditingRemark'];
+    const tips = (
+        <Card title={<><CheckCircleOutlined /> 审核信息</>}
+            extra={<Space>
+                {canCancelAudited(record) ?
+                    <Tooltip title="取消审核" placement="bottom">
+                        <Popconfirm
+                            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                            title={'要取消 ' + text + ' 的审核吗?'}
+                            onConfirm={() => cancelAudit(record, moduleInfo, dispatch)}
+                        >
+                            <UndoOutlined />
+                        </Popconfirm>
+                    </Tooltip> : null}
+            </Space>}
+        >
+            <Steps size="small" key="audit_info" direction="vertical" >
+                <Steps.Step title='已审核' key="audit_finished"
+                    icon={<CheckCircleOutlined />}
+                    status='finish'
+                    description={<span>
+                        {record['auditingName'] + '(' + deleteSecond(record['auditingDate']) + ')'}
+                        <br />
+                        {remark && remark.length > MAXTITLELENGTH ?
+                            <Tooltip title={remark}>
+                                <span><InfoCircleOutlined /> 审核意见</span>
+                            </Tooltip> :
+                            remark}
+                    </span>} />
+            </Steps>
+        </Card>
+    );
+    return <Popover placement="rightTop" trigger='hover'
+        content={tips}>
+        <CheckOutlined style={{ margin: '0px 2px' }} />
+    </Popover >
+}

@@ -1,0 +1,473 @@
+-- 删除所有审批流的数据
+delete from [dbo].[ACT_GE_BYTEARRAY];
+delete from [dbo].[ACT_HI_ACTINST];
+delete from [dbo].[ACT_HI_COMMENT];
+delete from [dbo].[ACT_HI_IDENTITYLINK];
+delete from [dbo].[ACT_HI_PROCINST];
+delete from [dbo].[ACT_HI_TASKINST];
+delete from [dbo].[ACT_HI_VARINST];
+delete from [dbo].[ACT_RE_DEPLOYMENT];
+delete from [dbo].[ACT_RU_IDENTITYLINK];
+delete from [dbo].[ACT_RU_TASK];
+delete from [dbo].[ACT_RU_VARIABLE];
+delete from [dbo].[ACT_RU_EXECUTION];
+delete from [dbo].[ACT_RE_PROCDEF];
+
+
+
+delete from dbo.pm_approve_project1
+delete from dbo.pm_approve_project2
+delete from dbo.pm_approve_project3
+delete from dbo.pm_approve_project4
+
+delete from dbo.pm_agreement_change
+delete from dbo.pm_agreement_audit
+delete from dbo.pm_agreement_deduct
+delete from dbo.pm_agreement_supervision
+delete from dbo.pm_agreement_purchase
+delete from dbo.pm_invoice;
+delete from dbo.pm_agreement_plan;
+-- 存贮过程[dbo].[proc_checkAgreementCanOperate]修改成了直接返回，以后改掉
+delete from [dbo].[pm_payment_detail]
+delete from [dbo].[pm_payment]
+delete from [dbo].[pm_agreement]
+delete from [dbo].[pm_project];
+delete from [dbo].pm_global;
+
+delete from [dbo].[ACT_HI_COMMENT];
+delete from [dbo].[ACT_HI_IDENTITYLINK];
+delete from [dbo].[ACT_HI_PROCINST];
+delete from [dbo].[ACT_HI_TASKINST];
+delete from [dbo].[ACT_HI_VARINST];
+delete from [dbo].[ACT_RE_DEPLOYMENT];
+delete from [dbo].[ACT_RU_IDENTITYLINK];
+delete from [dbo].[ACT_RU_TASK];
+delete from [dbo].[ACT_RU_VARIABLE];
+delete from [dbo].[ACT_RU_EXECUTION];
+delete from [dbo].[ACT_RE_PROCDEF];
+
+
+
+-- 导入部门，除了00，全删除
+insert into f_organization (
+[orgid],[orgcode],[orgname],[companyid],[parentid],[creater],[createdate] )
+select [tf_departmentId],[tf_departmentId],[tf_name],'00',
+LEFT([tf_departmentId],LEN([tf_departmentId])-2),
+'8a53b78262ea6e6d0162ea6e8ccd00f4',getDate()
+from [鑫泰old].dbo._Department where [tf_departmentId] <> '00'
+
+-- 导入人员
+insert into [dbo].[f_personnel] (
+[companyid],[personnelid],[personnelcode],[personnelname],[orgid],[isvalid],
+[creater],[createdate]
+)
+select '00',[tf_userId],[tf_loginName],[tf_userName],[tf_departmentId],[tf_allowLogin],
+'8a53b78262ea6e6d0162ea6e8ccd00f4' , GETDATE()
+from [xingtai_pm_old_].dbo._User
+where [tf_loginName] <> 'admin'
+-- 每个人创建用户
+update f_user set userid = personnelid  where LEN(personnelid) < 10
+
+-- 查找有哪些人的名字在f_user中没有
+select * from pm_approve_project2 p2
+    where  not exists ( select * from f_user where username = p2.creater)
+select p2.tf_shname1 from [xingtai_pm_old_].dbo.ApproveProject2 p2
+    where  not exists ( select * from f_user where username = p2.tf_shname1)
+select tf_shname2 from [xingtai_pm_old_].dbo.ApproveProject2 p2
+    where  not exists ( select * from f_user where username = p2.tf_shname2)
+select tf_shname3 from [xingtai_pm_old_].dbo.ApproveProject2 p2
+    where  not exists ( select * from f_user where username = p2.tf_shname3)
+select tf_shname4 from [xingtai_pm_old_].dbo.ApproveProject2 p2
+    where  not exists ( select * from f_user where username = p2.tf_shname4)
+
+
+
+
+
+-- 导入工程项目 类型 
+
+delete from [dbo].[pm_global_type];
+
+insert into [dbo].[pm_global_type] ([type_id_],[name_])
+  select [tf_globalTypeId],[tf_name]
+  from [鑫泰old].dbo.GlobalType
+
+
+-- 导入工程，工程性质和当前状态，还有录入人员需要维护
+INSERT INTO [dbo].[pm_global]
+           ([global_id_]  ,[orgid]  ,[unit_id_]
+           ,[code_] ,[name_] ,[kind_]     ,[type_id_]     ,[state_]
+           ,[address_]           ,[year_]
+           ,[this_date_]           ,[approve_date_]     
+           ,[start_date_] ,[end_date_]
+           ,[fact_start_date_]  ,[fact_end_date_]           ,[squaremeter_]
+           ,[zjsource_]   ,[zjall]       
+           ,[creater]  ,[createdate]
+           ,[remark_])
+
+SELECT [tf_globalId]  ,[tf_departmentId],
+case when tf_approvenumber = '泰州鑫泰集团有限公司' then '01'
+when tf_approvenumber = '泰州市新泰建设发展有限公司' then '02'
+when tf_approvenumber = '泰州市第二城南污水处理有限公司' then '03'
+when tf_approvenumber = '泰州经济技术开发区管理委员会' then '04'
+when tf_approvenumber = '泰州鑫泉环保工程有限公司' then '05' else null end
+   ,[tf_code]  ,[tf_name] ,  [tf_kind],  [tf_globalTypeId]      ,[tf_state]
+      ,[tf_address] ,[tf_thisyear] ,[tf_createdate]  ,[tf_approvedate]
+      ,[tf_startdate]  ,[tf_enddate]
+      ,[tf_factstartdate] ,[tf_factenddate]  ,[tf_squaremeter]
+      ,[tf_budgetsource]
+      ,[tf_budget]
+      ,[tf_inputmen]
+      ,[tf_inputdate]   ,[tf_remark]
+
+  FROM [鑫泰old].[dbo].[Global]
+
+select creater,
+(select userid from f_user where username=[pm_global].creater)
+from [dbo].[pm_global]
+where not exists (select userid from f_user where username=[pm_global].creater)
+
+update [pm_global] set creater = 
+	(select userid from f_user where username=[pm_global].creater);
+
+
+-- 标段导入
+INSERT INTO [dbo].[pm_project]
+           ([project_id_],[global_id_],[name_],[code_],[year_]
+           ,[budget_] ,[control_budget_] ,[win_budget_] ,[win_date_]
+           ,[start_date_] ,[end_date_]
+           ,[type_],[tender_kind_],[tender_proxy_] ,[win_development_]
+           ,[tender_remark_]
+           ,[win_type_],[payment_type_] ,[remark_]
+           ,[creater] ,[createdate] )
+
+SELECT [tf_projectId] ,[tf_globalId] ,[tf_name] ,[tf_code] ,[tf_thisyear] 
+	  ,[tf_budget] ,0 ,[tf_winbudget] ,[tf_windate]
+      ,[tf_startdate] ,[tf_enddate]
+      ,[tf_type] ,[tf_tendeKkind] ,[tf_tenderProxyName] ,[tf_winDeveloperName]
+      ,[tf_tenderRemark]
+      ,[tf_wintenderMethod]  ,[tf_paymentMethod]  ,[tf_remark]
+      ,[tf_inputmen]
+      ,[tf_inputdate] 
+  FROM [鑫泰old].[dbo].[Project]
+
+select creater,
+(select userid from f_user where username=[pm_project].creater)
+from [dbo].[pm_project]
+where not exists (select userid from f_user where username=[pm_project].creater)
+
+update [pm_project] set creater = 
+	isnull((select userid from f_user where username=[pm_project].creater),'8a53b78262ea6e6d0162ea6e8ccd00f4');
+
+
+
+-- 导入申请单位
+insert into pm_request_unit (unit_id_ , name_) 
+	select orgid,orgname from f_organization where orgid <> '00'
+
+-- 合同文件审批表
+INSERT INTO [dbo].[pm_approve_project2]
+           ([approve_id_] ,[project_id_] ,[code_] ,[name_]
+           ,[unit_id_] ,[jiaji_] ,[unit_name1_] ,[unit_name2_] ,[unit_name3_]
+           ,[scope_] ,[amount_] 
+           ,[payment_method_] ,[work_limit_] 
+           ,[edit_reply_] ,[first_date_] ,[first_men_],[first_attachment_]
+           ,[second_date_],[second_men_],[second_attachment_]
+           ,[printed_],[remark_] ,[creater] ,[createdate]
+        )
+SELECT [tf_id]   ,[tf_projectId] ,[tf_code] ,[tf_name]
+      ,
+case when  [tf_reserved4] = '服务业促进中心' then '0005'
+when  [tf_reserved4] = '鑫润园艺公司' then '0009'
+when  [tf_reserved4] = '鑫发资产公司' then '0007'
+when  [tf_reserved4] = '综合保税区' then '0006'
+when  [tf_reserved4] = '项目部' then '0000'
+when  [tf_reserved4] = '规划建设中心' then '0003'
+when  [tf_reserved4] = '稽核审计部' then '0001'
+when  [tf_reserved4] = '企业服务中心' then '0004'
+else null end	  
+	  
+	      ,[tf_jiaji] ,[tf_name1] ,[tf_name2] ,[tf_name3]
+      ,[tf_scope] ,[tf_amount] ,[tf_paymentMethod] ,[tf_workLimit]
+      ,[tf_reserved1] ,[tf_firstDate] ,[tf_firstMen] ,[tf_firstAttachment]
+      ,[tf_secondDate] ,[tf_secondMen] ,[tf_secondAttachment]
+     ,[tf_printed]  ,[tf_remark] ,[tf_inputmen] ,[tf_inputdate]
+  FROM [鑫泰old].[dbo].[ApproveProject2]
+
+-- 更新 creater
+update pm_approve_project2 
+	set creater = (select userid from f_user where username = p2.creater )
+	from pm_approve_project2 p2
+
+--  加入审批流程的审批信息
+
+
+
+
+-- 
+insert into pm_developer (
+[developer_id_],[developer_group_id_],[name_],[creater],[createdate]
+)
+select [tf_developerId],'10',[tf_name],'8a53b78262ea6e6d0162ea6e8ccd00f4',GETDATE()
+from [xingtai_pm_old_].[dbo].[Developer]
+
+--
+delete from pm_payorg;
+
+insert into pm_payorg ([payorg_id_],[name_])
+select [tf_payDepartmentId],[tf_name] from [xingtai_pm_old_].[dbo].[PayDepartment]
+  order by [tf_payDepartmentId] ;
+
+
+--
+delete from Pm_Agreement_Class_Type;
+
+insert into Pm_Agreement_Class_Type (
+[class_type_code_],[name_]
+)
+select 
+[tf_agreementClassId],[tf_name]
+from [xingtai_pm_old_].[dbo].[AgreementClass]
+order by [tf_agreementClassId];
+
+--
+delete from [dbo].[pm_agreement_cost_type];
+
+insert into [pm_agreement_cost_type] (
+[cost_type_code_],[name_]
+)
+select 
+[tf_agreementCostId],[tf_name]
+from [xingtai_pm_old_].[dbo].[AgreementCost]
+order by [tf_agreementCostId];
+
+--
+delete from [dbo].[pm_agreement_budget_type];
+
+insert into [pm_agreement_budget_type] (
+[budget_type_code_],[name_]
+)
+select 
+[tf_agreementBudgetId],[tf_name]
+from [xingtai_pm_old_].[dbo].[AgreementBudget]
+order by [tf_agreementBudgetId];
+
+
+--
+重复的合同名称
+FROM      Agreement
+WHERE   (tf_name IN ('地质灾害危险性评估合同', '地质灾害危险性评估合同书', '光电产业园标准厂房弱电系统维保', 
+                '光电产业园青年公寓空气能维修合同', '开发区吴陵路原美康地块围墙工程', '设计方案补偿协议', '土地估价协议书', 
+                '吴州路明珠中学南边100m道路破损维修', '协议书'))
+ORDER BY tf_name
+--------------
+delete from pm_agreement;
+insert into pm_agreement (
+[agreement_id_],[project_id_],[payorg_id_],[developer_id_],
+[class_type_code_],[cost_type_code_],[budget_type_code_],[state_code_],
+[code_],[name_],[wintender_method_],
+[amount_tp3_],[amount_tp2_],[amount_tp1_],[sing_amount_],[change_amount_],
+[final_amount_],[audit_amount_],[deduct_amount_],
+[pre_beforehand_],[pre_workhalf_],[pre_finish_],[pre_afteraudit_],[pre_finishhalfyear_],
+[pre_finishoneyear_],[pre_finishtwoyear_],[pre_finishthreeyear_],[pre_finishfouryear_],[pre_finishfiveyear_],
+[project_manager_],[sing_date_],[thisyear_],[agree_start_date_],[agree_end_date_],
+[start_date_],[end_date_],[context_],[paymethod_],[remark_],
+[auditing_userid_],[auditing_name_],[auditing_date_]
+, creater , createdate)
+select 
+[tf_agreementId],[tf_projectId],[tf_payDepartmentId],[tf_developerId],
+[tf_agreementClassId],[tf_agreementCostId],[tf_agreementBudgetId],
+case when tf_status = '已完成' then '90' when tf_status = '未审核' then '10' when tf_status = '正在执行' then '30' when tf_status = '已审核' then '20' when tf_status = '已审计' then '70' else '10' end,
+[tf_code],[tf_name],case when tf_wintenderMethod='招标发包' then '10' else '60' end,
+[tf_amountp3],[tf_amountp2],[tf_amountp1],[tf_signAmount],isnull([tf_changeAmount],0),
+[tf_finalAmount],[tf_auditAmount],isnull([tf_deductAmount],0),
+[tf_perBeforehand]/100.,[tf_perWorkhalf]/100.,[tf_perFinish]/100.,[tf_perAfterAudit]/100.,[tf_perFinishHalfYear]/100.,
+[tf_perFinishOneYear]/100.,[tf_perFinishTwoYear]/100.,[tf_perFinishThreeYear]/100.,[tf_perFinishFourYear]/100.,[tf_perFinishFiveYear]/100.,
+[tf_employeeName],[tf_signDate],[tf_thisyear],[tf_agreeStartDate],[tf_agreeEndDate],
+[tf_startDate],[tf_endDate],[tf_context],[tf_paymethod],[tf_remark],
+[tf_auditingName],[tf_auditingName],[tf_auditingDate],
+tf_inputmen,tf_inputdate
+from [xingtai_pm_old_].[dbo].[Agreement];
+
+
+
+----- 查找合同审核人员没有的人员
+select auditing_userid_,auditing_name_,auditing_date_,
+(select userid from f_user where username=auditing_name_)
+from pm_agreement
+where not exists (select userid from f_user where username=auditing_name_)
+
+
+select creater,
+(select userid from f_user where username=pm_agreement.creater)
+from pm_agreement
+where not exists (select userid from f_user where username=pm_agreement.creater)
+
+
+--
+update pm_agreement set auditing_userid_ = (select userid from f_user where username=auditing_name_);
+update pm_agreement set creater = (select userid from f_user where username=pm_agreement.creater);
+
+
+--   付款计划
+delete from pm_agreement_plan;
+
+insert into [dbo].[pm_agreement_plan] (
+[plan_id_],[agreement_id_],[code_],[reason_],[date_],[plan_amount_],
+[change_log_],[creater],[createdate],[payout_percent_],already_amount_
+)
+select 
+[tf_planId],[tf_agreementId],[tf_code],[tf_reason],[tf_date],[tf_planAmount],
+[tf_remark],[tf_inputmen],[tf_inputdate],[tf_payoutPercent]/100.,0
+from [xingtai_pm_old_].[dbo].[AgreementPlan]
+
+
+select creater,
+(select userid from f_user where username=pm_agreement_plan.creater)
+from pm_agreement_plan
+where not exists (select userid from f_user where username=pm_agreement_plan.creater)
+
+update pm_agreement_plan set creater = (select userid from f_user where username=pm_agreement_plan.creater);
+
+
+--   请款单
+delete pm_payment;
+
+insert into pm_payment (
+[payment_id_],[agreement_id_],[code_],[payment_date_],[reason_],
+[type_],[xxdj_],[gclbq_],[gcllj_],[tryfor_hint_],[tryfor_money_],[hd_money_],
+[count_],[remark_],[creater],[createdate],
+[auditing_name_],[auditing_date_]
+)
+select 
+[tf_paymentId],[tf_agreementId],[tf_code],[tf_paymentDate],[tf_reason],
+[tf_paymentType],[tf_xxjd],[tf_gclbq],[tf_gcllj],[tf_tryforHint],[tf_tryforMoney],[tf_hdMoney],
+[tf_count],[tf_remark],[tf_inputmen],[tf_inputdate],
+[tf_auditingName],[tf_auditingDate]
+from [xingtai_pm_old_].[dbo].[Payment];
+
+
+
+select creater,
+(select userid from f_user where username=pm_payment.creater)
+from pm_payment
+where not exists (select userid from f_user where username=pm_payment.creater)
+
+update pm_payment set creater = (select userid from f_user where username=pm_payment.creater);
+
+-- 审批人员
+select auditing_name_,
+(select userid from f_user where username=pm_payment.auditing_name_)
+from pm_payment
+where not exists (select userid from f_user where username=pm_payment.auditing_name_)
+
+update pm_payment set auditing_userid_ = (select userid from f_user where username=pm_payment.auditing_name_);
+-- 把请款单审批的做掉
+
+
+
+-- 付款单
+insert into pm_payment_detail (
+[payment_detail_id_],[payment_id_],[reason_],[fact_money_],[fact_date_],
+[men_],[zph_],[pzh_],[hph_],[bank_],[bank_account_],[remark_],[creater],[createdate]
+)
+select 
+[tf_paymentDetailId],[tf_paymentId],[tf_reason],[tf_factMoney],[tf_paymentDate],
+[tf_paymentMen],[tf_zph],[tf_pzh],[tf_fph],[tf_bank],[tf_bankAccount],
+[tf_remark],[tf_inputmen],[tf_inputdate]
+from [xingtai_pm_old_].[dbo].[PaymentDetail]
+
+select creater,
+(select userid from f_user where username=pm_payment_detail.creater)
+from pm_payment_detail
+where not exists (select userid from f_user where username=pm_payment_detail.creater)
+
+update pm_payment_detail set creater = (select userid from f_user where username=pm_payment_detail.creater);
+
+
+-- 合同审计
+insert into [dbo].[pm_agreement_audit] (
+[audit_id_],[agreement_id_],[department_],[sjtype_],[send_date_],[audit_date_],
+[code_],[result_],[send_money_],[finished_money_],[audit_radio_],[cost_money_],
+[cost_jia_money_],[forfeit_],[remark_],[creater],[createdate],
+[auditing_name_],[auditing_date_]
+)
+select 
+[tf_agreementAuditId],[tf_agreementId],[tf_department],'10',[tf_sendDate],[tf_auditDate],
+[tf_code],[tf_result],[tf_sendMoney],[tf_finishedMoney],[tf_auditRatio],[tf_costMoney],
+[tf_costMoneyJiaFang],[tf_forfeit],[tf_remark],[tf_inputmen],[tf_inputdate],
+[tf_inputmen],[tf_inputdate]
+from [xingtai_pm_old_].[dbo].[AgreementAudit];
+
+
+
+select creater,
+(select userid from f_user where username=pm_agreement_audit.creater)
+from pm_agreement_audit
+where not exists (select userid from f_user where username=pm_agreement_audit.creater)
+
+update pm_agreement_audit set creater = (select userid from f_user where username=pm_agreement_audit.creater);
+
+update pm_agreement_audit set auditing_userid_ = 
+	(select userid from f_user where username=pm_agreement_audit.auditing_name_);
+
+
+
+--
+
+insert into [dbo].[f_dataobjectattachment](
+[attachmentid],[objectid],[idvalue],[title],
+[orderno],[ftype],[atype],
+[filename],[suffixname],[filesize],[pwidth],[pheight],
+[localpathname],[localfilename],[hasimagepreviewdata],
+[haspdfpreviewviewdata],[originalpreviewmode],[previewdata],
+[creater],[createdate]
+)
+select 
+[tf_additionId],case when tf_moduleId = '3020' then 'PmApproveProject2'
+when tf_moduleId = '3010' then 'PmApproveProject1' when tf_moduleId = '2010' then 'PmAgreement'
+when tf_moduleId = '2063' then 'AgreementAudit1' when tf_moduleId = '1020' then 'PmProject'
+when tf_moduleId = '2030' then 'PmPayment' when tf_moduleId = '1010' then 'PmGlobal'
+when tf_moduleId = '2032' then 'PmPaymentDetail' when tf_moduleId = '2065' then 'PmAgreementAudit' end,
+[tf_moduleIdValue],[tf_filename],[tf_order],'99','99',
+[tf_filename],RIGHT(RTRIM([tf_filename]), CHARINDEX('.',REVERSE(RTRIM([tf_filename]))) - 1),[tf_filesize],
+[tf_imgwidth],[tf_imgheight],null,'附件' + attachmentid,0,0,'direct',[tf_imagePreview],
+[tf_inputmen],[tf_inputdate]
+from [xingtai_pm_old_].[dbo].[_Addition]
+where tf_moduleId <> '2063'
+
+update [f_dataobjectattachment] set originalpreviewmode = 'image' where 
+	suffixname='jpg' or suffixname='jpeg' or suffixname='png';
+
+update [f_dataobjectattachment] set [hasimagepreviewdata] = 1 where 
+	suffixname='jpg' or suffixname='jpeg' or suffixname='png';
+
+update [f_dataobjectattachment] set [haspdfpreviewviewdata] = 1 where 
+	suffixname='xlsx' or suffixname='xls' or suffixname='docx' or suffixname='doc';
+
+delete from f_dataobjectattachment where filename is null;
+
+--
+insert into [dbo].[pm_agreement_state_change](
+[state_change_id_],[agreement_id_],[state_code_],
+[make_date_],[reason_],[creater],[createdate]
+)
+select  [tf_statusChangeId],[tf_agreementId],
+case when tf_status = '已完成' then '90' 
+	 when tf_status = '未审核' then '10' 
+	 when tf_status = '正在执行' then '30' 
+	 when tf_status = '已审核' then '20' 
+	 when tf_status = '已审计' then '70'
+	 when tf_status = '已初审' then '70'
+	  else '10' end,
+[tf_changeDate],[tf_reason],[tf_inputmen],[tf_inputdate]
+from [xingtai_pm_old_].[dbo].[AgreementStatusChange]
+
+select creater,
+(select userid from f_user where username=[pm_agreement_state_change].creater)
+from [pm_agreement_state_change]
+where not exists (select userid from f_user where username=[pm_agreement_state_change].creater)
+
+update [pm_agreement_state_change] set creater = 
+	isnull((select userid from f_user where username=[pm_agreement_state_change].creater),'8a53b78262ea6e6d0162ea6e8ccd00f4');
+

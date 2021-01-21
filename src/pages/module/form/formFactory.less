@@ -1,0 +1,59 @@
+@import '~antd/es/style/themes/default.less';
+
+:global {
+
+    .collapsed .ant-card-body {
+        padding: 0px;
+    }
+    
+    // panel 是在fieldset下面的
+    .mainregion-panel .ant-card-body , .modal-panel .ant-card-body, .drawer-panel .ant-card-body  {
+        //padding: 0px 0px;
+    }
+
+    .moduleform .ant-card-body {
+        //  padding: 0px 16px 16px;
+    }
+
+    .mainregion-fieldset > .ant-card-body {
+        padding-left: 64px;
+        padding-right: 64px;
+    }
+
+    // form 下面的字段的上下margin的设置
+    .moduleform .ant-row .ant-form-item {
+        margin-bottom: 6px;
+        margin-top   : 6px;
+    }
+
+    .moduleform .ant-select-disabled.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+        cursor: default !important;
+    }
+
+    .moduleform .ant-card-small>.ant-card-head {
+        //background-color:#f0f5ff;
+    }
+
+    .moduleform .ant-card .ant-card-small {
+        //padding-bottom: 16px;
+    }
+
+    .moduleform .ant-checkbox-group .ant-checkbox-wrapper {
+        padding-right: 16px;
+    }
+
+    // form 显示在主区域时上下不要留空，否则空位是二倍
+    .pageheaderformwrapper > .ant-pro-page-header-wrap-children-content {
+        margin: 0px 16px 0px !important;
+    }
+
+    // form 显示在主区域时，最下面固定的快捷栏
+    .formfoot .ant-card-body {
+        padding: 0px;
+    }
+
+}
+
+.card_border_top {
+    border-top: 1px solid @divider-color;
+}

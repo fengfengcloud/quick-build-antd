@@ -1,0 +1,117 @@
+
+列表grid
+1.grid scheme 的附加设置中配置  width:2000,可以设置grid的总宽度
+2.grid 字段中设置 
+    responsive: ['xl']          可以配置响应式显示或隐藏，lg,xl,xxl
+    disableSorter : false,      禁止排序
+    disableSearch : false,      禁止列搜索
+    
+    titleIconCls : 'x-fa fa-question', 列头使用一个图标，tooltip里写入title
+
+    render : function (value, record, recno){
+        return value + '(' + record['otherfield'] + ')'
+    }                           自定义泻染函数
+    allowPin : true             对于树形结构的模块，加上此选项，会在值后面加一个pin的图标，可以执行pin操作
+
+    模块字段FDataobjectfield中的图像字段，可以在 grid字段设置中设置
+        imageHeight : 48,
+        imageWidth : 48,
+        imageStyle:{borderRadius:'50%'}, 来设置照片的css属性
+
+
+表单form
+    只有fieldset下才是放字段的，其他的都是包容别的容器的容器。
+
+    一个panel,在fieldset下，可以不同的分栏，需要加 style : {padding : 0 , margin : 0 }
+
+    表单方案附加设置：
+
+    form 的显示类型，弹出式窗口、抽屉式、在主区域中(grid的位置)显示，
+    declare const FormShowTypes: ["modal", "drawer", "mainregion",];
+    第一个窗口设置  showType : "modal" | "drawer" | "mainregion"
+
+    窗口宽，高                            正数是像素数，负数是百分比
+    centered: true|false                modal模式下是否居中,默认false
+    isDrawer: true|false                表单是modal窗口式或者抽屉式  ,默认false
+
+    formLayout:'horizontal'|'vertical'  表单layout,字段描述和字段水平、垂直排列,默认horizontal
+    hideRequiredMark:true|false,        隐藏必填项的标志*,默认false
+    formSize : small | middle | large   字段的大小，默认为middle
+
+    表单容器设置hiddenTitle:true,则不显示title
+
+    form字段设置：
+    help:'写在字段下方的说明，错误提示也是'  写在字段下方对字段的描述，可以设置在字段的附加设置中
+    requiredMessage:'这是一个必填项'      必填字段没有填写时的出错提示，可以设置在字段的附加设置中
+    labelWidth: 120                     字段的label宽度
+    label:<span>labelname</span>        可以自定义label的显示内容,可以是html内容
+    placeholder:''                      字段为空时里面显示的信息，可以设置在字段的附加设置中
+
+    imageField 
+        照片文件form字段可以设置  imageWidth:256,imageHeight:128 来设置照片的大小，默认为96.
+                               imageStyle:{borderRadius:'50%'} 来设置照片的css属性
+    
+    数据字典选择和manytoone的字段，如果是使用radio.group的，设置radioButton = true,则radio以Button形式显示
+    
+    某些字段根据parentField的值来隐藏或显示，在表单字段中配置：
+    parentField : {
+        fieldName : 'parentfieldname',              //父字段名称
+        visibleValue : 'value',                     //父字段值为'value'时可见
+    }
+
+    manytomany设置时默认是select多选，在formfield中设置xtype : 'manytomanycheckboxgroup',可以改成checkbox多选
+
+
+日期字段：moment提交的值与北京时间差8个小时，但是后台能读取到时间后会转换成正确的时间，这个暂时不管了。
+日期字段 modulefield中,字段类型为timestamp,datetime 默认是不显示秒，在附加字段中设置 disableSecond : false,
+    才会显示秒数值,修改的时候秒会保存到数据库
+日期字段显示的值在grid中和显示时都不允许换行。
+
+评分组件:五个星打分
+字段附加设置中加入 isRate : true, 控件即为评分组件，1-5分
+
+
+/**
+ * 自定义筛选的附件属性：
+ * allowEmpty : true        // 允许为空值(默认为false)：boolean类型，manytoone, dictionary 都会加入 未定义值
+ * addCount : false         // 不加入boolean,manytoone,dictionary 的记录数(默认为true)
+ * removeZoneValue : false   // 在combobox中，addCount为true时，没有记录的值将不显示,默认为true
+ * comboThisField : true    // 按照当前字段的值的字义来展示，按照navigate的模式来处理,和dictionary类似
+ * tagSelect : true         // 使用tag方式选择筛选条件，boolean类型，manytoone, dictionary 有效
+ *          tagSelect:可配置属性 
+ *                  expandable:true|false, 
+ *                  expand= !expandable || true|false 
+ * checkbox : true          // 使用checkbox多选的方式来进行筛选条件，boolean ,manytoone,dictionary有效
+ * radio : true             // 使用radio 单选的方式来进行筛选条件，boolean ,manytoone,dictionary有效
+ * radioButton : true       // 使用raido 单选方式按钮排列
+ * hideCheckAll : true      // tagSelect中不显示“选中所有”的按钮
+ * addCodeToText : true     // 在codelevel的树的下拉选择框中，在文字描述后面加入代码
+ * 
+ * 在自定义分组的附加属性中设置：
+ * restNumber : 3,          // 值大于1，则可以显示或隐藏部分筛选条件
+ * restHidden : true ,      // 默认部分筛选条件是隐藏或显示
+ * buttonCol : 12,          // 按钮部分的列span,暂是时自动计算的，未用到
+ * regionVisible : true     // 用户自定义筛选区域默认隐藏或显示
+ * 
+ * 日期字段的设置
+ * operator : 'day','year','quarter','week','month' // 可以用来设置选择的月，年，季，周不设置为日区间
+ */
+
+
+
+附件类型的设置：在数据字典附件类别中，设置一个和模块name,或者模块title一至的名称，比如
+        02 02 工程项目，那么所有的0201，0202，0203，都是模块“工程项目”附件的类别，可以在上传附件的时候进行选择。
+        0201 0201 项目立项文件，。。。。。。
+
+
+模块附加设置，如果设置了菜单名称，就不排在table的actions里面
+    如果菜单名称是toolbar ,那么就放在，toolbar上，在新增的后面
+    在附加设置中加入   visibleWithEmpty : true,表示无记录才加到 toolbar，比如做自动计划
+                    visibleWithRecord : true,表示有记录才加入到  toolbar上
+                    needParentFilter : true ,必须要有父模块限定才显示
+                    disableInForm : true,      当前按钮不能加在form上
+
+数据库返回自定义异常的文本，如果是以下格式，会自动把错误到字段上：
+{totalPrice:"总金额不能为负数！",aaa:"other error"}
+sql server :
+    raisError('{totalPrice:"总金额不能为负数！",aaa:"other field error"}', 16, 11);

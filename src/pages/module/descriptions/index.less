@@ -1,0 +1,32 @@
+@import '~antd/es/style/themes/default.less';
+
+:global {
+    .noborder .ant-descriptions-view {
+        border: 0px solid #f0f0f0;
+    }
+
+    .noborder table th,
+    .border table th {
+        width       : 120px;
+        //text-align: center;
+    }
+
+    // 加了这个，Descriptions 在 grid 展开的时候，单元格之间才有分隔线
+    .border table,
+    .noborder table {
+        border-collapse: collapse;
+    }
+}
+
+.card_border_top {
+    border-top: 1px solid @divider-color;
+    margin-top: -1px
+}
+
+.manytooneinfo {
+    font-size: 12px;
+    cursor: pointer;
+    filter:alpha(Opacity=80);
+    -moz-opacity:0.5;
+    opacity: 0.5;
+}

@@ -1,0 +1,46 @@
+mkdir quick-build-antd
+yarn create umi
+
+
+yarn add numeral
+yarn add ajax-js
+yarn add react-icons
+yarn add react-zmage
+yarn add react-highlight-words
+yarn add react-helmet
+
+
+
+待办事项：
+
+XXXXXXXX有5条记录等待启动审批流程
+        现在去启动
+
+XXXXXXXX有10条记录等待我审批
+        马上去审批
+
+XXXXXXXX有10条记录等待我接受任务
+        去接受任务
+
+有审批流程，并且是我录入的，还没有开始的，等待审批流程启动
+等待我审批的记录
+等待我接受任务的记录
+
+属性：
+    {
+      id: '000000010',
+      title: '工程项目合同请款单',
+      description: '有10个等待审批的任务',
+      extra: '最长已等待3天',
+      status: 'urgent',
+      type: 'event',
+    },
+
+
+
+待处理：分为几类
+设置在待处理问题中的所有模块的处理信息。
+info
+warn
+error
+
