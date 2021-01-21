@@ -39,7 +39,7 @@ export const selections = (state: DataminingModal, dispatch: Function) => {
             text: <>{EMPTY_MENU_ICON}选择所有末级节点</>,
             onSelect: () => { updateSelections(getAllleafRowids(dataSource)) }
         }, {
-            key: 'select_allleaf',
+            key: 'select_allnotleaf',
             text: <>{EMPTY_MENU_ICON}选择所有非末级节点</>,
             onSelect: () => {
                 updateSelections(getAllhasChildrenRowids(dataSource))
