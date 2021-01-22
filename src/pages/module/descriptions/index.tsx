@@ -210,6 +210,7 @@ const Description = ({ moduleInfo, record, dispatch, disableTitle, setVisible }:
                 }
             </Space>
         }
+        className="descriptionform"
         style={{ maxWidth: '1100px' }}
         key={'key_' + record[moduleInfo.primarykey]}
         bodyStyle={{ padding: 0, margin: -1 }}
@@ -312,7 +313,9 @@ const DescriptionForm: React.FC<DescriptionFormProps> = ({ moduleInfo, record, d
                         {children[index]}
                     </TabPane>)
                 }
-                return <Tabs key={panel.detailid} centered={false}>{tabs}</Tabs>
+                return <Tabs key={panel.detailid} tabPosition={panel.tabPosition || 'top'}
+                    centered={false}>{tabs}
+                </Tabs>
             } else if (panel.xtype == 'approvehistory') {
                 if (!title) title = "流程审批记录"
                 if (moduleInfo.moduleLimit.hasapprove && isStartProcess(record))

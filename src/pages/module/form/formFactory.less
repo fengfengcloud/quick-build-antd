@@ -6,6 +6,20 @@
         padding: 0px;
     }
     
+    // tabs下面的线下不要留空，由里面的控件自己控制
+    .moduleform .ant-tabs-nav {
+        margin: 0 0 0 0 !important;
+      }
+
+    // tabls的第一个tab项，不要顶住最左面
+    .moduleform .ant-tabs-top > .ant-tabs-nav {
+        padding-left: 12px;
+    }
+    
+    // tabls的第一个tab项，不要顶住最上面
+    .moduleform .ant-tabs-left > .ant-tabs-nav {
+        padding-top: 12px;
+    }
     // panel 是在fieldset下面的
     .mainregion-panel .ant-card-body , .modal-panel .ant-card-body, .drawer-panel .ant-card-body  {
         //padding: 0px 0px;
