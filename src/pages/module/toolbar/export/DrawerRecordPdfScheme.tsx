@@ -1,5 +1,5 @@
 import { getPdfjsUrl, isSafari, onOpenInNewWindow, urlEncode } from '@/utils/utils';
-import { EyeOutlined, SelectOutlined } from '@ant-design/icons';
+import { FilePdfOutlined, SelectOutlined } from '@ant-design/icons';
 import { Drawer, Tooltip } from 'antd';
 import React, { useState } from 'react';
 import { ExcelSchemeState, ModuleModal } from '../../data';
@@ -32,7 +32,7 @@ export const DrawerRecordPdfScheme: React.FC<DrawerRecordPdfSchemeParam> = ({ mo
     }
 
     return <Tooltip title={`预览${scheme.title}的pdf文件`}>
-        <EyeOutlined onClick={() => { setShowpdf(true); }} />
+        <FilePdfOutlined onClick={() => { setShowpdf(true); }} />
         <Drawer
             title={<span style={{ display: 'flex' }}>
                 <span style={{ flex: 1 }}>{record[moduleInfo.namefield] + ' 的 ' + scheme.title}</span>

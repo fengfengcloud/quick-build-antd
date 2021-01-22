@@ -156,9 +156,10 @@ const Description = ({ moduleInfo, record, dispatch, disableTitle, setVisible }:
             scheme.onlypdf ? null : <Tooltip title={`导出${scheme.title}`}
                 key='_download_'><DownloadOutlined onClick={
                     () => { download(null) }} /></Tooltip>,
-            <Tooltip title={`导出${scheme.title}的pdf文件`} key='_exportfilepdf_'>
-                <FilePdfOutlined onClick={
-                    () => { download('pdf') }} /></Tooltip>,
+            // 这个按钮加上，按钮太多了，可以在预览中下载
+            // <Tooltip title={`导出${scheme.title}的pdf文件`} key='_exportfilepdf_'>
+            //     <FilePdfOutlined onClick={
+            //         () => { download('pdf') }} /></Tooltip>,
             <DrawerRecordPdfScheme moduleInfo={moduleInfo} record={record}
                 scheme={scheme} key='_recordpdf_' />
         ]

@@ -78,7 +78,7 @@ export const DragDropHeaderCell = ({ children, column, className, ...restProps }
         },
         drop: (dragItem: any) => {
             const { column: dragColumn } = dragItem;
-            message.warn('dropped:' + dragColumn[ROWID] + '   to ' + column[ROWID])
+            //message.warn('dropped:' + dragColumn[ROWID] + '   to ' + column[ROWID])
             if (column.isTotalColumn)
                 moveFieldGroup(state, dispatch, dragColumn[ROWID], column[ROWID]);
             else

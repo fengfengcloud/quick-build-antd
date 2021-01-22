@@ -6,7 +6,6 @@ import { getModuleInfo, getFieldDefine } from "../modules";
 import { getNextId, apply, showResultInfo } from "@/utils/utils";
 import { getMaxPrimaryKeyFromKey, DateTimeFormat } from "../moduleUtils";
 import { getAjaxNewDefault } from "../service";
-import { message } from "antd";
 
 /**
  * 在编辑记录前对记录做一下处理
@@ -65,7 +64,7 @@ export const getDifferentField = ({ dest, sour, moduleInfo }:
     }
     console.log('修改过的字段');
     console.log(result);
-    message.warn(JSON.stringify(result))
+    // message.warn(JSON.stringify(result))
     return result;
 }
 
