@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
-import { Layout } from 'antd';
+import { Layout, PageHeader } from 'antd';
 import { getFilterScheme, getModuleInfo } from '../module/modules';
 import UserDefineFilter from '../module/UserDefineFilter';
 import { DataminingModal } from './data';
@@ -16,6 +16,7 @@ import { DataminingNavigate } from './navigate'
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ACT_DATAMINING_FETCH_SCHEMES } from './constants';
 import { getModuleIcon } from '../module/moduleUtils';
+import styles from './index.less';
 /**
  *
  * 商业数据分析BI的主文件
@@ -35,6 +36,7 @@ import { getModuleIcon } from '../module/moduleUtils';
 
 interface DataminingParams {
   moduleName: string;
+  inTab?: boolean;              // 是否是独立的一页，如果否，则表示在tab页中
 }
 
 // DataminingContext 中存放的上下文的字段值
@@ -49,19 +51,19 @@ export const DataminingContext = createContext<DataminingStateContext>({
   dispatch: () => { },
 });
 
-const Datamining: React.FC<DataminingParams> = ({ moduleName }) => {
+const Datamining: React.FC<DataminingParams> = ({ moduleName, inTab }) => {
   //console.log("初始化DataminingModelProvider");
   const [state, dispatch] = useReducer(DataminingReducer, getDataminingModal(moduleName));
   return (
     <HOCDndProvider>
       <DataminingContext.Provider value={{ state, dispatch }}>
-        <DataminingModule />
+        <DataminingModule inTab={inTab} />
       </DataminingContext.Provider>
     </HOCDndProvider>
   );
 };
 
-const DataminingModule: React.FC = () => {
+const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
   const context = useContext<DataminingStateContext>(DataminingContext);
   const { state, dispatch } = context;
   const { moduleName, currentScheme } = state;
@@ -129,9 +131,8 @@ const DataminingModule: React.FC = () => {
     state.fetchLoading, state.monetary, state.monetaryPosition, state.schemeState.columnGroup,
     state.schemeState.fieldGroup, state.currSetting.fieldGroupFixedLeft]);
 
-  return (
-    <PageHeaderWrapper title={<span>{getModuleIcon(moduleInfo)} {moduleInfo.title}</span>}
-      extra={<Toolbar state={state} dispatch={dispatch}></Toolbar>}>
+  const dataminingComponent = (
+    <React.Fragment>
       <GroupRegion state={state} dispatch={dispatch} key={state.moduleName} />
       <Layout className="datamininglayout">
         <DataminingNavigate />
@@ -149,7 +150,21 @@ const DataminingModule: React.FC = () => {
           {/* </Space> */}
         </Layout.Content>
       </Layout>
-    </PageHeaderWrapper>
+    </React.Fragment>
+  );
+  return (
+    inTab ? <div>
+      <PageHeader title={<span>{getModuleIcon(moduleInfo)} {moduleInfo.title}</span>}
+        extra={<Toolbar state={state} dispatch={dispatch}></Toolbar>}>
+      </PageHeader>
+      <div className={styles.dataminingcard}>
+        {dataminingComponent}
+      </div>
+    </div> :
+      <PageHeaderWrapper title={<span>{getModuleIcon(moduleInfo)} {moduleInfo.title}</span>}
+        extra={<Toolbar state={state} dispatch={dispatch}></Toolbar>}>
+        {dataminingComponent}
+      </PageHeaderWrapper>
   );
 };
 

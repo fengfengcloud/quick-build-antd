@@ -69,7 +69,7 @@ const ModuleUrlEntry: React.FC<ModuleProps> = (params) => {
         //          }); 的方式来传递值，URL参数不显示在地址栏，刷新后参数也不会丢失
         parentFilter = JSON.parse(decodeURIComponent(state.parentFilter));
     }
-    
+
     useEffect(() => {
         // 如果模块的定义信息还没有加载，则先去加载
         if (!moduleState)
@@ -133,7 +133,7 @@ const ModuleUrlEntry: React.FC<ModuleProps> = (params) => {
     </>
     const moduleDescription = moduleInfo.description ?
         <span dangerouslySetInnerHTML={{ __html: moduleInfo.description || '' }}></span> : null;
-    const spanid: string = new Date().getTime() + '';
+    // const spanid: string = new Date().getTime() + '';
     const { Content } = Layout;
 
 
@@ -163,7 +163,8 @@ const ModuleUrlEntry: React.FC<ModuleProps> = (params) => {
                         dispatch={dispatch} />
                 </Space>}
             content={moduleDescription}
-            extraContent={<span id={spanid}> </span>}>
+            // extraContent={<span id={spanid}> </span>}
+        >
             <GridContent>
                 <Layout>
                     <NavigateSider moduleState={moduleState} dispatch={dispatch} />

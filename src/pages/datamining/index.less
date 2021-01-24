@@ -2,6 +2,11 @@
 
 :global {
 
+  // tabs 的 nav 下面不要留空
+  .dataminingtabs>div.ant-tabs-nav {
+    margin: 0px;
+  }
+
   // table header cell记录拖动时
   .drop-over-right {
     border-right: 3px dashed #1890ff !important;
@@ -97,7 +102,7 @@ thead .parentcolumnheader {
 
 // 显示或隐藏剩余分组的按钮的文字颜色
 thead .parentcolumnheader button {
-  color: @text-color-secondary !important;
+  color: @text-color-secondary  !important;
 }
 
 thead .rowcellselected {
@@ -175,4 +180,9 @@ tbody .categorycolumn {
   float: right;
   padding: 5px;
   cursor: pointer;
+}
+
+.dataminingcard {
+  background: @layout-body-background  !important;
+  padding: 16px;
 }

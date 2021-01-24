@@ -5,13 +5,7 @@ import Datamining from '@/pages/datamining';
 //PmInvoice
 const monitor: React.FC = () => {
     return (
-    //<PageHeaderWrapper>
-        <>
-            {/* <Datamining moduleName="PmInvoice"></Datamining> */}
-            {/* <Datamining moduleName="PmAgreement"></Datamining> */}
-            <Datamining moduleName="PmPlanPayoutBalance"></Datamining>
-            </>
-    //</PageHeaderWrapper>
+        <Datamining moduleName="PmPlanPayoutBalance"></Datamining>
     )
 }
 
