@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
-import { Layout, PageHeader } from 'antd';
+import { Layout, PageHeader, Typography } from 'antd';
 import { getFilterScheme, getModuleInfo } from '../module/modules';
 import UserDefineFilter from '../module/UserDefineFilter';
 import { DataminingModal } from './data';
@@ -51,7 +51,7 @@ export const DataminingContext = createContext<DataminingStateContext>({
   dispatch: () => { },
 });
 
-const Datamining: React.FC<DataminingParams> = ({ moduleName, inTab }) => {
+export const Datamining: React.FC<DataminingParams> = ({ moduleName, inTab }) => {
   //console.log("初始化DataminingModelProvider");
   const [state, dispatch] = useReducer(DataminingReducer, getDataminingModal(moduleName));
   return (
@@ -130,7 +130,12 @@ const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
     [state.schemeState.dataSource, state.selectedRowKeys, state.expandedRowKeys,
     state.fetchLoading, state.monetary, state.monetaryPosition, state.schemeState.columnGroup,
     state.schemeState.fieldGroup, state.currSetting.fieldGroupFixedLeft]);
-
+  const title = <span>{getModuleIcon(moduleInfo)} {moduleInfo.title}
+    <Typography.Text type="secondary"
+      style={{ fontSize: '14px', marginLeft: '24px', fontWeight: 400 }}>
+      {state.currentScheme.title}
+    </Typography.Text>
+  </span>;
   const dataminingComponent = (
     <React.Fragment>
       <GroupRegion state={state} dispatch={dispatch} key={state.moduleName} />
@@ -154,18 +159,31 @@ const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
   );
   return (
     inTab ? <div>
-      <PageHeader title={<span>{getModuleIcon(moduleInfo)} {moduleInfo.title}</span>}
+      <PageHeader title={title}
         extra={<Toolbar state={state} dispatch={dispatch}></Toolbar>}>
       </PageHeader>
       <div className={styles.dataminingcard}>
         {dataminingComponent}
       </div>
     </div> :
-      <PageHeaderWrapper title={<span>{getModuleIcon(moduleInfo)} {moduleInfo.title}</span>}
+      <PageHeaderWrapper title={title}
         extra={<Toolbar state={state} dispatch={dispatch}></Toolbar>}>
         {dataminingComponent}
       </PageHeaderWrapper>
   );
 };
 
-export default Datamining;
+
+// 从菜单进入
+interface DataminingProps {
+  route: any;
+  match: any;
+}
+
+const DataminingUrlEntry: React.FC<DataminingProps> = (params) => {
+  const { route, match } = params;
+  const moduleName = route.name || match.params.moduleName;
+  return <Datamining moduleName={moduleName} key={moduleName} ></Datamining>
+}
+
+export default DataminingUrlEntry;

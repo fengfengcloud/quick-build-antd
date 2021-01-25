@@ -101,6 +101,14 @@ export default defineConfig({
               component: './module/index'
             },
             {
+              path: '*/datamining/:moduleName?',
+              component: './datamining/index',
+            },
+            {
+              path: "/datamining/:moduleName?",
+              component: './datamining/index'
+            },
+            {
               component: './404',
             },
           ],

@@ -21,6 +21,7 @@ import { EMPTY_MENU_ICON, getAuthorityFromRouter, getMenuAwesomeIcon } from '@/u
 import { SystemInfo } from '@/models/systeminfo';
 import { getSystemMenu } from '@/services/systeminfo';
 import styles from './BasicLayout.less';
+import { dataminingList } from '@/pages/dashboard/analysis';
 
 const noMatch = (
   <Result
@@ -109,12 +110,14 @@ export const footerRender = (props: any) => {
 };
 
 // 根据返回的菜单生成antd的菜单
-const generateMenu = (menuDefine:
-  { menuid: string; text: any; objectid: any; iconCls: string; children: any[]; visible: boolean },
+const generateMenu = (menuDefine: {
+  menuid: string; text: any; objectid: any; iconCls: string; children: any[];
+  visible: boolean, isdatamining: boolean
+},
   parentPath: string, hasicon: boolean) => {
   if (menuDefine.text == '-') return null;
   // 有些隐藏的菜单只有administrator才能看到
-  if (currentUser.usercode != 'administrator' && !menuDefine.visible) return null;
+  if (!menuDefine.visible) return null;       //currentUser.usercode != 'administrator' && 
   let menu: any = {
     path: parentPath + '/' + menuDefine.text,
     name: menuDefine.text, // 菜单的标题
@@ -122,10 +125,24 @@ const generateMenu = (menuDefine:
     icon: menuDefine.iconCls,
   }
   if (menuDefine.objectid) {
-    menu = {
-      ...menu,
-      path: parentPath + `/module/${menuDefine.objectid}`,
-      moduleName: menuDefine.objectid,
+    if (menuDefine.isdatamining) {
+      menu = {
+        ...menu,
+        path: parentPath + `/datamining/${menuDefine.objectid}`,
+        moduleName: menuDefine.objectid,
+      }
+      
+      dataminingList.push({
+        moduleName: menuDefine.objectid,
+        title: menuDefine.text,
+      })
+
+    } else {
+      menu = {
+        ...menu,
+        path: parentPath + `/module/${menuDefine.objectid}`,
+        moduleName: menuDefine.objectid,
+      }
     }
     sysMenuData[menuDefine.objectid] = menu;
   }
@@ -230,18 +247,18 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
       children: [{
         name: formatMessage({ id: 'menu.dashboard.charts' }),
         path: '/dashboard/charts',
-      },{
+      }, {
         name: formatMessage({ id: 'menu.dashboard.analysis' }),
         path: '/dashboard/analysis',
       }, {
         name: formatMessage({ id: 'menu.dashboard.monitor' }),
         path: '/dashboard/monitor',
-      }, 
-      // {
-      //   name: formatMessage({ id: 'menu.dashboard.workplace' }),
-      //   path: '/dashboard/workplace',
-      // }
-    ]
+      },
+        // {
+        //   name: formatMessage({ id: 'menu.dashboard.workplace' }),
+        //   path: '/dashboard/workplace',
+        // }
+      ]
     })
     menu.push({
       name: formatMessage({ id: 'menu.account' }),
