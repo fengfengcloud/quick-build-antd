@@ -1,4 +1,4 @@
-import { Dropdown, Form, Input, Menu, message, Modal } from 'antd';
+import { Dropdown, Form, Input, Menu, Modal } from 'antd';
 import React, { ReactChild, useContext } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { DataminingContext, DataminingStateContext } from '..';
@@ -78,7 +78,6 @@ export const DragDropHeaderCell = ({ children, column, className, ...restProps }
         },
         drop: (dragItem: any) => {
             const { column: dragColumn } = dragItem;
-            //message.warn('dropped:' + dragColumn[ROWID] + '   to ' + column[ROWID])
             if (column.isTotalColumn)
                 moveFieldGroup(state, dispatch, dragColumn[ROWID], column[ROWID]);
             else
@@ -103,7 +102,6 @@ export const DragDropHeaderCell = ({ children, column, className, ...restProps }
         * 2、如果当前记录被选中了，则展开所有的选中记录。
         */
         drop: (item) => {
-            message.warn(JSON.stringify(item));
             expandHeadCellWithGroup(state, dispatch, cellType,
                 (cellType === 'group' || cellType === 'fieldingroup') ? column : {},
                 item.fieldid, item.text || item.title);

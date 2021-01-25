@@ -175,7 +175,7 @@ export const combineSelectedColumns = (columnGroup: any[], keepChildren: boolean
   const selections: any[] = getSelectedColumnGroup(columnGroup);
   const pnoderowid = getParentRowid(selections[0][ROWID]);
   const parentChildren: any[] = pnoderowid ? getTreeRecordByKey(columnGroup, pnoderowid, ROWID).children : columnGroup;
-  message.warn(pnoderowid);
+  // message.warn(pnoderowid);
   for (let i in selections) {
     if (getParentRowid(selections[i][ROWID]) != pnoderowid) {
       message.warn('合并的分组必须在同一个父分组之下！');
