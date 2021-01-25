@@ -36,7 +36,7 @@ const errorHandler = (error: { response: Response }): Response => {
     if (url.indexOf("getuserbean.do") == -1 && url.indexOf("logout") == -1) {
       //&& window.location.href.indexOf('user/login') == -1
       //不加&& window.location.href.indexOf('user/login') == -1 ie11 运行不正常，ie11中url  为空
-      if (status === 999) {
+      if (status === 999 || status === 401) {
         if (!window['isAlert']) {
           window['isAlert'] = true; //可能有多个request同时运行
           window.alert('用户登录已超时,请按 确定 按钮重新进行身份验证！')
@@ -100,7 +100,7 @@ export const syncRequest = (url: string, { type = 'get', params }:
     data: params,
     successEvent: (res: string) => result = JSON.parse(res),
     errorEvent: (res: any) => {
-      if (res === 999) {
+      if (res === 999 || res === 401) {
         if (!window['isAlert']) {
           window['isAlert'] = true; //可能有多个request同时运行
           window.alert('用户登录已超时,请按 确定 按钮重新进行身份验证！')
