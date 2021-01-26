@@ -69,7 +69,7 @@ const DetailTable = ({ pFilter, readOnly, enableUserFilter }:
 
     useEffect(() => {
         if (parentFilter && (pFilter.fieldvalue != parentFilter.fieldvalue)) {
-            message.error('parentfilter changed:' + pFilter.text + '=======' + parentFilter.text)
+            // message.error('parentfilter changed:' + pFilter.text + '=======' + parentFilter.text)
             dispatch({
                 type: 'modules/init',
                 payload: {

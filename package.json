@@ -1,6 +1,7 @@
 {
   "name": "quick-build-antd",
   "version": "4.0.0",
+  "license": "MIT",
   "private": true,
   "description": "快速架构系统antd版本",
   "scripts": {
