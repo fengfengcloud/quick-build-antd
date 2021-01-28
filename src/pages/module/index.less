@@ -1,122 +1,134 @@
 @import '~antd/es/style/themes/default.less';
 
 :global {
-    .x-fa {
-        display                : inline-block;
-        font                   : normal normal normal 14px/1 FontAwesome;
-        font-size              : inherit;
-        text-rendering         : auto;
-        -webkit-font-smoothing : antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-    // table的toolbar 总计部分100%，这样可以把自定义按钮放在最前面
-    .ant-pagination-total-text {
-        width: 100%;
-    }
+  .x-fa {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-    .ant-pro-page-header-wrap-children-content {
-        margin: 16px 16px 0 !important;
-    }
+  // table 中的记录拖动时
+  .moduletable tr.drop-over-downward td {
+    border-bottom: 2px dashed #1890ff !important;
+  }
 
-    // 加了table的选择框不居中
-    .ant-checkbox-wrapper {
-        //margin-right: 8px;
-    }
+  .moduletable tr.drop-over-upward td {
+    border-top: 2px dashed #1890ff !important;
+  }
 
-    .ant-checkbox-wrapper+.ant-checkbox-wrapper {
-        margin-left: 0px;
-    }
 
-    // small的table的页码条中的文字高度24
-    .mini .paginationtoolbar {
-        height : 24px !important
-    }
+  // table的toolbar 总计部分100%，这样可以把自定义按钮放在最前面
+  .ant-pagination-total-text {
+    width: 100%;
+  }
 
-    // 导航tabs的标签的间距减少
-    .navigate .ant-tabs-tab {
-        margin: 0 16px 0 0;
-    }
+  .ant-pro-page-header-wrap-children-content {
+    margin: 16px 16px 0 !important;
+  }
 
-    // 审批的黄色按钮
-    .actionyellow {
-        color: #fdb933;
-    }
+  // 加了table的选择框不居中
+  .ant-checkbox-wrapper {
+    //margin-right: 8px;
+  }
 
-    // 只读时或浮点数数据全部靠右
-    .double>.ant-input-number-input-wrap input,
-    .ant-input-number-input-wrap input[readonly] {
-        text-align: right !important;
-    }
+  .ant-checkbox-wrapper+.ant-checkbox-wrapper {
+    margin-left: 0px;
+  }
 
-    // 只读时或者浮点数时取消数值的上下箭头
-    .double>.ant-input-number-handler-wrap,
-    .ant-input-number-handler-wrap [readonly] {
-        display: none;
-    }
+  // small的table的页码条中的文字高度24
+  .mini .paginationtoolbar {
+    height: 24px !important
+  }
 
-    // readonly的字段种类太多，没法一致，现在加入 readOnly,配合onValueChanged,阻止修改
-    // .form-field-readonly {
-    //     color     : rgba(0, 0, 0, 0.9) !important;
-    //     background: #f9f9f9 !important;
-    //     cursor    : default !important;
-    // }
+  // 导航tabs的标签的间距减少
+  .navigate .ant-tabs-tab {
+    margin: 0 16px 0 0;
+  }
 
-    // 评分组件字体小一些
-    .ant-rate {
-        font-size: 16px !important;
-    }
+  // 审批的黄色按钮
+  .actionyellow {
+    color: #fdb933;
+  }
 
-    .ant-rate-star:not(:last-child) {
-        margin-right: 4px !important;
-    }
+  // 只读时或浮点数数据全部靠右
+  .double>.ant-input-number-input-wrap input,
+  .ant-input-number-input-wrap input[readonly] {
+    text-align: right !important;
+  }
 
-    .markdown table {
-        border-collapse:collapse;
-        border: 1px solid @border-color-base;
-        padding : 8;
-    }
+  // 只读时或者浮点数时取消数值的上下箭头
+  .double>.ant-input-number-handler-wrap,
+  .ant-input-number-handler-wrap [readonly] {
+    display: none;
+  }
 
-    .markdown table th {
-        border: 1px solid @border-color-base;
-        padding : 4px;
-    }
-    .markdown table td {
-        border: 1px solid @border-color-base;
-        padding : 4px;
-    }
+  // readonly的字段种类太多，没法一致，现在加入 readOnly,配合onValueChanged,阻止修改
+  // .form-field-readonly {
+  //     color     : rgba(0, 0, 0, 0.9) !important;
+  //     background: #f9f9f9 !important;
+  //     cursor    : default !important;
+  // }
 
-    .markdown ol {
-        display: block;
-        list-style-type: decimal;
-        margin-block-start: 1em;
-        margin-block-end: 1em;
-        margin-inline-start: 0px;
-        margin-inline-end: 0px;
-        padding-inline-start: 40px;
-    }
-    
-    .markdown ul {
-        display: block;
-        list-style-type: disc;
-        margin-block-start: 1em;
-        margin-block-end: 1em;
-        margin-inline-start: 0px;
-        margin-inline-end: 0px;
-        padding-inline-start: 40px;
-    }
+  // 评分组件字体小一些
+  .ant-rate {
+    font-size: 16px !important;
+  }
 
-    .markdown blockquote {
-        display: block;
-        margin-block-start: 1em;
-        margin-block-end: 1em;
-        margin-inline-start: 40px;
-        margin-inline-end: 40px;
-    }
+  .ant-rate-star:not(:last-child) {
+    margin-right: 4px !important;
+  }
+
+  .markdown table {
+    border-collapse: collapse;
+    border: 1px solid @border-color-base;
+    padding: 8;
+  }
+
+  .markdown table th {
+    border: 1px solid @border-color-base;
+    padding: 4px;
+  }
+
+  .markdown table td {
+    border: 1px solid @border-color-base;
+    padding: 4px;
+  }
+
+  .markdown ol {
+    display: block;
+    list-style-type: decimal;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+  }
+
+  .markdown ul {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+  }
+
+  .markdown blockquote {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 40px;
+    margin-inline-end: 40px;
+  }
 
 }
 
 .headerparenttext {
-    font-size  : @font-size-base;
-    margin-left: 16px;
-    font-weight: normal;
+  font-size: @font-size-base;
+  margin-left: 16px;
+  font-weight: normal;
 }

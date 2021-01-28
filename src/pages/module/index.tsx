@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { createContext, useEffect } from 'react';
 import { PageHeaderWrapper, GridContent } from '@ant-design/pro-layout';
 import { Spin, Card, Skeleton, Space, Layout } from 'antd';
 import { Dispatch } from 'redux';
@@ -14,6 +14,7 @@ import { NavigateSider } from './navigate/sider';
 import { isParentFilterChanged, getParentFilterTitle, getModuleIcon, ModuleHelpMarkDown } from './moduleUtils';
 import PinStatus from './widget/pinStatus';
 import ModuleForm from './form';
+import HOCDndProvider from '@/utils/HOCDndProvider';
 import StartEndDateSectionSelect from './grid/sqlparams';
 
 interface ModuleProps {
@@ -24,6 +25,18 @@ interface ModuleProps {
     modules: ModuleState[];
     match: any;
 }
+
+// DataminingContext 中存放的上下文的字段值
+export interface ModuleStateContext {
+    state: ModuleState | any;
+    dispatch: Function;
+}
+
+// DataminingContext 的上下文
+export const ModuleContext = createContext<ModuleStateContext>({
+    state: undefined,
+    dispatch: () => { },
+});
 
 /**
  * 使用网址进入模块的入口。进入的是一个全界面的入口，
@@ -135,11 +148,8 @@ const ModuleUrlEntry: React.FC<ModuleProps> = (params) => {
         <span dangerouslySetInnerHTML={{ __html: moduleInfo.description || '' }}></span> : null;
     // const spanid: string = new Date().getTime() + '';
     const { Content } = Layout;
-
-
-    return moduleState.formState.showType === 'mainregion' && moduleState.formState.visible ?
-        moduleForm
-        :
+    const component = moduleState.formState.showType === 'mainregion' && moduleState.formState.visible ?
+        moduleForm :
         <PageHeaderWrapper
             title={<span>{getModuleIcon(moduleInfo)} {moduleInfo.title}
                 <ModuleHelpMarkDown moduleInfo={moduleInfo} />
@@ -163,7 +173,7 @@ const ModuleUrlEntry: React.FC<ModuleProps> = (params) => {
                         dispatch={dispatch} />
                 </Space>}
             content={moduleDescription}
-            // extraContent={<span id={spanid}> </span>}
+        // extraContent={<span id={spanid}> </span>}
         >
             <GridContent>
                 <Layout>
@@ -179,7 +189,15 @@ const ModuleUrlEntry: React.FC<ModuleProps> = (params) => {
             </GridContent>
             {/* 模块的form的字义 */}
             {moduleForm}
-        </PageHeaderWrapper >
+        </PageHeaderWrapper >;
+
+    return (
+        <HOCDndProvider>
+            <ModuleContext.Provider value={{ state: moduleState, dispatch }}>
+                {component}
+            </ModuleContext.Provider>
+        </HOCDndProvider>
+    )
 }
 
 export default connect(({ modules, loading }:

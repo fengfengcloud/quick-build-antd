@@ -7,6 +7,7 @@ import { getAllFilterAjaxParam, getColumnFiltersInfo, getGridColumnFilters } fro
 import { message } from 'antd';
 import { getGridColumnSorts } from '../grid/sortUtils';
 import { getMonetary, setDefaultMonetaryPosition, setDefaultMonetaryType } from '../grid/monetary';
+import update from 'immutability-helper';
 
 interface ActionProps {
     'type': string,
@@ -89,6 +90,12 @@ export const moduleStateReducer = (moduleState: ModuleState, action: ActionProps
             return { ...moduleState, fetchLoading: false };
         case 'updateDataList':
             return updateDateList(moduleState, action);
+        case 'updateDataSource':
+            return update(moduleState , {
+                dataSource : {
+                    $set : action.payload.dataSource
+                }
+            })
         case 'fetchData':
             return fetchData(moduleState);
         case 'selectedRowKeysChanged':

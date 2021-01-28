@@ -25,7 +25,7 @@ const ResultTree: React.FC<ResultTreeParams> = ({ state, dispatch }) => {
 
   const handleTableChange = (
     pagination: any,
-    filters: Record<string, Key[] | null>,
+    filters: Record<string, (Key | boolean)[] | null>,
     sorter: SorterResult<any> | SorterResult<any>[],
     extra: TableCurrentDataSource<any>,
   ) => {

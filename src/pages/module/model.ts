@@ -33,6 +33,7 @@ export interface ModuleModelType {
     reducers: {
         updateModuleState: Reducer<ModalState>;
         updateDataList: Reducer<ModalState>;
+        updateDataSource: Reducer<ModalState>;
         updateRecord: Reducer<ModalState>;
         insertRecord: Reducer<ModalState>;
         formStateChanged: Reducer<ModalState>;
@@ -507,6 +508,20 @@ const Model: ModuleModelType = {
                     }
                 }),
                 currSetting,
+            };
+            return result;
+        },
+
+        updateDataSource(state = {}, action) {
+            debugger;
+            const { moduleName, dataSource = [] } = action.payload;
+            const moduleState: ModuleState = state[moduleName] as ModuleState;
+            const result = {
+                ...state
+            };
+            result[moduleName] = {
+                ...moduleState,
+                dataSource,
             };
             return result;
         },

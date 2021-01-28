@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Dispatch } from 'redux';
 import { Table, Tooltip, Space } from 'antd';
 import { PaginationConfig } from 'antd/lib/pagination';
@@ -16,6 +16,8 @@ import GridSizeButton from './GridSizeButton';
 import GridSettingButton from './GridSettingButton';
 import { getToolbarButton } from '../toolbar/BatchOperateButton';
 import StartEndDateSectionSelect from './sqlparams';
+import { DragDropHeaderCell } from './headCellDragDrop';
+import { DragableBodyRow } from './bodyRowDragDrop';
 
 interface ModuleGridProps {
     moduleState: ModuleState,
@@ -252,7 +254,34 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({ moduleState, moduleInfo, dispat
     //     </div>,
     // }
 
+    const components = {
+        // body: {
+        //     row: (props: any) => <DragableBodyRow {...props} />,
+        // },
+        // header: {
+        //     cell: (props: any) => <DragDropHeaderCell {...props} />
+        // }
+    };
+
+    // 鼠标拖动行移动位置
+    const moveRow = useCallback((dragIndex, hoverIndex, dragRecord) => {
+        const data: any[] = [...moduleState.dataSource];
+        const dragRow = data[dragIndex];
+        data.splice(dragIndex, 1);
+        data.splice(hoverIndex, 0, dragRow);
+        dispatch({
+            type: 'modules/updateDataSource',
+            payload: {
+                moduleName,
+                dataSource: data,
+            }
+        })
+    },
+        [moduleState.dataSource],
+    );
+
     return <Table
+        className="moduletable"
         columns={columns}
         size={moduleState.currSetting.gridSize}   //  ={gridType == 'selectfield' || gridType == 'onetomanygrid' || moduleInfo.istreemodel ? 'small' : 'normal'}
         loading={fetchLoading}
@@ -267,7 +296,8 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({ moduleState, moduleInfo, dispat
             selectedRowKeys: moduleState.selectedRowKeys,
             onChange: handlerSelectedRowKeys,
         }}
-        onRow={(record) => ({
+        onRow={(record, index) => ({
+            record, index, moveRow,
             onClick: () => {
                 selectRow(record);
             },
@@ -282,6 +312,7 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({ moduleState, moduleInfo, dispat
         })}
         pagination={paginationProps}
         onChange={handleTableChange}
+        components={components}
         scroll={{ x: true }}
         {...params} />
 }
