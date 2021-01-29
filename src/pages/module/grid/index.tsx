@@ -18,6 +18,7 @@ import { getToolbarButton } from '../toolbar/BatchOperateButton';
 import StartEndDateSectionSelect from './sqlparams';
 import { DragDropHeaderCell } from './headCellDragDrop';
 import { DragableBodyRow } from './bodyRowDragDrop';
+import { SimpleDescription } from '../descriptions';
 
 interface ModuleGridProps {
     moduleState: ModuleState,
@@ -247,12 +248,15 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({ moduleState, moduleInfo, dispat
         }
     }
 
-    // params.expandable = {
-    //     expandedRowRender: (record: any) => <div style={{ borderCollapse: 'collapse' }}>
-    //         <SimpleDescription record={record} disableTitle={true}
-    //             moduleInfo={moduleInfo} dispatch={dispatch} />
-    //     </div>,
-    // }
+    // 设置了可以单击展开记录的功能
+    if (gridScheme.expandRecord) {
+        params.expandable = {
+            expandedRowRender: (record: any) => <div style={{ borderCollapse: 'collapse' }}>
+                <SimpleDescription record={record} disableTitle={true}
+                    moduleInfo={moduleInfo} dispatch={dispatch} isRecordExpand={true} />
+            </div>,
+        }
+    }
 
     const components = {
         // body: {

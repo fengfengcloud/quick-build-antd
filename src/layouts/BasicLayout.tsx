@@ -131,12 +131,11 @@ const generateMenu = (menuDefine: {
         path: parentPath + `/datamining/${menuDefine.objectid}`,
         moduleName: menuDefine.objectid,
       }
-      
-      dataminingList.push({
-        moduleName: menuDefine.objectid,
-        title: menuDefine.text,
-      })
-
+      if (!dataminingList.find((rec) => rec.moduleName === menuDefine.objectid))
+        dataminingList.push({
+          moduleName: menuDefine.objectid,
+          title: menuDefine.text,
+        })
     } else {
       menu = {
         ...menu,

@@ -1,6 +1,7 @@
 
 列表grid
 1.grid scheme 的附加设置中配置  width:2000,可以设置grid的总宽度
+  grid scheme 的附加设置中配置  expandRecord:true ,可以展开每一条记录的form
 2.grid 字段中设置 
     responsive: ['xl']          可以配置响应式显示或隐藏，lg,xl,xxl
     disableSorter : false,      禁止排序

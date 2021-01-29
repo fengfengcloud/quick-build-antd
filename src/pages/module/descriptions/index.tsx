@@ -126,16 +126,16 @@ export const PopoverDescription = ({ moduleInfo, record, dispatch, children }:
     </Popover>
 }
 
-export const SimpleDescription = ({ moduleInfo, record, dispatch, disableTitle }:
-    { moduleInfo: ModuleModal, record: any, dispatch: Dispatch, disableTitle?: boolean, }) => {
+export const SimpleDescription = ({ moduleInfo, record, dispatch, disableTitle, isRecordExpand }:
+    { moduleInfo: ModuleModal, record: any, dispatch: Dispatch, disableTitle?: boolean, isRecordExpand?: boolean }) => {
     return <Description moduleInfo={moduleInfo} record={record}
-        disableTitle={disableTitle} dispatch={dispatch} />
+        disableTitle={disableTitle} dispatch={dispatch} isRecordExpand={isRecordExpand} />
 }
 
-const Description = ({ moduleInfo, record, dispatch, disableTitle, setVisible }:
+const Description = ({ moduleInfo, record, dispatch, disableTitle, setVisible, isRecordExpand }:
     {
         moduleInfo: ModuleModal, record: any, dispatch: Dispatch, disableTitle?: boolean,
-        setVisible?: Function
+        setVisible?: Function, isRecordExpand?: boolean
     }) => {
     if (record === null) return null;
     const { modulename: moduleName, primarykey } = moduleInfo;
@@ -212,7 +212,7 @@ const Description = ({ moduleInfo, record, dispatch, disableTitle, setVisible }:
             </Space>
         }
         className="descriptionform"
-        style={{ maxWidth: '1100px' }}
+        style={isRecordExpand ? {} : { maxWidth: '1100px' }}
         key={'key_' + record[moduleInfo.primarykey]}
         bodyStyle={{ padding: 0, margin: -1 }}
         extra={disableTitle ? null :

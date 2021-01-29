@@ -10,6 +10,7 @@ import FOrganizationTreeSelect from './components/OrganizationTreeSelect';
 import { PieConfig } from '@ant-design/charts/es/pie';
 import DataTable from './components/DataTable';
 import ToggleTableChartButton from './components/ToggleTableChartButton';
+import { EchartsDemo } from './echartsDemo';
 
 //  http://localhost:8080/platform/datamining/fetchdataminingdata.do?schemeid=ff8080817577544601757dc2f86b0030
 
@@ -31,7 +32,7 @@ const cardParams: CardProps = {
 }
 
 export default () => {
-    return <Row gutter={[12, 12]} style={{ margin: 6 }}>
+    const result = <Row gutter={[12, 12]} style={{ margin: 6 }}>
         <Col md={24} lg={12}>
             <PmAgreementGlobal />
         </Col>
@@ -43,7 +44,18 @@ export default () => {
                 <PmAgreementSignYearMonthColumn />
             </Card>
         </Col>
+        <Col xs={24} sm={24} md={24} lg={12}>
+            <Card title='echarts图表' bodyStyle={{ paddingTop: 12, paddingBottom: 12 }}>
+                <EchartsDemo id="echarts1" />
+            </Card>
+        </Col>
+        <Col xs={24} sm={24} md={24} lg={12} >
+            <Card title='echarts图表' bodyStyle={{ paddingTop: 12, paddingBottom: 12 }}>
+                <EchartsDemo id="echarts2"/>
+            </Card>
+        </Col>
     </Row >
+    return result;
 }
 
 
