@@ -1,0 +1,223 @@
+import React, { Key, useEffect, useState } from 'react';
+import { ActionParamsModal } from './systemAction';
+import { DrawerProps } from 'antd/lib/drawer';
+import { Button, Card, Checkbox, Col, Form, Input, message, Row, Select, Space, Table, Tooltip, Tree, Typography } from 'antd';
+import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
+import { ImportOutlined } from '@ant-design/icons';
+import request from '@/utils/request';
+import { CheckboxChangeEvent } from 'antd/es/checkbox';
+const { Title, Paragraph } = Typography;
+
+interface ImportDrawerProps extends DrawerProps {
+    children: any,
+}
+
+interface LabelValue {
+    label: string;
+    value: string;
+}
+
+const context = <Typography>
+    <Title level={5}>转入相关说明</Title>
+    <Paragraph>
+        <ul>
+            <li>表名转换成模块名以及字段名的转换都是按照驼峰命名规则进行,如果有实体bean,实体bean里的字段名必须和字段表里的名称一致；</li>
+            <li>表必须有唯一主键,不能有复合主键; 视图也必须有唯一主键,主键设置可以在导入表信息后自行设置; 必须有名称字段，如果没有可以设置为主键字段;</li>
+            <li>各表之间的关联关系是树状结构，不许有循环引用;表自顶向下导入;所有视图的关联关系需要自己设置。</li>
+            <li>如果业务数据库的表仅用于查询，则不用建立实体bean;</li>
+            <li>导入表信息后，请进行检查beanname,如果不对或者没找到系统中已有的bean请自行修正;</li>
+            <li>具有树形结构的表(代码分级或id-pid类型)只能用做于基础模块，不能用于有大量数据的业务模块;</li>
+        </ul>
+    </Paragraph>
+</Typography>;
+
+/**
+ * 
+ * 导入表和字段
+ * @param params 
+ * 
+ */
+export const importTableAndView = (params: ActionParamsModal) => {
+    const props: ImportDrawerProps = {
+        visible: true,
+        title: <><ImportOutlined></ImportOutlined> 表和视图相关信息导入管理</>,
+        width: '100%',
+        zIndex: undefined,
+        children: <span>{context}<FormComponent /></span>,
+        onClose: () => setGlobalDrawerProps((props: any) => ({ visible: false })),
+    }
+    setGlobalDrawerProps(props);
+}
+
+const FormComponent = () => {
+    const [schemes, setSchemes] = useState<LabelValue[]>([]);
+    const [groups, setGroups] = useState<LabelValue[]>([]);
+    const [tableviews, setTableviews] = useState<any>([]);
+    const [schema, setSchema] = useState<string | null>(null);
+    const [selected, setSelected] = useState<string | null>();
+    const [fieldSource, setFieldSource] = useState<any[]>([]);
+    const [form] = Form.useForm();
+
+    const columns: any = [{
+        dataIndex: 'order',
+        title: '序号',
+        width: '48px',
+        align: 'right',
+        render: (_: any, record: any, index: number) => {
+            return index + 1;
+        }
+    }, {
+        dataIndex: 'fieldname',
+        title: '字段名',
+    }, {
+        dataIndex: 'comments',
+        title: '字段名',
+    }, {
+        dataIndex: 'namefield',
+        title: '名称字段',
+        align: 'center',
+        width: '76px',
+        render: (value: any, record: any) => <Checkbox checked={!!value}
+            onChange={(e: CheckboxChangeEvent) => {
+                fieldSource.forEach(field => {
+                    field.namefield = e.target.checked ? field.fieldname === record.fieldname : false;
+                })
+                setFieldSource([...fieldSource]);
+            }} />
+    }, {
+        dataIndex: 'fieldtype',
+        title: '字段类型',
+    }, {
+        dataIndex: 'fieldlen',
+        title: '长度',
+    }, {
+        dataIndex: 'fieldrelation',
+        title: '关联关系',
+    }, {
+        dataIndex: 'jointable',
+        title: '关联表',
+        render: (value: string, record: any) => {
+            if (!value) return value;
+            if (!record["by5"]) return value;
+            return <Tooltip title="转到此表或视图">
+                <Button type='link' style={{ padding: 0, margin: 0 }}
+                    onClick={() => {
+                        selectTableView(value);
+                    }}>{value}
+                </Button>
+            </Tooltip>;
+        }
+    }, {
+        dataIndex: 'by5',
+        title: '备注',
+        render: (value: string) => <span dangerouslySetInnerHTML={{ __html: value }}></span>,
+        flex: 1,
+    }];
+
+    const selectTableView = (selectedTableViewName: string | null) => {
+        setSelected(selectedTableViewName);
+        form.setFieldsValue({
+            title: selectedTableViewName
+        });
+        if (selectedTableViewName) {
+            request(`/api/platform/database/getfields.do?schema=${schema ?
+                schema : ''}&tablename=${selectedTableViewName}`)
+                .then((response: any) => { setFieldSource(response) });
+        } else
+            setFieldSource([]);
+    }
+
+    const toolbar = (
+        <Card bodyStyle={{ padding: 0, margin: 0 }}>
+            <Form form={form}>
+                <Space size='large' style={{ padding: '16px', margin: 0 }}>
+                    <Form.Item label='选择数据库：' name="schema" style={{ marginBottom: 0 }}>
+                        <Select showSearch onChange={(value: any) => {
+                            const v = value === '默认数据库' ? null : value;
+                            setSchema(v);
+                            getTableViews(v);
+                        }}
+                            style={{ width: 200 }} options={schemes} >
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label='模块中文名称：' name="title" style={{ marginBottom: 0 }}>
+                        <Input
+                            style={{ width: 200 }} >
+                        </Input>
+                    </Form.Item>
+                    <Form.Item label='选择模块分组：' name="objectgroup" style={{ marginBottom: 0 }}>
+                        <Select showSearch options={groups}
+                            style={{ width: 200 }} >
+                        </Select>
+                    </Form.Item>
+                    <Form.Item style={{ marginBottom: 0 }}><Button type='primary'>导入</Button></Form.Item>
+                </Space>
+            </Form>
+            <Row>
+                <Col span={6}>
+                    <Card title="未加入到系统的表和视图" size='small'
+                        bodyStyle={{ maxHeight: '600px', overflowY: 'auto' }}>
+                        <Tree treeData={tableviews} showLine
+                            expandedKeys={['table', 'view']}
+                            selectedKeys={[selected as string]}
+                            onSelect={(selectedKeys: Key[], info: {
+                                event: 'select';
+                                selected: boolean;
+                            }) => {
+                                if (info.selected) {
+                                    selectTableView(selectedKeys[0] as string);
+                                } else {
+                                    selectTableView(null)
+                                }
+                            }}
+                        >
+                        </Tree>
+                    </Card>
+                </Col>
+                <Col span={18}>
+                    <Card title="字段信息" size='small'
+                        bodyStyle={{ maxHeight: '600px', overflowY: 'auto' }}>
+                        <Table columns={columns} size='small' bordered dataSource={fieldSource} pagination={false} >
+                        </Table>
+                    </Card>
+                </Col>
+            </Row>
+        </Card>
+    )
+
+    // 获取数据库未导入的表和视图
+    const getTableViews = (schema: string | null) => {
+        request('/api/platform/database/getnotimporttableview.do', {
+            params: {
+                schema
+            }
+        }).then((response: any) => {
+            setTableviews(response.children.map((child: any) => {
+                return {
+                    title: child.text,
+                    key: child.value,
+                    selectable: false,
+                    children: child.children && child.children.map((c: any) => ({
+                        title: c.text,
+                        key: c.value,
+                    }))
+                }
+            }));
+        })
+    }
+
+    useEffect(() => {
+        request('/api/platform/database/getschemas.do').then((response: any[]) => {
+            setSchemes(response.map(({ text }) => ({ label: text, value: text })));
+            form.setFieldsValue({ schema: response[0].text });
+            getTableViews(null);
+        })
+
+        request('/api/platform/systemcommon/getobjectgroups.do').then((response: any[]) => {
+            setGroups(response.map(({ text, value }) => ({ label: text, value: value })));
+        })
+
+    }, []);
+
+    return toolbar;
+} 

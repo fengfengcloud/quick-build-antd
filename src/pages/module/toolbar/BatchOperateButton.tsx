@@ -111,12 +111,15 @@ const BatchOperateButton = ({ moduleState, dispatch, readOnly }:
                         record: getSelectedRecord(moduleState),
                         records: getSelectedRecords(moduleState),
                     }
-                    systemActions[fun.fcode](params);
+                    if (systemActions[fun.fcode])
+                        systemActions[fun.fcode](params);
+                    else
+                        message.error(`${moduleInfo.title}功能『${fun.title}』的执行函数“${fun.fcode}”没有找到！`)
                 }}
             >
                 {fun.title}
             </Menu.Item>)
-        result.push(<Menu.Divider key='_menu_divider3_'/>);
+        result.push(<Menu.Divider key='_menu_divider3_' />);
         return result;
     }
 
@@ -248,7 +251,10 @@ export const getToolbarButton = ({ moduleState, dispatch }: {
                     message.warning(`要${fun.title}${max == 1 ? '只能' : '最多'}选择 ${max} 条记录！`);
                     return;
                 }
-                systemActions[fun.fcode](params);
+                if (systemActions[fun.fcode])
+                    systemActions[fun.fcode](params);
+                else
+                    message.error(`${moduleInfo.title}功能『${fun.title}』的执行函数“${fun.fcode}”没有找到！`)
             }}
         >
             {fun.title}

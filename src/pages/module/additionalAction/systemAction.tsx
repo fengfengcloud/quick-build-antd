@@ -11,6 +11,7 @@ import { activitiModeler } from '../approve/ProcessManage/activitiModeler';
 import { apply, download } from '@/utils/utils';
 import { businessActions } from './businessAction';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
+import { importTableAndView } from './importTableAndView';
 
 export interface ActionParamsModal {
     moduleInfo: ModuleModal,
@@ -244,4 +245,5 @@ export const systemActions: ActionStore = apply({
     'setrolelimit': setRoleLimit,
     'designworkflow': designWorkFlow,
     'deployworkflow': deployWorkFlow,
+    'importtableandview': importTableAndView,
 }, businessActions) as ActionStore;

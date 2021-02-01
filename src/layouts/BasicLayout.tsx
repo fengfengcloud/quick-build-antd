@@ -194,12 +194,14 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
   /**
    * constructor
    */
+
   useEffect(() => {
     setGlobalDrawerProps = (props: any) => {
-      setDrawerProps({ ...props, zIndex: 1000000 });
+      // zIndex 不能设置，设计太高combo会没有下拉选择, 在不需要设置时，设置zIndex:undefined
+      setDrawerProps({ zIndex: 1000000, ...props, });
     }
     setGlobalModalProps = (props: any) => {
-      setModalProps({ ...props, zIndex: 1000000 - 10 });
+      setModalProps({ zIndex: 1000000-10, ...props, });
     }
     if (dispatch) {
       dispatch({
