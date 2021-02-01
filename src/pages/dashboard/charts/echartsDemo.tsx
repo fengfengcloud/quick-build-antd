@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
 import * as echarts from 'echarts';
-import { message } from 'antd';
 
 export const EchartsDemo = ({ id }: { id: string }) => {
-    message.warn("drow");
 
     let option: any;
     let myChart: any;
@@ -11,7 +9,8 @@ export const EchartsDemo = ({ id }: { id: string }) => {
     option = {
         width: '100%',
         tooltip: {
-            trigger: 'item'
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         legend: {
             top: '0',
@@ -49,6 +48,7 @@ export const EchartsDemo = ({ id }: { id: string }) => {
                     maxSurfaceAngle: 80
                 },
                 labelLayout: (params: any) => {
+                    console.log(params);
                     let isLeft = params.labelRect.x < myChart.getWidth() / 2;
                     let points = params.labelLinePoints;
                     // Update the end point.
@@ -81,7 +81,7 @@ export const EchartsDemo = ({ id }: { id: string }) => {
         });
         let chartDom: any = document.getElementById(id);
         myChart = echarts.init(chartDom);
-        option && myChart.setOption(option);
+        myChart.setOption(option);
         return () => {
             window.removeEventListener("resize", myChart.resize());
         }

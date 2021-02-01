@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Button, message, Space, Drawer, Tooltip, Popconfirm, Typography } from 'antd';
 import {
     EditOutlined, PlusOutlined, SaveOutlined, CopyOutlined, CloseOutlined, FileTextOutlined,
-    RollbackOutlined, DownloadOutlined, FilePdfOutlined, AuditOutlined, PlayCircleOutlined,
-    LeftOutlined, RightOutlined, ReloadOutlined, CheckCircleOutlined, QuestionCircleOutlined, UndoOutlined, WarningOutlined, PrinterOutlined
+    RollbackOutlined, DownloadOutlined, AuditOutlined, PlayCircleOutlined, LeftOutlined, RightOutlined, 
+    ReloadOutlined, CheckCircleOutlined, QuestionCircleOutlined, UndoOutlined, PrinterOutlined
 } from '@ant-design/icons';
 import { ModuleModal, ModuleFieldType, ModuleState, FormState, AdditionFunctionModal } from '../data';
 import { getFormSchemePanel } from './formFactory';
@@ -24,6 +24,7 @@ import { DrawerRecordPdfScheme } from '../toolbar/export/DrawerRecordPdfScheme';
 import { isAudited, canAudited, canCancelAudited, auditRecord, cancelAudit } from '../audit/utils';
 import { businessActionButtons } from '../additionalAction/businessAction';
 import { execPrintRecordScheme } from '../toolbar/export/PrintRecordScheme';
+import { Audit_Finished, Audit_Waititng } from '../constants';
 
 interface ModuleFormProps {
     moduleInfo: ModuleModal,
@@ -117,15 +118,7 @@ const ModuleForm: React.FC<ModuleFormProps> = ({ moduleInfo, moduleState, dispat
                 : null
             }
             {moduleInfo.moduleLimit.hasaudit && currRecord[primarykey] ? !isAudited(currRecord) ?
-                <Typography.Text type="danger" code style={{ fontSize: '12px' }}>
-                    <WarningOutlined style={{ marginRight: '4px' }} />
-                    未审核
-                </Typography.Text> :
-                <Typography.Text type="secondary" code style={{ fontSize: '12px' }}>
-                    <CheckCircleOutlined style={{ marginRight: '4px' }} />
-                    已审核
-                </Typography.Text> :
-                null
+                 Audit_Waititng : Audit_Finished : null
             }
         </Space >
     }

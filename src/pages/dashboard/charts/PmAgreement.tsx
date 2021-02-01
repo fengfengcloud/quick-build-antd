@@ -50,9 +50,6 @@ export default () => {
             </Card>
         </Col>
         <Col xs={24} sm={24} md={24} lg={12} >
-            <Card title='echarts图表' bodyStyle={{ paddingTop: 12, paddingBottom: 12 }}>
-                <EchartsDemo id="echarts2"/>
-            </Card>
         </Col>
     </Row >
     return result;

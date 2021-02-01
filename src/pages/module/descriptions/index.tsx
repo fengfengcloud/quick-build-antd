@@ -1,8 +1,8 @@
 import React, { useEffect, useState, CSSProperties } from 'react';
 import { Descriptions, Card, Popover, Tag, Space, Tooltip, Tabs, Typography, Rate } from 'antd';
 import {
-    CheckOutlined, CloseOutlined, BlockOutlined, LoadingOutlined, DownloadOutlined, FilePdfOutlined,
-    DownOutlined, RightOutlined, InfoCircleOutlined, WarningOutlined, CheckCircleOutlined, PrinterOutlined
+    CheckOutlined, CloseOutlined, BlockOutlined, LoadingOutlined, DownloadOutlined,
+    DownOutlined, RightOutlined, InfoCircleOutlined, PrinterOutlined
 } from '@ant-design/icons';
 // https://github.com/Caldis/react-zmage
 import Zmage from 'react-zmage';
@@ -20,6 +20,7 @@ import { DrawerRecordPdfScheme } from '../toolbar/export/DrawerRecordPdfScheme';
 import ProgressField from '../form/field/ProgressField';
 import { isAudited } from '../audit/utils';
 import { execPrintRecordScheme } from '../toolbar/export/PrintRecordScheme';
+import { Audit_Finished, Audit_Waititng } from '../constants';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -199,15 +200,7 @@ const Description = ({ moduleInfo, record, dispatch, disableTitle, setVisible, i
                     : null
                 }
                 {moduleInfo.moduleLimit.hasaudit && record[primarykey] ? !isAudited(record) ?
-                    <Typography.Text type="danger" code >
-                        <WarningOutlined style={{ marginRight: '4px' }} />
-                    未审核
-                </Typography.Text> :
-                    <Typography.Text type="secondary" code >
-                        <CheckCircleOutlined style={{ marginRight: '4px' }} />
-                    已审核
-                </Typography.Text> :
-                    null
+                    Audit_Waititng : Audit_Finished : null
                 }
             </Space>
         }
