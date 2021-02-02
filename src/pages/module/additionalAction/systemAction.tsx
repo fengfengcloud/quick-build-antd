@@ -246,5 +246,6 @@ export const systemActions: ActionStore = apply({
     'designworkflow': designWorkFlow,
     'deployworkflow': deployWorkFlow,
     'importtableandview': importTableAndView,
+    // 实体对象和实体对象共用
     'refreshfields': refreshFields,
 }, businessActions) as ActionStore;
