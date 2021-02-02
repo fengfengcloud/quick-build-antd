@@ -490,7 +490,8 @@ const Model: ModuleModelType = {
                     record[moduleInfo.primarykey] == key) !== undefined)
             ////
             const currSetting = { ...moduleState.currSetting };
-            if (total <= limit)                 //记录很少，就把导航隐藏
+            //记录很少，并且没有选中导航，就把导航隐藏
+            if (total <= limit && moduleState.filters.navigate.length === 0)
                 currSetting.navigate.visible = false;
             result[moduleName] = {
                 ...moduleState,

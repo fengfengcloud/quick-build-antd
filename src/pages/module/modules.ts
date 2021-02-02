@@ -465,6 +465,30 @@ export const canDelete = (moduleInfo: ModuleModal, record: any): { canDelete: bo
     };
 }
 
+// 在父模块或导航中找到字段是parentfieldname的条件的值
+export const getParentOrNavigateIdAndText = (state: ModuleState, pModuleName: string) => {
+    const { filters: { parentfilter, navigate } } = state;
+    if (parentfilter && parentfilter.fieldahead === pModuleName)
+        return {
+            id: parentfilter.fieldvalue,
+            text: parentfilter.text,
+            moduleTitle: parentfilter.fieldtitle,
+            operator: parentfilter.operator
+        }
+    for (let i in navigate) {
+        const filter = navigate[i];
+        if (filter.fieldahead === pModuleName)
+            return {
+                id: filter.fieldvalue,
+                text: filter.text,
+                moduleTitle: filter.fieldtitle,
+                operator: filter.operator
+            }
+    }
+    return null;
+}
+
+
 /**
  * 根据字段ＩＤ号取得字段的定义,如果没找到返回null
  */

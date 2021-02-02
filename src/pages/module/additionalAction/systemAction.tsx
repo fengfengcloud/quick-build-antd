@@ -11,7 +11,7 @@ import { activitiModeler } from '../approve/ProcessManage/activitiModeler';
 import { apply, download } from '@/utils/utils';
 import { businessActions } from './businessAction';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
-import { importTableAndView } from './importTableAndView';
+import { importTableAndView, refreshFields } from './importTableAndView';
 
 export interface ActionParamsModal {
     moduleInfo: ModuleModal,
@@ -246,4 +246,5 @@ export const systemActions: ActionStore = apply({
     'designworkflow': designWorkFlow,
     'deployworkflow': deployWorkFlow,
     'importtableandview': importTableAndView,
+    'refreshfields': refreshFields,
 }, businessActions) as ActionStore;

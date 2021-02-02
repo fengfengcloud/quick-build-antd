@@ -6,6 +6,8 @@ import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import { ImportOutlined } from '@ant-design/icons';
 import request from '@/utils/request';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { serialize } from 'object-to-formdata';
+import { getParentOrNavigateIdAndText } from '../modules';
 const { Title, Paragraph } = Typography;
 
 interface ImportDrawerProps extends DrawerProps {
@@ -127,6 +129,58 @@ const FormComponent = () => {
             setFieldSource([]);
     }
 
+    // 导入后把导入的表或视图从树中删除
+    const removeTableView = (selectedTableViewName: string) => {
+        tableviews.forEach((rec: any) => {
+            if (rec.children)
+                rec.children = rec.children.filter((r: any) => r.title != selectedTableViewName)
+        })
+        setTableviews([...tableviews]);
+        selectTableView(null)
+    }
+
+    const importAction = () => {
+        const objectgroup: string = form.getFieldValue('objectgroup');
+        const title: string = form.getFieldValue('title');
+        let namefield = null;
+        fieldSource.forEach(rec => {
+            if (rec.namefield)
+                namefield = rec.fieldname;
+        })
+        if (!selected) {
+            message.warn('请先选择一个表或视图！');
+            return;
+        }
+        if (!objectgroup) {
+            message.warn('请先选择一个模块分组！');
+            return;
+        }
+        if (!namefield) {
+            message.warn('没有选择名称字段，请在下面的grid中选择一个名称字段，如果没有名称字段，则选择主键！');
+            return;
+        }
+        if (!title) {
+            message.warn('请录入模块中文名称！');
+            return;
+        }
+        request('/api/platform/database/importtableorview.do', {
+            params: {
+                schema,
+                tablename: selected,
+                title,
+                namefield,
+                objectgroup,
+            }
+        }).then((response) => {
+            if (response.status)
+                message.error(selected + '--表信息导入失败，请检查后台日志！');
+            else {
+                message.info(selected + '--表信息导入成功！');
+                removeTableView(selected);
+            }
+        })
+    };
+
     const toolbar = (
         <Card bodyStyle={{ padding: 0, margin: 0 }}>
             <Form form={form}>
@@ -150,14 +204,16 @@ const FormComponent = () => {
                             style={{ width: 200 }} >
                         </Select>
                     </Form.Item>
-                    <Form.Item style={{ marginBottom: 0 }}><Button type='primary'>导入</Button></Form.Item>
+                    <Form.Item style={{ marginBottom: 0 }}>
+                        <Button type='primary' onClick={importAction}>导入</Button>
+                    </Form.Item>
                 </Space>
             </Form>
             <Row>
                 <Col span={6}>
                     <Card title="未加入到系统的表和视图" size='small'
                         bodyStyle={{ maxHeight: '600px', overflowY: 'auto' }}>
-                        <Tree treeData={tableviews} showLine
+                        <Tree treeData={tableviews} showLine key="_tableviewstree"
                             expandedKeys={['table', 'view']}
                             selectedKeys={[selected as string]}
                             onSelect={(selectedKeys: Key[], info: {
@@ -177,7 +233,8 @@ const FormComponent = () => {
                 <Col span={18}>
                     <Card title="字段信息" size='small'
                         bodyStyle={{ maxHeight: '600px', overflowY: 'auto' }}>
-                        <Table columns={columns} size='small' bordered dataSource={fieldSource} pagination={false} >
+                        <Table columns={columns} size='small' bordered dataSource={fieldSource}
+                            pagination={false} key="_fieldtable" rowKey='fieldname'>
                         </Table>
                     </Card>
                 </Col>
@@ -220,4 +277,74 @@ const FormComponent = () => {
     }, []);
 
     return toolbar;
-} 
+}
+
+
+
+/**
+ * 刷新一个表的字段，把表中没有的字段加进来。
+ * @param params 
+ */
+export const refreshFields = (params: ActionParamsModal) => {
+    const { record, dispatch, moduleState } = params;
+    const { moduleName } = moduleState;
+    if (moduleName === 'FDataobjectfield')
+        return refreshFieldsInDataobjectFields(params);
+    const title = record['title'];
+    const objectid = record['objectid'];
+    request('/api/platform/database/refreshtablefields.do', {
+        method: 'POST',
+        data: serialize({
+            objectid
+        })
+    }).then(response => {
+        if (response.tag === 0)
+            message.info(`模块${title}表中没有发现新增的字段`);
+        else {
+            message.info(`已成功刷新字段，共加入了 ${response.tag} 个字字段, 字段名称是: ${response.msg}`);
+            dispatch({
+                type: 'modules/refreshRecord',
+                payload: {
+                    moduleName,
+                    recordId: objectid,
+                },
+            })
+        }
+    })
+
+}
+
+/**
+ * 在实体对象字段模块中刷新字段
+ * @param params 
+ */
+const refreshFieldsInDataobjectFields = (params: ActionParamsModal) => {
+    const { moduleState, dispatch } = params;
+    const filter = getParentOrNavigateIdAndText(moduleState, 'FDataobject');
+    if (!filter) {
+        message.warn('请先在导航列表中选择一个实体对象！');
+        return;
+    }
+    const title = filter.text;
+    const objectid = filter.id;
+    request('/api/platform/database/refreshtablefields.do', {
+        method: 'POST',
+        data: serialize({
+            objectid
+        })
+    }).then(response => {
+        if (response.tag === 0)
+            message.info(`模块${title}表中没有发现新增的字段`);
+        else {
+            message.info(`已成功刷新字段，共加入了 ${response.tag} 个字字段, 字段名称是: ${response.msg}`);
+            dispatch({
+                type: 'modules/fetchData',
+                payload: {
+                    moduleName: moduleState.moduleName,
+                    forceUpdate: true,
+                }
+            })
+        }
+    })
+
+}
