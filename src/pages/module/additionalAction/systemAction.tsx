@@ -12,6 +12,7 @@ import { apply, download } from '@/utils/utils';
 import { businessActions } from './businessAction';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import { importTableAndView, refreshFields } from './importTableAndView';
+import { breakDataSource, testDataSource, importSchema } from './dataSource';
 
 export interface ActionParamsModal {
     moduleInfo: ModuleModal,
@@ -227,7 +228,6 @@ const deployWorkFlow = (params: ActionParamsModal) => {
     })
 }
 
-
 interface ActionStore {
     [actionName: string]: Function;
 }
@@ -248,4 +248,8 @@ export const systemActions: ActionStore = apply({
     'importtableandview': importTableAndView,
     // 实体对象和实体对象共用
     'refreshfields': refreshFields,
+    'testDataSource': testDataSource,
+    'breakDataSource': breakDataSource,
+    'importSchema': importSchema,
+
 }, businessActions) as ActionStore;
