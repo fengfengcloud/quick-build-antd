@@ -5,8 +5,6 @@ import { Button, Card, Checkbox, Col, Form, Input, message, Row, Space, Table, T
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import request from '@/utils/request';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { serialize } from 'object-to-formdata';
-import { getParentOrNavigateIdAndText } from '../modules';
 const { Title, Paragraph } = Typography;
 
 interface ImportDrawerProps extends DrawerProps {
@@ -37,12 +35,11 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
     const { record } = params;
 
     const FormComponent = () => {
-        const [tableviews, setTableviews] = useState<any>([]);
-        const [schema, setSchema] = useState<string | null>(null);
+        const [tableviews, setTableviews] = useState<any[]>([]);
         const [selected, setSelected] = useState<string | null>();
         const [fieldSource, setFieldSource] = useState<any[]>([]);
         const [form] = Form.useForm();
-
+        const databaseschemeid = record['schemaid'];
         const columns: any = [{
             dataIndex: 'order',
             title: '序号',
@@ -87,7 +84,7 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
                 return <Tooltip title="转到此表或视图">
                     <Button type='link' style={{ padding: 0, margin: 0 }}
                         onClick={() => {
-                            selectTableView(value);
+                            selectTableView(value, value);
                         }}>{value}
                     </Button>
                 </Tooltip>;
@@ -99,14 +96,26 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
             flex: 1,
         }];
 
-        const selectTableView = (selectedTableViewName: string | null) => {
+        const getComments = (tablename: string | null): string | null => {
+            if (!tablename)
+                return null;
+            let comment = tablename;
+            tableviews.forEach(rec => {
+                rec.children && rec.children.forEach((r: any) => {
+                    if (r.key === tablename)
+                        comment = r.comment;
+                })
+            })
+            return comment;
+        }
+
+        const selectTableView = (selectedTableViewName: string | null, comment: string | null) => {
             setSelected(selectedTableViewName);
             form.setFieldsValue({
-                title: selectedTableViewName
+                title: getComments(selectedTableViewName)
             });
             if (selectedTableViewName) {
-                request(`/api/platform/database/getfields.do?schema=${schema ?
-                    schema : ''}&tablename=${selectedTableViewName}`)
+                request(`/api/platform/datasource/getfields.do?databaseschemeid=${databaseschemeid}&tablename=${selectedTableViewName}`)
                     .then((response: any) => { setFieldSource(response) });
             } else
                 setFieldSource([]);
@@ -119,7 +128,7 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
                     rec.children = rec.children.filter((r: any) => r.title != selectedTableViewName)
             })
             setTableviews([...tableviews]);
-            selectTableView(null)
+            selectTableView(null, null)
         }
 
         const importAction = () => {
@@ -146,13 +155,16 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
                 message.warn('请录入模块中文名称！');
                 return;
             }
-            request('/api/platform/database/importtableorview.do', {
+            request('/api/platform/datasource/importtableorview.do', {
                 params: {
-                    schema,
+                    databaseschemeid,
                     tablename: selected,
                     title,
                     namefield,
-                    objectgroup,
+                    groupname: objectgroup,
+                    fields: JSON.stringify([]),
+                    hasdatamining: false,
+                    showkeyfield: false,
                 }
             }).then((response) => {
                 if (response.status)
@@ -189,11 +201,12 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
                                 onSelect={(selectedKeys: Key[], info: {
                                     event: 'select';
                                     selected: boolean;
+                                    selectedNodes: any[];
                                 }) => {
                                     if (info.selected) {
-                                        selectTableView(selectedKeys[0] as string);
+                                        selectTableView(selectedKeys[0] as string, info.selectedNodes[0].comment);
                                     } else {
-                                        selectTableView(null)
+                                        selectTableView(null, null)
                                     }
                                 }}
                             >
@@ -216,7 +229,7 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
         const getTableViews = () => {
             request('/api/platform/datasource/getnotimporttableview.do', {
                 params: {
-                    databaseschemeid: record['schemaid']
+                    databaseschemeid
                 }
             }).then((response: any) => {
                 setTableviews(response.children.map((child: any) => {
@@ -225,17 +238,21 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
                         key: child.value,
                         selectable: false,
                         children: child.children && child.children.map((c: any) => ({
-                            title: c.text,
+                            title: c.value === c.text ? c.value : `${c.text}(${c.value})`,
                             key: c.value,
+                            comment: c.text,
                         }))
                     }
                 }));
             })
         }
 
-        // useEffect(() => {
-        //     getTableViews();
-        // }, [])
+        useEffect(() => {
+            getTableViews();
+            form.setFieldsValue({
+                objectgroup: record['title'],
+            })
+        }, [])
 
         return toolbar;
     }
@@ -251,71 +268,3 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
     setGlobalDrawerProps(props);
 }
 
-
-/**
- * 刷新一个表的字段，把表中没有的字段加进来。
- * @param params 
- */
-export const refreshFields = (params: ActionParamsModal) => {
-    const { record, dispatch, moduleState } = params;
-    const { moduleName } = moduleState;
-    if (moduleName === 'FDataobjectfield')
-        return refreshFieldsInDataobjectFields(params);
-    const title = record['title'];
-    const objectid = record['objectid'];
-    request('/api/platform/database/refreshtablefields.do', {
-        method: 'POST',
-        data: serialize({
-            objectid
-        })
-    }).then(response => {
-        if (response.tag === 0)
-            message.info(`模块${title}表中没有发现新增的字段`);
-        else {
-            message.info(`已成功刷新字段，共加入了 ${response.tag} 个字字段, 字段名称是: ${response.msg}`);
-            dispatch({
-                type: 'modules/refreshRecord',
-                payload: {
-                    moduleName,
-                    recordId: objectid,
-                },
-            })
-        }
-    })
-
-}
-
-/**
- * 在实体对象字段模块中刷新字段
- * @param params 
- */
-const refreshFieldsInDataobjectFields = (params: ActionParamsModal) => {
-    const { moduleState, dispatch } = params;
-    const filter = getParentOrNavigateIdAndText(moduleState, 'FDataobject');
-    if (!filter) {
-        message.warn('请先在导航列表中选择一个实体对象！');
-        return;
-    }
-    const title = filter.text;
-    const objectid = filter.id;
-    request('/api/platform/database/refreshtablefields.do', {
-        method: 'POST',
-        data: serialize({
-            objectid
-        })
-    }).then(response => {
-        if (response.tag === 0)
-            message.info(`模块${title}表中没有发现新增的字段`);
-        else {
-            message.info(`已成功刷新字段，共加入了 ${response.tag} 个字字段, 字段名称是: ${response.msg}`);
-            dispatch({
-                type: 'modules/fetchData',
-                payload: {
-                    moduleName: moduleState.moduleName,
-                    forceUpdate: true,
-                }
-            })
-        }
-    })
-
-}

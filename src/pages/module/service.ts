@@ -71,6 +71,9 @@ export async function fetchObjectData(params: any) {
   params.start = (params.page - 1) * params.limit;
   return request(`/api/platform/dataobject/fetchdata.do?_dc=` + new Date().getTime(), {
     method: 'POST',
+    params: {
+      moduleName_: params.moduleName
+    },
     body: serialize(params),
   })
 }
@@ -87,6 +90,9 @@ export async function fetchObjectTreeData(params: any) {
   params.start = (params.page - 1) * params.limit;
   return request(`/api/platform/dataobject/fetchtreedata.do?_dc=` + new Date().getTime(), {
     method: 'POST',
+    params: {
+      moduleName_: params.moduleName
+    },
     body: serialize(params),
   })
 }
@@ -114,6 +120,9 @@ export async function fetchObjectRecord(params: any) {
   return new Promise(function (resolve, reject) {
     request(`/api/platform/dataobject/fetchinfo.do?_dc=` + new Date().getTime(), {
       method: 'POST',
+      params: {
+        moduleName_: params.objectname
+      },
       body: serialize(params),
     }).then(response => {
       resolve(response);
