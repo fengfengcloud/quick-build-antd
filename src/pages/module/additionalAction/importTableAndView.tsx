@@ -1,9 +1,9 @@
 import React, { Key, useEffect, useState } from 'react';
 import { ActionParamsModal } from './systemAction';
 import { DrawerProps } from 'antd/lib/drawer';
-import { Button, Card, Checkbox, Col, Form, Input, message, Row, Select, Space, Table, Tooltip, Tree, Typography } from 'antd';
+import { Button, Card, Checkbox, Col, Form, Input, message, Modal, Row, Select, Space, Table, Tooltip, Tree, Typography } from 'antd';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
-import { ImportOutlined } from '@ant-design/icons';
+import { EditOutlined, ImportOutlined } from '@ant-design/icons';
 import request from '@/utils/request';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { serialize } from 'object-to-formdata';
@@ -74,6 +74,25 @@ const FormComponent = () => {
     }, {
         dataIndex: 'comments',
         title: '字段描述',
+        render: (value: string, record: any) => {
+            return <div style={{ cursor: 'pointer' }}
+                onClick={() => {
+                    let textvalue = value;
+                    Modal.confirm({
+                        title: '请输入字段描述',
+                        icon: null,
+                        content: <Form autoComplete='off'>
+                            <Input name="text" defaultValue={value} maxLength={50}
+                                onChange={(e) => { textvalue = e.target.value.trim(); }} />
+                        </Form>,
+                        onOk: (() => {
+                            record['comments'] = textvalue || value;
+                            setFieldSource([...fieldSource]);
+                        })
+                    })
+                }}
+            ><EditOutlined /> {value}</div>
+        }
     }, {
         dataIndex: 'namefield',
         title: '名称字段',
@@ -120,7 +139,7 @@ const FormComponent = () => {
         if (!tablename)
             return null;
         let comment = tablename;
-        tableviews.forEach((rec:any) => {
+        tableviews.forEach((rec: any) => {
             rec.children && rec.children.forEach((r: any) => {
                 if (r.key === tablename)
                     comment = r.comment;
@@ -183,6 +202,10 @@ const FormComponent = () => {
                 title,
                 namefield,
                 objectgroup,
+                fields: JSON.stringify(fieldSource.map(field => ({
+                    name: field.fieldname,
+                    title: field.comments,
+                }))),
             }
         }).then((response) => {
             if (response.status)
