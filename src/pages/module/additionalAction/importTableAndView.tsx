@@ -73,7 +73,7 @@ const FormComponent = () => {
         title: '字段名',
     }, {
         dataIndex: 'comments',
-        title: '字段名',
+        title: '字段描述',
     }, {
         dataIndex: 'namefield',
         title: '名称字段',
@@ -116,10 +116,23 @@ const FormComponent = () => {
         flex: 1,
     }];
 
+    const getComments = (tablename: string | null): string | null => {
+        if (!tablename)
+            return null;
+        let comment = tablename;
+        tableviews.forEach((rec:any) => {
+            rec.children && rec.children.forEach((r: any) => {
+                if (r.key === tablename)
+                    comment = r.comment;
+            })
+        })
+        return comment;
+    }
+
     const selectTableView = (selectedTableViewName: string | null) => {
         setSelected(selectedTableViewName);
         form.setFieldsValue({
-            title: selectedTableViewName
+            title: getComments(selectedTableViewName)
         });
         if (selectedTableViewName) {
             request(`/api/platform/database/getfields.do?schema=${schema ?
@@ -133,7 +146,7 @@ const FormComponent = () => {
     const removeTableView = (selectedTableViewName: string) => {
         tableviews.forEach((rec: any) => {
             if (rec.children)
-                rec.children = rec.children.filter((r: any) => r.title != selectedTableViewName)
+                rec.children = rec.children.filter((r: any) => r.key != selectedTableViewName)
         })
         setTableviews([...tableviews]);
         selectTableView(null)
@@ -255,8 +268,9 @@ const FormComponent = () => {
                     key: child.value,
                     selectable: false,
                     children: child.children && child.children.map((c: any) => ({
-                        title: c.text,
+                        title: c.value === c.text ? c.value : `${c.text}(${c.value})`,
                         key: c.value,
+                        comment: c.text,
                     }))
                 }
             }));

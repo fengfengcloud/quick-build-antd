@@ -238,6 +238,9 @@ export const refreshRowData = async (state: DataminingModal, record: any, isrefr
     const { moduleName, filters, schemeState: currentScheme } = state;
     const result = await request('/api/platform/datamining/fetchdata.do', {
         method: 'POST',
+        params: {
+            moduleName_: moduleName,
+        },
         data: serialize({
             moduleName,
             groupfieldid: null,

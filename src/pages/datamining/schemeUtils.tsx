@@ -513,6 +513,9 @@ export const fetchRecordExpandChildren = async (state: DataminingModal, currentS
     const { moduleName, filters } = state;
     return await request('/api/platform/datamining/fetchdata.do', {
         method: 'POST',
+        params: {
+            moduleName_: moduleName,
+        },
         data: serialize({
             moduleName,
             groupfieldid: fieldid,
@@ -537,6 +540,9 @@ export const fetchRootData = async (state: DataminingModal) => {
     const { moduleName, filters, schemeState } = state;
     return await request('/api/platform/datamining/fetchdata.do', {
         method: 'POST',
+        params: {
+            moduleName_: moduleName,
+        },
         data: serialize({
             moduleName,
             conditions: JSON.stringify(getGroupDetailConditions(schemeState.columnGroup)),

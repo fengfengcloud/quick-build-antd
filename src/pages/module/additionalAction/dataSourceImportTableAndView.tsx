@@ -1,10 +1,11 @@
 import React, { Key, useEffect, useState } from 'react';
 import { ActionParamsModal } from './systemAction';
 import { DrawerProps } from 'antd/lib/drawer';
-import { Button, Card, Checkbox, Col, Form, Input, message, Row, Space, Table, Tooltip, Tree, Typography } from 'antd';
+import { Button, Card, Checkbox, Col, Form, Input, message, Modal, Row, Space, Switch, Table, Tooltip, Tree, Typography } from 'antd';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import request from '@/utils/request';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { EditOutlined } from '@ant-design/icons';
 const { Title, Paragraph } = Typography;
 
 interface ImportDrawerProps extends DrawerProps {
@@ -53,7 +54,26 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
             title: '字段名',
         }, {
             dataIndex: 'comments',
-            title: '字段名',
+            title: '字段描述',
+            render: (value: string, record: any) => {
+                return <div style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                        let textvalue = value;
+                        Modal.confirm({
+                            title: '请输入字段描述',
+                            icon: null,
+                            content: <Form autoComplete='off'>
+                                <Input name="text" defaultValue={value} maxLength={50}
+                                    onChange={(e) => { textvalue = e.target.value.trim(); }} />
+                            </Form>,
+                            onOk: (() => {
+                                record['comments'] = textvalue || value;
+                                setFieldSource([...fieldSource]);
+                            })
+                        })
+                    }}
+                ><EditOutlined /> {value}</div>
+            }
         }, {
             dataIndex: 'namefield',
             title: '名称字段',
@@ -125,7 +145,7 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
         const removeTableView = (selectedTableViewName: string) => {
             tableviews.forEach((rec: any) => {
                 if (rec.children)
-                    rec.children = rec.children.filter((r: any) => r.title != selectedTableViewName)
+                    rec.children = rec.children.filter((r: any) => r.key != selectedTableViewName)
             })
             setTableviews([...tableviews]);
             selectTableView(null, null)
@@ -155,6 +175,10 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
                 message.warn('请录入模块中文名称！');
                 return;
             }
+            if (fieldSource.find(field => !!field.by5)){
+                message.warn('尚有关联表还没有加入，请先导入该表');
+                return;
+            }
             request('/api/platform/datasource/importtableorview.do', {
                 params: {
                     databaseschemeid,
@@ -162,9 +186,12 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
                     title,
                     namefield,
                     groupname: objectgroup,
-                    fields: JSON.stringify([]),
-                    hasdatamining: false,
-                    showkeyfield: false,
+                    fields: JSON.stringify(fieldSource.map(field => ({
+                        name: field.fieldname,
+                        title: field.comments,
+                    }))),
+                    hasdatamining: !!form.getFieldValue('hasdatamining'),
+                    showkeyfield: !!form.getFieldValue('showkeyfield'),
                 }
             }).then((response) => {
                 if (response.status)
@@ -185,6 +212,12 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
                         </Form.Item>
                         <Form.Item label='模块分组名称：' name="objectgroup" style={{ marginBottom: 0 }}>
                             <Input style={{ width: 200 }} />
+                        </Form.Item>
+                        <Form.Item label='启用模块数据分析：' name="hasdatamining" style={{ marginBottom: 0 }}>
+                            <Switch checkedChildren="启用" unCheckedChildren="禁用" />
+                        </Form.Item>
+                        <Form.Item label='主键字段显示：' name="showkeyfield" style={{ marginBottom: 0 }}>
+                            <Switch checkedChildren="显示" unCheckedChildren="隐藏" />
                         </Form.Item>
                         <Form.Item style={{ marginBottom: 0 }}>
                             <Button type='primary' onClick={importAction}>导入</Button>

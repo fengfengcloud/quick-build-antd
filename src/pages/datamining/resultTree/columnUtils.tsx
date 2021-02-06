@@ -435,6 +435,9 @@ export const getFieldColumnWithGroup = async (state: DataminingModal, fieldid: s
   // 取得当前所选分组字段的所有值，限定在 condition的条件下
   const columns: any[] = await request('/api/platform/datamining/fetchdata.do', {
     method: 'POST',
+    params: {
+      moduleName_: moduleName,
+    },
     data: serialize(params)
   });
   if (columns.length == 0) return null;

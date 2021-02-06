@@ -224,6 +224,9 @@ export const fetchNavigateData = async (state: DataminingModal, navigate: Datami
     const { moduleName, filters } = state;
     return await request('/api/platform/datamining/fetchdata.do', {
         method: 'POST',
+        params: {
+            moduleName_: moduleName,
+        },
         data: serialize({
             moduleName,
             groupfieldid: navigate.navigateGroup.fieldid,
@@ -253,6 +256,9 @@ export const expandNavigateRowWithGroup = ({ state, navigateGroup, expandRecord,
     } while (record)
     request('/api/platform/datamining/fetchdata.do', {
         method: 'POST',
+        params: {
+            moduleName_: moduleName,
+        },
         data: serialize({
             moduleName,
             groupfieldid: groupFieldid,
