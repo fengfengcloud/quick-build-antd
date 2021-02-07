@@ -64,7 +64,7 @@ export const getFormSchemePanel: React.FC<FormSchemePanelProps> = (params): any 
       const icon = item.collapsible ? fieldsetVisible[detailid] ?
         <DownOutlined onClick={onCollsped} /> : <RightOutlined onClick={onCollsped} /> : defaultIcon;
       const className = (item.collapsible && !fieldsetVisible[detailid] ? 'collapsed' : '') + ' ' +
-        (firstFieldSet || item.tabTitle || xtype == 'panel' ? '' : styles.card_border_top)
+        (firstFieldSet || item.tabTitle || xtype == 'panel' ? 'card_border_top_first' : 'card_border_top')
       return {
         key: detailid,
         size: 'small',      //'middle','large'
@@ -148,7 +148,7 @@ export const getFormSchemePanel: React.FC<FormSchemePanelProps> = (params): any 
         </TabPane>)
       }
       field = <Card key={item.detailid}
-        className={showType + '-' + xtype + ' ' + styles.card_border_top}
+        className={showType + '-' + xtype + ' ' + 'card_border_top'}
         bodyStyle={{
           paddingTop: 0,
           paddingBottom: 0,

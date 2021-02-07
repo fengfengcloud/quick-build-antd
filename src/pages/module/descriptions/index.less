@@ -2,52 +2,57 @@
 
 :global {
 
-    // 记录展开显示description时
-    tr.ant-table-expanded-row .descriptionform .ant-descriptions-view table {
-        width : 100%;
-    }
+  // 记录展开显示description时
+  tr.ant-table-expanded-row .descriptionform .ant-descriptions-view table {
+    width: 100%;
+  }
 
-    // tabs下面的线下不要留空，由里面的控件自己控制
-    .descriptionform .ant-tabs-nav {
-        margin: 0 0 0 0 !important;
-    }
-    
-    // tabls的第一个tab项，不要顶住最左面
-    .descriptionform .ant-tabs-top > .ant-tabs-nav {
-        padding-left: 12px;
-    }
+  // tabs下面的线下不要留空，由里面的控件自己控制
+  .descriptionform .ant-tabs-nav {
+    margin: 0 0 0 0 !important;
+  }
 
-    // tabls的第一个tab项，不要顶住最上面
-    .descriptionform .ant-tabs-left > .ant-tabs-nav {
-        padding-top: 12px;
-    }
+  // tabls的第一个tab项，不要顶住最左面
+  .descriptionform .ant-tabs-top>.ant-tabs-nav {
+    padding-left: 12px;
+  }
 
-    .noborder .ant-descriptions-view {
-        border: 0px solid #f0f0f0;
-    }
+  // tabls的第一个tab项，不要顶住最上面
+  .descriptionform .ant-tabs-left>.ant-tabs-nav {
+    padding-top: 12px;
+  }
 
-    .noborder table th,
-    .border table th {
-        width       : 120px;
-        //text-align: center;
-    }
+  .noborder .ant-descriptions-view {
+    border: 0px solid #f0f0f0;
+  }
 
-    // 加了这个，Descriptions 在 grid 展开的时候，单元格之间才有分隔线
-    .border table,
-    .noborder table {
-        border-collapse: collapse;
-    }
-}
+  .noborder table th,
+  .border table th {
+    width: 120px;
+    //text-align: center;
+  }
 
-.card_border_top {
+  // 加了这个，Descriptions 在 grid 展开的时候，单元格之间才有分隔线
+  .border table,
+  .noborder table {
+    border-collapse: collapse;
+  }
+
+  .desc_card_border_top {
     border-top: 1px solid @divider-color;
     margin-top: -1px
+  }
+
+  .desc_card_border_top .ant-card-head {
+    background-color: @background-color-light;
+  }
+
 }
 
 .manytooneinfo {
-    font-size: 12px;
-    cursor: pointer;
-    filter:alpha(Opacity=80);
-    -moz-opacity:0.5;
-    opacity: 0.5;
+  font-size: 12px;
+  cursor: pointer;
+  filter: alpha(Opacity=80);
+  -moz-opacity: 0.5;
+  opacity: 0.5;
 }

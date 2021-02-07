@@ -348,7 +348,7 @@ const DescriptionForm: React.FC<DescriptionFormProps> = ({ moduleInfo, record, d
                 key={panel.detailid}
                 bordered={true}
                 bodyStyle={collspaed ? { padding: 0 } : { margin: '-1px -1px -1px -1px', padding: 0 }}
-                className={styles.card_border_top}
+                className='desc_card_border_top'
                 title={!panel.tabTitle && title && !panel.hiddenTitle ?
                     <Space>{icon}<span >{`${title}`}</span></Space> : null}>
                 <div style={collspaed ? { display: 'none' } : {}}>

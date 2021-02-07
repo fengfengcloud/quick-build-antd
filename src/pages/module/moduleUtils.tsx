@@ -69,8 +69,8 @@ export const updateTreeRecord = (records: any[], newRecord: any, primarykey: str
 export const addRecordToTree = (records: any[], newRecord: any, primarykey: string, codelevelstr: string): any[] => {
     const codelevel: string[] = codelevelstr.split(',');
     const newRecordLevel = getLevel(newRecord[primarykey], codelevel);
-    // 如果是根节点的，那么直接加入后返回
-    if (newRecordLevel == 1)
+    // 如果是pid类型，或者是根节点的，那么直接加入后返回
+    if (!codelevelstr || newRecordLevel == 1)
         return [...records, newRecord];
     const parentkey = (newRecord[primarykey] as string).substr(0, getLevelLen(newRecordLevel - 1, codelevel));
     const result = [...records];
@@ -202,11 +202,11 @@ export const getRecordByKey = (dataSource: any[], key: string, primarykey: strin
  * @param moduleState 
  */
 export const getSelectedRecord = (moduleState: ModuleState): any => {
-    const { selectedRowKeys, moduleName } = moduleState;
-    const { primarykey } = getModuleInfo(moduleName);
+    const { selectedRowKeys, moduleName, dataSource } = moduleState;
+    const { primarykey, istreemodel } = getModuleInfo(moduleName);
     if (selectedRowKeys.length !== 1)
         return null;
-    return getRecordByKey(moduleState.dataSource, selectedRowKeys[0], primarykey);
+    return getRecordByKey(istreemodel ? getAllTreeRecord(dataSource) : dataSource, selectedRowKeys[0], primarykey);
 }
 
 /**
