@@ -1,30 +1,31 @@
 import React, { Key, useEffect, useState } from 'react';
 import { ActionParamsModal } from './systemAction';
 import { DrawerProps } from 'antd/lib/drawer';
-import { Button, Card, Checkbox, Col, Form, Input, message, Modal, Row, Space, Switch, Table, Tooltip, Tree, Typography } from 'antd';
+import { Button, Card, Checkbox, Col, Collapse, Form, Input, message, Modal, Row, Space, Switch, Table, Tooltip, Tree, Typography } from 'antd';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import request from '@/utils/request';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { EditOutlined } from '@ant-design/icons';
-const { Title, Paragraph } = Typography;
 
 interface ImportDrawerProps extends DrawerProps {
     children: any,
 }
 
-const context = <Typography>
-    <Title level={5}>转入相关说明</Title>
-    <Paragraph>
-        <ul>
-            <li>表对象前缀_数据库的表名’为生成的模块名，模块和字段名的转换都是按照驼峰命名规则进行；</li>
-            <li>表必须有唯一主键,不能有复合主键; 视图也必须有唯一主键,主键设置可以在导入表信息后自行设置; 必须有名称字段，如果没有可以设置为主键字段；</li>
-            <li>各表之间的关联关系是树状结构，不许有循环引用;表自顶向下导入;所有视图的关联关系需要自己设置；</li>
-            <li>业务数据库的表仅用于查询，不用建立实体bean；</li>
-            <li>具有树形结构的表(代码分级或id-pid类型)只能用做于基础模块，不能用于有大量数据的业务模块；</li>
-            <li>请建立一个只读帐号来操作业务数据库,确保业务数据库不受本系统的影响；</li>
-        </ul>
-    </Paragraph>
-</Typography>;
+const context =
+    <Collapse defaultActiveKey={['remark']} style={{ marginBottom: '16px' }} >
+        <Collapse.Panel header="转入相关说明" key="remark">
+            <Typography>
+                <ul>
+                    <li>表对象前缀_数据库的表名’为生成的模块名，模块和字段名的转换都是按照驼峰命名规则进行；</li>
+                    <li>表必须有唯一主键,不能有复合主键; 视图也必须有唯一主键,主键设置可以在导入表信息后自行设置; 必须有名称字段，如果没有可以设置为主键字段；</li>
+                    <li>各表之间的关联关系是树状结构，不许有循环引用;表自顶向下导入;所有视图的关联关系需要自己设置；</li>
+                    <li>业务数据库的表仅用于查询，不用建立实体bean；</li>
+                    <li>具有树形结构的表(代码分级或id-pid类型)只能用做于基础模块，不能用于有大量数据的业务模块；</li>
+                    <li>请建立一个只读帐号来操作业务数据库,确保业务数据库不受本系统的影响；</li>
+                </ul>
+            </Typography>
+        </Collapse.Panel>
+    </Collapse>;
 
 /**
  * 
@@ -175,7 +176,7 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
                 message.warn('请录入模块中文名称！');
                 return;
             }
-            if (fieldSource.find(field => !!field.by5)){
+            if (fieldSource.find(field => !!field.by5)) {
                 message.warn('尚有关联表还没有加入，请先导入该表');
                 return;
             }
@@ -203,8 +204,8 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
             })
         };
 
-        const toolbar = (
-            <Card bodyStyle={{ padding: 0, margin: 0 }}>
+        const toolbar = (<div>
+            <Card bodyStyle={{ padding: 0, margin: 0 }} style={{ marginBottom: '16px' }}>
                 <Form form={form}>
                     <Space size='large' style={{ padding: '16px', margin: 0 }}>
                         <Form.Item label='模块中文名称：' name="title" style={{ marginBottom: 0 }}>
@@ -224,38 +225,39 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
                         </Form.Item>
                     </Space>
                 </Form>
-                <Row>
-                    <Col span={6}>
-                        <Card title="未加入到系统的表和视图" size='small'
-                            bodyStyle={{ maxHeight: '600px', overflowY: 'auto' }}>
-                            <Tree treeData={tableviews} showLine key="_tableviewstree"
-                                expandedKeys={['table', 'view']}
-                                selectedKeys={[selected as string]}
-                                onSelect={(selectedKeys: Key[], info: {
-                                    event: 'select';
-                                    selected: boolean;
-                                    selectedNodes: any[];
-                                }) => {
-                                    if (info.selected) {
-                                        selectTableView(selectedKeys[0] as string, info.selectedNodes[0].comment);
-                                    } else {
-                                        selectTableView(null, null)
-                                    }
-                                }}
-                            >
-                            </Tree>
-                        </Card>
-                    </Col>
-                    <Col span={18}>
-                        <Card title="字段信息" size='small'
-                            bodyStyle={{ maxHeight: '600px', overflowY: 'auto' }}>
-                            <Table columns={columns} size='small' bordered dataSource={fieldSource}
-                                pagination={false} key="_fieldtable" rowKey='fieldname'>
-                            </Table>
-                        </Card>
-                    </Col>
-                </Row>
             </Card>
+            <Row gutter={16}>
+                <Col span={6}>
+                    <Card title="未加入到系统的表和视图" size='small'>
+                        <Tree treeData={tableviews} showLine key="_tableviewstree"
+                            style={{ height: '600px', overflowY: 'auto' }}
+                            expandedKeys={['table', 'view']}
+                            selectedKeys={[selected as string]}
+                            onSelect={(selectedKeys: Key[], info: {
+                                event: 'select';
+                                selected: boolean;
+                                selectedNodes: any[];
+                            }) => {
+                                if (info.selected) {
+                                    selectTableView(selectedKeys[0] as string, info.selectedNodes[0].comment);
+                                } else {
+                                    selectTableView(null, null)
+                                }
+                            }}
+                        >
+                        </Tree>
+                    </Card>
+                </Col>
+                <Col span={18}>
+                    <Card title="字段信息" size='small'>
+                        <Table columns={columns} size='small' bordered dataSource={fieldSource}
+                            style={{ height: '600px', overflowY: 'auto' }}
+                            pagination={false} key="_fieldtable" rowKey='fieldname'>
+                        </Table>
+                    </Card>
+                </Col>
+            </Row>
+        </div>
         )
 
         // 获取数据库未导入的表和视图
@@ -297,6 +299,7 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
         zIndex: undefined,
         children: <span>{context}<FormComponent /></span>,
         onClose: () => setGlobalDrawerProps((props: any) => ({ visible: false })),
+        bodyStyle: { backgroundColor: '#f0f2f5', padding: 16 }
     }
     setGlobalDrawerProps(props);
 }

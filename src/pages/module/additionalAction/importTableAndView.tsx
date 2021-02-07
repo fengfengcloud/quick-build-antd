@@ -1,14 +1,13 @@
 import React, { Key, useEffect, useState } from 'react';
 import { ActionParamsModal } from './systemAction';
 import { DrawerProps } from 'antd/lib/drawer';
-import { Button, Card, Checkbox, Col, Form, Input, message, Modal, Row, Select, Space, Table, Tooltip, Tree, Typography } from 'antd';
+import { Button, Card, Checkbox, Col, Collapse, Form, Input, message, Modal, Row, Select, Space, Table, Tooltip, Tree, Typography } from 'antd';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import { EditOutlined, ImportOutlined } from '@ant-design/icons';
 import request from '@/utils/request';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { serialize } from 'object-to-formdata';
 import { getParentOrNavigateIdAndText } from '../modules';
-const { Title, Paragraph } = Typography;
 
 interface ImportDrawerProps extends DrawerProps {
     children: any,
@@ -19,25 +18,27 @@ interface LabelValue {
     value: string;
 }
 
-const context = <Typography>
-    <Title level={5}>转入相关说明</Title>
-    <Paragraph>
-        <ul>
-            <li>表名转换成模块名以及字段名的转换都是按照驼峰命名规则进行,如果有实体bean,实体bean里的字段名必须和字段表里的名称一致；</li>
-            <li>表必须有唯一主键,不能有复合主键; 视图也必须有唯一主键,主键设置可以在导入表信息后自行设置; 必须有名称字段，如果没有可以设置为主键字段;</li>
-            <li>各表之间的关联关系是树状结构，不许有循环引用;表自顶向下导入;所有视图的关联关系需要自己设置。</li>
-            <li>如果业务数据库的表仅用于查询，则不用建立实体bean;</li>
-            <li>导入表信息后，请进行检查beanname,如果不对或者没找到系统中已有的bean请自行修正;</li>
-            <li>具有树形结构的表(代码分级或id-pid类型)只能用做于基础模块，不能用于有大量数据的业务模块;</li>
-        </ul>
-    </Paragraph>
-</Typography>;
+const context =
+    <Collapse defaultActiveKey={['remark']} style={{ marginBottom: '16px' }} >
+        <Collapse.Panel header="转入相关说明" key="remark">
+            <Typography>
+                <ul>
+                    <li>表名转换成模块名以及字段名的转换都是按照驼峰命名规则进行,如果有实体bean,实体bean里的字段名必须和字段表里的名称一致；</li>
+                    <li>表必须有唯一主键,不能有复合主键; 视图也必须有唯一主键,主键设置可以在导入表信息后自行设置; 必须有名称字段，如果没有可以设置为主键字段;</li>
+                    <li>各表之间的关联关系是树状结构，不许有循环引用;表自顶向下导入;所有视图的关联关系需要自己设置。</li>
+                    <li>如果业务数据库的表仅用于查询，则不用建立实体bean;</li>
+                    <li>导入表信息后，请进行检查beanname,如果不对或者没找到系统中已有的bean请自行修正;</li>
+                    <li>具有树形结构的表(代码分级或id-pid类型)只能用做于基础模块，不能用于有大量数据的业务模块;</li>
+                </ul>
+            </Typography>
+        </Collapse.Panel>
+    </Collapse>;
 
 /**
- * 
+ *
  * 导入表和字段
- * @param params 
- * 
+ * @param params
+ *
  */
 export const importTableAndView = (params: ActionParamsModal) => {
     const props: ImportDrawerProps = {
@@ -47,6 +48,7 @@ export const importTableAndView = (params: ActionParamsModal) => {
         zIndex: undefined,
         children: <span>{context}<FormComponent /></span>,
         onClose: () => setGlobalDrawerProps((props: any) => ({ visible: false })),
+        bodyStyle: { backgroundColor: '#f0f2f5', padding: 16 }
     }
     setGlobalDrawerProps(props);
 }
@@ -217,8 +219,8 @@ const FormComponent = () => {
         })
     };
 
-    const toolbar = (
-        <Card bodyStyle={{ padding: 0, margin: 0 }}>
+    const toolbar = (<div>
+        <Card bodyStyle={{ padding: 0, margin: 0 }} style={{ marginBottom: '16px' }}>
             <Form form={form}>
                 <Space size='large' style={{ padding: '16px', margin: 0 }}>
                     <Form.Item label='选择数据库：' name="schema" style={{ marginBottom: 0 }}>
@@ -245,37 +247,38 @@ const FormComponent = () => {
                     </Form.Item>
                 </Space>
             </Form>
-            <Row>
-                <Col span={6}>
-                    <Card title="未加入到系统的表和视图" size='small'
-                        bodyStyle={{ maxHeight: '600px', overflowY: 'auto' }}>
-                        <Tree treeData={tableviews} showLine key="_tableviewstree"
-                            expandedKeys={['table', 'view']}
-                            selectedKeys={[selected as string]}
-                            onSelect={(selectedKeys: Key[], info: {
-                                event: 'select';
-                                selected: boolean;
-                            }) => {
-                                if (info.selected) {
-                                    selectTableView(selectedKeys[0] as string);
-                                } else {
-                                    selectTableView(null)
-                                }
-                            }}
-                        >
-                        </Tree>
-                    </Card>
-                </Col>
-                <Col span={18}>
-                    <Card title="字段信息" size='small'
-                        bodyStyle={{ maxHeight: '600px', overflowY: 'auto' }}>
-                        <Table columns={columns} size='small' bordered dataSource={fieldSource}
-                            pagination={false} key="_fieldtable" rowKey='fieldname'>
-                        </Table>
-                    </Card>
-                </Col>
-            </Row>
-        </Card>
+        </Card >
+        <Row gutter={16}>
+            <Col span={6}>
+                <Card title="未加入到系统的表和视图" size='small'>
+                    <Tree treeData={tableviews} showLine key="_tableviewstree"
+                        style={{ height: '600px', overflowY: 'auto' }}
+                        expandedKeys={['table', 'view']}
+                        selectedKeys={[selected as string]}
+                        onSelect={(selectedKeys: Key[], info: {
+                            event: 'select';
+                            selected: boolean;
+                        }) => {
+                            if (info.selected) {
+                                selectTableView(selectedKeys[0] as string);
+                            } else {
+                                selectTableView(null)
+                            }
+                        }}
+                    >
+                    </Tree>
+                </Card>
+            </Col>
+            <Col span={18}>
+                <Card title="字段信息" size='small'>
+                    <Table columns={columns} size='small' bordered dataSource={fieldSource}
+                        style={{ height: '600px', overflowY: 'auto' }}
+                        pagination={false} key="_fieldtable" rowKey='fieldname'>
+                    </Table>
+                </Card>
+            </Col>
+        </Row>
+    </div>
     )
 
     // 获取数据库未导入的表和视图
@@ -320,7 +323,7 @@ const FormComponent = () => {
 
 /**
  * 刷新一个表的字段，把表中没有的字段加进来。
- * @param params 
+ * @param params
  */
 export const refreshFields = (params: ActionParamsModal) => {
     const { record, dispatch, moduleState } = params;
@@ -353,7 +356,7 @@ export const refreshFields = (params: ActionParamsModal) => {
 
 /**
  * 在实体对象字段模块中刷新字段
- * @param params 
+ * @param params
  */
 const refreshFieldsInDataobjectFields = (params: ActionParamsModal) => {
     const { moduleState, dispatch } = params;
