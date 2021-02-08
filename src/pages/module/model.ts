@@ -169,7 +169,7 @@ const Model: ModuleModelType = {
                 default:
                     break;
             }
-            const newModuleState = {
+            const newModuleState: ModuleState = {
                 ...moduleState,
                 filters
             };
@@ -180,7 +180,8 @@ const Model: ModuleModelType = {
                 selectedTextValue: [],
                 gridParams: { curpage, limit, start, total, totalpage },
                 dataSource,
-                remoteRoot: remoteRoot || {}
+                remoteRoot: remoteRoot || {},
+                recordOrderChanged: false,
             });
             yield put({
                 type: 'updateModuleState',
