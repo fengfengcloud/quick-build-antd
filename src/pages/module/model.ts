@@ -509,13 +509,13 @@ const Model: ModuleModelType = {
                     }
                 }),
                 currSetting,
+                recordOrderChanged: false,
             };
             return result;
         },
 
         updateDataSource(state = {}, action) {
-            debugger;
-            const { moduleName, dataSource = [] } = action.payload;
+            const { moduleName, dataSource = [], recordOrderChanged } = action.payload;
             const moduleState: ModuleState = state[moduleName] as ModuleState;
             const result = {
                 ...state
@@ -523,6 +523,7 @@ const Model: ModuleModelType = {
             result[moduleName] = {
                 ...moduleState,
                 dataSource,
+                recordOrderChanged: recordOrderChanged === true,
             };
             return result;
         },

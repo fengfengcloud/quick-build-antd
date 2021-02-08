@@ -91,9 +91,12 @@ export const moduleStateReducer = (moduleState: ModuleState, action: ActionProps
         case 'updateDataList':
             return updateDateList(moduleState, action);
         case 'updateDataSource':
-            return update(moduleState , {
-                dataSource : {
-                    $set : action.payload.dataSource
+            return update(moduleState, {
+                dataSource: {
+                    $set: action.payload.dataSource
+                },
+                recordOrderChanged: {
+                    $set: action.payload.recordOrderChanged === true
                 }
             })
         case 'fetchData':
@@ -412,6 +415,7 @@ const updateDateList = (moduleState: ModuleState, action: ActionProps) => {
         gridParams: { curpage, limit, start, total, totalpage },
         dataSource,
         selectedRowKeys,
+        recordOrderChanged: false,
         selectedTextValue: selectedRowKeys.map((key: string): TextValue => {
             const rec = dataSource.find((record: any) => record[primarykey] == key) || {};
             return {

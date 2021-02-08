@@ -220,11 +220,11 @@ export interface AdditionFunctionModal {
 
 // 模块记录单条打印方案
 export interface RecordPrintSchemeModal {
-    schemeid : string,
-    title : string,
-    iconcls : string,
-    orderno : number,
-    othersetting : string,
+    schemeid: string,
+    title: string,
+    iconcls: string,
+    orderno: number,
+    othersetting: string,
 }
 
 // {
@@ -250,19 +250,20 @@ export interface SqlParamsDefine {
 }
 
 export interface ModuleModal {
-    moduleid: string,               // 模块id,
-    modulename: string,             // 模块名称,
+    moduleid: string,                               // 模块id,
+    modulename: string,                             // 模块名称,
     objectname: string,
-    title: string,                  // 实体对象中文名称
-    primarykey: string,             // 主键
-    namefield: string,              // 名称字段，该字段可以用来描述唯一的记录
-    namefieldtpl?: string,          // 名称定段tpl,如果单个字段不能用来描述唯一记录，可以用组合字段
-    description?: string,           // 模块描述
+    title: string,                                  // 实体对象中文名称
+    primarykey: string,                             // 主键
+    namefield: string,                              // 名称字段，该字段可以用来描述唯一的记录
+    namefieldtpl?: string,                          // 名称定段tpl,如果单个字段不能用来描述唯一记录，可以用组合字段
+    description?: string,                           // 模块描述
     istreemodel: boolean,                           // 是否是树形模块
     codelevel?: string,                             // 树形结构编码级长
     iconcls?: string,                               // awesome定义的图标
     helpmarkdown?: string,                          // markdown的帮助信息
-    attachmentTypes: TextValue[] | null,            //模块的附件类型
+    attachmentTypes: TextValue[] | null,            // 模块的附件类型
+    orderfield?: string,                            // 顺序号字段
 
     moduleLimit: ModuleLimit,                       // 当前模块的权限设置
     userLimit: UserLimit,                           // 当前用户的权限设置
@@ -323,17 +324,18 @@ export interface ModuleFilters {
 export interface ModuleState {
     moduleName: string,
     moduleInfo?: ModuleModal,
-    dataSourceLoadCount: number,    // 列表调用次数，当需要刷新时，将此值+1即可
-    currentGridschemeid: string,    // 当前显示的列表方案的id
-    selectedRowKeys: any[],         // 当前选中的记录
-    selectedTextValue: TextValue[],  // 当前选中的记录的id和name
-    expandedRowKeys: any[],          // 树形结构展开的节点
-    pinkey: string,                  // 树形结构当前以哪一个主键值作为根节点显示
-    dataSource: any[],              // 当前页的模块数据
-    lastInsertRecord?: any,          // 最后一条插入的记录
-    remoteRoot?: any,                // 需要加入总计的总计值
+    dataSourceLoadCount: number,            // 列表调用次数，当需要刷新时，将此值+1即可
+    currentGridschemeid: string,            // 当前显示的列表方案的id
+    selectedRowKeys: any[],                 // 当前选中的记录
+    selectedTextValue: TextValue[],         // 当前选中的记录的id和name
+    expandedRowKeys: any[],                 // 树形结构展开的节点
+    pinkey: string,                         // 树形结构当前以哪一个主键值作为根节点显示
+    dataSource: any[],                      // 当前页的模块数据
+    lastInsertRecord?: any,                 // 最后一条插入的记录
+    remoteRoot?: any,                       // 需要加入总计的总计值
     monetary: MonetaryType;
     monetaryPosition: 'behindnumber' | 'columntitle',
+    recordOrderChanged?: boolean;           // 记录的顺序改变过了
     filters: ModuleFilters,
     sorts: SortModal[],
     sortschemeid?: string | null,

@@ -149,6 +149,7 @@ export const generateModuleInfo = (module: any): ModuleModal => {
         associates: obj.fovDataobjectassociates || [],
         istreemodel: !!obj.istreemodel,
         codelevel: obj.codelevel,
+        orderfield: obj.orderfield,
         helpmarkdown: obj.helpmarkdown,
         attachmentTypes: obj.attachmentTypes,
         sqlparamsDefine: obj.fDataobjectsqlparams,
@@ -415,6 +416,14 @@ export const canEdit = (moduleInfo: ModuleModal, record: any): { canEdit: boolea
         canEdit: true,
         message: ''
     };
+}
+
+/**
+ * 判断是否当前模块的记录可以移动，有orderno字段，并且是可以修改的
+ * @param moduleInfo 
+ */
+export const canMoveRow = (moduleInfo: ModuleModal) => {
+    return moduleInfo.orderfield && hasEdit(moduleInfo);
 }
 
 /**

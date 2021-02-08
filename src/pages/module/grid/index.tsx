@@ -6,7 +6,7 @@ import { ReloadOutlined } from '@ant-design/icons';
 import { Key, SorterResult, TableCurrentDataSource, TablePaginationConfig } from 'antd/lib/table/interface';
 import { ModuleModal, ModuleState, GridOperateType } from '../data';
 import { getAllFilterCount } from './filterUtils';
-import { getGridScheme, hasAssociatesSouth } from '../modules';
+import { canMoveRow, getGridScheme, hasAssociatesSouth } from '../modules';
 import SortInfoButton from './sortInfoButton';
 import { getPinRecord } from '../moduleUtils';
 import { getColumns, getSubTotalFields } from './columnFactory';
@@ -19,6 +19,8 @@ import StartEndDateSectionSelect from './sqlparams';
 import { DragDropHeaderCell } from './headCellDragDrop';
 import { DragableBodyRow } from './bodyRowDragDrop';
 import { SimpleDescription } from '../descriptions';
+import { apply } from '@/utils/utils';
+import { UpdateRecordOrderNoButton } from './updateRecordOrderno';
 
 interface ModuleGridProps {
     moduleState: ModuleState,
@@ -168,6 +170,9 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({ moduleState, moduleInfo, dispat
                 }
                 <div style={{ flex: 1 }} />
                 <Space size='middle' style={{ whiteSpace: 'nowrap' }} >
+                    {
+                        moduleState.recordOrderChanged ? <UpdateRecordOrderNoButton moduleState={moduleState} dispatch={dispatch} /> : null
+                    }
                     <GridSizeButton moduleState={moduleState} dispatch={dispatch} />
                     <SortInfoButton moduleState={moduleState} dispatch={dispatch} />
                     <GridSettingButton moduleState={moduleState} dispatch={dispatch} />
@@ -257,15 +262,17 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({ moduleState, moduleInfo, dispat
             </div>,
         }
     }
-
-    const components = {
-        // body: {
-        //     row: (props: any) => <DragableBodyRow {...props} />,
-        // },
-        // header: {
-        //     cell: (props: any) => <DragDropHeaderCell {...props} />
-        // }
-    };
+    const components: any = {};
+    if (canMoveRow(moduleInfo)) {
+        apply(components, {
+            body: {
+                row: (props: any) => <DragableBodyRow {...props} />,
+            }
+        })
+    }
+    // header: {
+    //     cell: (props: any) => <DragDropHeaderCell {...props} />
+    // }
 
     // 鼠标拖动行移动位置
     const moveRow = useCallback((dragIndex, hoverIndex, dragRecord) => {
@@ -278,6 +285,7 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({ moduleState, moduleInfo, dispat
             payload: {
                 moduleName,
                 dataSource: data,
+                recordOrderChanged: true,
             }
         })
     },
