@@ -5,8 +5,8 @@ import { ModuleState, ParentFilterModal, ModuleModal } from './data';
 import { getModuleInfo } from './modules';
 import styles from './index.less';
 import { CloseOutlined, PushpinOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, Input, message, Popover, Tooltip } from 'antd';
-import { history } from 'umi';
+import { Button, Input, message, Popover, Tabs, Tooltip } from 'antd';
+import { currentUser, history } from 'umi';
 import request from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 import { CHILDREN } from '../datamining/constants';
@@ -281,42 +281,57 @@ interface ModuleHelpMarkDownProps {
 export const ModuleHelpMarkDown: React.FC<ModuleHelpMarkDownProps> = ({ moduleInfo }) => {
     const { helpmarkdown } = moduleInfo;
     const [markdown, setMarkdown] = useState<string>('');
+    const { usercode } = currentUser;
     useEffect(() => {
         setMarkdown(helpmarkdown || '');
     }, [moduleInfo.modulename])
+    const showMarkDown = <div style={{ padding: 4, height: '520px', overflowY: 'auto', border: '1px solid gray' }}>
+        <span className="markdown" dangerouslySetInnerHTML={{
+            __html: marked(markdown)
+        }}></span>
+    </div>
+    const editMarkDown = <>
+        <Button
+            type="primary"
+            style={{ margin: 8, position: 'absolute', right: '18px', top: '40px', zIndex: 1 }}
+            onClick={() => {
+                request('/api/platform/systemcommon/saveobjectmarkdown.do', {
+                    method: 'post',
+                    body: serialize({
+                        moduleName: moduleInfo.modulename,
+                        text: markdown
+                    })
+                }).then((response) => {
+                    message.info('模块的帮助信息保存成功！');
+                })
+            }}
+        >保存</Button>
+        <Input.TextArea style={{ height: '520px' }}
+            value={markdown}
+            onChange={(e) => {
+                setMarkdown(e.target.value);
+            }}
+        />
+    </>
     if (helpmarkdown || 1) {
         return (
             <Popover key={moduleInfo.modulename}
                 trigger='click'
-                title="help mark down"
-                content={<div style={{ width: '1000px' }}>
-                    <div style={{ padding: 4, height: '500px', overflowY: 'auto', border: '1px solid gray' }}>
-                        <span className="markdown" dangerouslySetInnerHTML={{
-                            __html: marked(markdown)
-                        }}></span>
-                    </div>
-                    <Button
-                        type="primary"
-                        style={{ margin: 8 }}
-                        onClick={() => {
-                            request('/api/platform/systemcommon/saveobjectmarkdown.do', {
-                                method: 'post',
-                                body: serialize({
-                                    moduleName: moduleInfo.modulename,
-                                    text: markdown
-                                })
-                            }).then((response) => {
-                                message.info('模块的帮助信息保存成功！');
-                            })
-                        }}
-                    >保存</Button>
-                    <Input.TextArea style={{ height: '300px' }}
-                        value={markdown}
-                        onChange={(e) => {
-                            setMarkdown(e.target.value);
-                        }}
-                    />
-
+                placement='bottom'
+                title={`${moduleInfo.title}的帮助说明`}
+                content={<div style={{ width: '1000px', marginTop: '-12px' }} >
+                    {
+                        usercode === 'admin' || usercode === 'administrator' ?
+                            <Tabs>
+                                <Tabs.TabPane tab='展示页' key='showtab'>
+                                    {showMarkDown}
+                                </Tabs.TabPane>
+                                <Tabs.TabPane tab='编辑页' key='edittab'>
+                                    {editMarkDown}
+                                </Tabs.TabPane>
+                            </Tabs>
+                            : showMarkDown
+                    }
                 </div>
                 }>
                 <span className={styles.headerparenttext}>
