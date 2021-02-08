@@ -263,7 +263,7 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({ moduleState, moduleInfo, dispat
         }
     }
     const components: any = {};
-    if (canMoveRow(moduleInfo)) {
+    if (canMoveRow(moduleState)) {
         apply(components, {
             body: {
                 row: (props: any) => <DragableBodyRow {...props} />,

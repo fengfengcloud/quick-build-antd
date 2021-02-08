@@ -264,6 +264,7 @@ export interface ModuleModal {
     helpmarkdown?: string,                          // markdown的帮助信息
     attachmentTypes: TextValue[] | null,            // 模块的附件类型
     orderfield?: string,                            // 顺序号字段
+    orderfieldcontroltable?: string,                // 顺序号字段的父模块的限定字段
 
     moduleLimit: ModuleLimit,                       // 当前模块的权限设置
     userLimit: UserLimit,                           // 当前用户的权限设置

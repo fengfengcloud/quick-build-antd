@@ -150,6 +150,7 @@ export const generateModuleInfo = (module: any): ModuleModal => {
         istreemodel: !!obj.istreemodel,
         codelevel: obj.codelevel,
         orderfield: obj.orderfield,
+        orderfieldcontroltable: obj.orderfieldcontroltable,
         helpmarkdown: obj.helpmarkdown,
         attachmentTypes: obj.attachmentTypes,
         sqlparamsDefine: obj.fDataobjectsqlparams,
@@ -419,11 +420,15 @@ export const canEdit = (moduleInfo: ModuleModal, record: any): { canEdit: boolea
 }
 
 /**
- * 判断是否当前模块的记录可以移动，有orderno字段，并且是可以修改的
+ * 判断是否当前模块的记录可以移动，有orderno字段，并且是可以修改的，如果有记录顺序控制字段，则必须有该筛选条件
  * @param moduleInfo 
  */
-export const canMoveRow = (moduleInfo: ModuleModal) => {
-    return moduleInfo.orderfield && hasEdit(moduleInfo);
+export const canMoveRow = (moduleState: ModuleState) => {
+    const { moduleName } = moduleState;
+    const moduleInfo = getModuleInfo(moduleName);
+    const { orderfield, orderfieldcontroltable } = moduleInfo;
+    return orderfield && hasEdit(moduleInfo) &&
+        (!orderfieldcontroltable || getParentOrNavigateIdAndText(moduleState, orderfieldcontroltable));
 }
 
 /**
