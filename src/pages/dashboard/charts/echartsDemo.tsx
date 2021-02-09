@@ -48,7 +48,7 @@ export const EchartsDemo = ({ id }: { id: string }) => {
                     maxSurfaceAngle: 80
                 },
                 labelLayout: (params: any) => {
-                    console.log(params);
+                    //console.log(params);
                     let isLeft = params.labelRect.x < myChart.getWidth() / 2;
                     let points = params.labelLinePoints;
                     // Update the end point.

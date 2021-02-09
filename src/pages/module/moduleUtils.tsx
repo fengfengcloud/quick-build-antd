@@ -10,10 +10,13 @@ import { currentUser, history } from 'umi';
 import request from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 import { CHILDREN } from '../datamining/constants';
+import { isAdmin, isAdministrator } from '@/utils/Authorized';
 
 export const DateFormat = 'YYYY-MM-DD';
 export const DateTimeFormat = "YYYY-MM-DD HH:mm:ss"
 export const DateTimeFormatWithOutSecond = "YYYY-MM-DD HH:mm";
+
+const PARNET = '__parent__';
 
 // 取得某一个级数的长度，从1开始
 const getLevelLen = (level: number, codelevel: string[]): number => {
@@ -45,7 +48,7 @@ export const updateTreeRecord = (records: any[], newRecord: any, primarykey: str
         recs.forEach(rec => {
             if (rec[primarykey] === newRecord[primarykey]) {
                 for (let key in rec) {
-                    if (key !== CHILDREN && key !== '__parent__')         // 只留下children属性
+                    if (key !== CHILDREN && key !== PARNET)         // 只留下children属性
                         delete rec[key];
                 }
                 apply(rec, newRecord);
@@ -81,7 +84,7 @@ export const addRecordToTree = (records: any[], newRecord: any, primarykey: stri
                 if (rec[primarykey] === parentkey) {
                     if (!rec.children) rec.children = [];
                     rec.children.push(newRecord);
-                    newRecord.__parent__ = rec;
+                    newRecord[PARNET] = rec;
                     alreadyAdd = true;
                 }
             if (!alreadyAdd && rec.children && Array.isArray(rec.children))
@@ -125,7 +128,7 @@ export const generateTreeParent = (nodes: any[]) => {
     const addParent = (item: any) => {
         if (Array.isArray(item.children)) {
             item.children.forEach((c: any) => {
-                c.__parent__ = item;
+                c[PARNET] = item;
                 addParent(c);
             });
         }
@@ -180,7 +183,7 @@ export const getMaxPrimaryKeyFromKey = (data: any[], key: string, primarykey: st
     const record = getPinRecord(data, key, primarykey);
     if (!record || Array.isArray(record))
         return '';
-    const parent = record.__parent__;
+    const parent = record[PARNET];
     // 是根节点的
     if (!parent) {
         return data.reduce((a, b) => b[primarykey] > a[primarykey] ? b : a)[primarykey];
@@ -313,7 +316,7 @@ export const ModuleHelpMarkDown: React.FC<ModuleHelpMarkDownProps> = ({ moduleIn
             }}
         />
     </>
-    if (helpmarkdown || 1) {
+    if (helpmarkdown || isAdmin() || isAdministrator()) {
         return (
             <Popover key={moduleInfo.modulename}
                 trigger='click'
@@ -321,7 +324,7 @@ export const ModuleHelpMarkDown: React.FC<ModuleHelpMarkDownProps> = ({ moduleIn
                 title={`${moduleInfo.title}的帮助说明`}
                 content={<div style={{ width: '1000px', marginTop: '-12px' }} >
                     {
-                        usercode === 'admin' || usercode === 'administrator' ?
+                        isAdmin() || isAdministrator() ?
                             <Tabs>
                                 <Tabs.TabPane tab='展示页' key='showtab'>
                                     {showMarkDown}

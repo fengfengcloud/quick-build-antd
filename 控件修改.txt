@@ -4,6 +4,13 @@ https://react-table.tanstack.com/docs/api/usePagination
 https://jbetancur.github.io/react-data-table-component/?path=/story/expandable-rows--basic
 https://ej2.syncfusion.com/home/   收费的
 
+
+    "eslint": "^7.17.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-plugin-unicorn": "^27.0.0",
+
+
 『』
 
 2020-08-05：修改/node_modules/antd/es/descriptions/Row.js,

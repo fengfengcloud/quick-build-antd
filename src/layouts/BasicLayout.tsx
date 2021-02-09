@@ -7,7 +7,7 @@ import ProLayout, {
   MenuDataItem, BasicLayoutProps as ProLayoutProps, Settings,
 } from '@ant-design/pro-layout';
 import React, { useEffect, useState } from 'react';
-import { Link, useIntl, connect, Dispatch, currentUser } from 'umi';
+import { Link, useIntl, connect, Dispatch } from 'umi';
 import {
   BankOutlined, PhoneOutlined, QqOutlined, MailOutlined, UserOutlined,
   CopyrightOutlined, DashboardOutlined
@@ -143,7 +143,9 @@ const generateMenu = (menuDefine: {
         moduleName: menuDefine.objectid,
       }
     }
-    sysMenuData[menuDefine.objectid] = menu;
+    // 不要加入数据分析的模块的菜单，加入了地址就到了数据分析去了
+    if (!menuDefine.isdatamining)
+      sysMenuData[menuDefine.objectid] = menu;
   }
   // 菜单图标设置规则,
   // 顶层菜单项必须有一个图标
@@ -177,6 +179,10 @@ const generateMenu = (menuDefine: {
 export let setGlobalDrawerProps: Function;
 export let setGlobalModalProps: Function;
 
+// menuData 在 "@ant-design/pro-layout": "^6.14.0",中放在useState中，
+// 网址带参数，刷新网页时无效。5.X 可以使用
+let menuData: any = null;
+
 const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
   const {
     dispatch,
@@ -191,17 +197,13 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
   const [drawerProps, setDrawerProps] = useState({});
   const [modalProps, setModalProps] = useState({});
 
-  /**
-   * constructor
-   */
-
   useEffect(() => {
     setGlobalDrawerProps = (props: any) => {
       // zIndex 不能设置，设计太高combo会没有下拉选择, 在不需要设置时，设置zIndex:undefined
       setDrawerProps({ zIndex: 1000000, ...props, });
     }
     setGlobalModalProps = (props: any) => {
-      setModalProps({ zIndex: 1000000-10, ...props, });
+      setModalProps({ zIndex: 1000000 - 10, ...props, });
     }
     if (dispatch) {
       dispatch({
@@ -221,9 +223,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
     }
   }, []);
 
-  /**
-   * init variables
-   */
   const handleMenuCollapse = (payload: boolean): void => {
     if (dispatch) {
       dispatch({
@@ -231,15 +230,15 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
         payload,
       });
     }
-  }; // get children authority
+  };
 
   const authorized = getAuthorityFromRouter(props.route.routes, location.pathname || '/') || {
     authority: undefined,
   };
   const { formatMessage } = useIntl();
-  const [menuData, setMenuData] = useState([]);
+  //const [menuData, setMenuData] = useState([]);
 
-  useEffect(() => {
+  const getMenuData = () => {
     let menu: any = getSystemMenu().map((value: any) => generateMenu(value, '', true)) || [];
     menu.unshift({
       path: '/dashboard',
@@ -254,12 +253,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
       }, {
         name: formatMessage({ id: 'menu.dashboard.monitor' }),
         path: '/dashboard/monitor',
-      },
-        // {
-        //   name: formatMessage({ id: 'menu.dashboard.workplace' }),
-        //   path: '/dashboard/workplace',
-        // }
-      ]
+      },]
     })
     menu.push({
       name: formatMessage({ id: 'menu.account' }),
@@ -274,8 +268,10 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
           path: '/account/settings',
         },]
     })
-    setMenuData(menu);
-  }, [])
+    return menu;
+  }
+  if (!menuData)
+    menuData = getMenuData();
 
   return (
     <ProLayout

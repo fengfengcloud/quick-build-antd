@@ -28,7 +28,7 @@ const cardParams: CardProps = {
 }
 
 export default () => {
-    return <Row gutter={[12, 12]} style={{ margin: 6 }}>
+    return <Row gutter={[12, 12]} style={{ margin: '12px 6px' }}>
         <Col md={24} lg={12}>
             <OrganizationPmAgreementPayoutPie />
         </Col>
