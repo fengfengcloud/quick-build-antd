@@ -127,7 +127,7 @@ const ResultTree: React.FC<ResultTreeParams> = ({ state, dispatch }) => {
           className="dataminingtable"
           size="small"
           bordered={true}
-          sticky={{ offsetHeader: 64 }}         // 设置粘性表头
+          sticky={{ offsetHeader: 48 }}         // 设置粘性表头
           tableLayout='auto'         //'auto','fixed'
           loading={state.fetchLoading}
           pagination={false}
