@@ -19,7 +19,6 @@
     border-top: 2px dashed #1890ff !important;
   }
 
-
   // table的toolbar 总计部分100%，这样可以把自定义按钮放在最前面
   .ant-pagination-total-text {
     width: 100%;
@@ -35,13 +34,13 @@
     //margin-right: 8px;
   }
 
-  .ant-checkbox-wrapper+.ant-checkbox-wrapper {
-    margin-left: 0px;
+  .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+    margin-left: 0;
   }
 
   // small的table的页码条中的文字高度24
   .mini .paginationtoolbar {
-    height: 24px !important
+    height: 24px !important;
   }
 
   // 导航tabs的标签的间距减少
@@ -55,13 +54,13 @@
   }
 
   // 只读时或浮点数数据全部靠右
-  .double>.ant-input-number-input-wrap input,
+  .double > .ant-input-number-input-wrap input,
   .ant-input-number-input-wrap input[readonly] {
     text-align: right !important;
   }
 
   // 只读时或者浮点数时取消数值的上下箭头
-  .double>.ant-input-number-handler-wrap,
+  .double > .ant-input-number-handler-wrap,
   .ant-input-number-handler-wrap [readonly] {
     display: none;
   }
@@ -83,19 +82,19 @@
   }
 
   .markdown table {
-    border-collapse: collapse;
-    border: 1px solid @border-color-base;
     padding: 8;
+    border: 1px solid @border-color-base;
+    border-collapse: collapse;
   }
 
   .markdown table th {
-    border: 1px solid @border-color-base;
     padding: 4px;
+    border: 1px solid @border-color-base;
   }
 
   .markdown table td {
-    border: 1px solid @border-color-base;
     padding: 4px;
+    border: 1px solid @border-color-base;
   }
 
   .markdown ol {
@@ -103,8 +102,8 @@
     list-style-type: decimal;
     margin-block-start: 1em;
     margin-block-end: 1em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
     padding-inline-start: 40px;
   }
 
@@ -113,8 +112,8 @@
     list-style-type: disc;
     margin-block-start: 1em;
     margin-block-end: 1em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
     padding-inline-start: 40px;
   }
 
@@ -125,11 +124,10 @@
     margin-inline-start: 40px;
     margin-inline-end: 40px;
   }
-
 }
 
 .headerparenttext {
-  font-size: @font-size-base;
   margin-left: 16px;
   font-weight: normal;
+  font-size: @font-size-base;
 }

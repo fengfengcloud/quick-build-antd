@@ -1,7 +1,6 @@
 @import '~antd/es/style/themes/default.less';
 
 :global {
-
   // 记录展开显示description时
   tr.ant-table-expanded-row .descriptionform .ant-descriptions-view table {
     width: 100%;
@@ -13,17 +12,17 @@
   }
 
   // tabls的第一个tab项，不要顶住最左面
-  .descriptionform .ant-tabs-top>.ant-tabs-nav {
+  .descriptionform .ant-tabs-top > .ant-tabs-nav {
     padding-left: 12px;
   }
 
   // tabls的第一个tab项，不要顶住最上面
-  .descriptionform .ant-tabs-left>.ant-tabs-nav {
+  .descriptionform .ant-tabs-left > .ant-tabs-nav {
     padding-top: 12px;
   }
 
   .noborder .ant-descriptions-view {
-    border: 0px solid #f0f0f0;
+    border: 0 solid #f0f0f0;
   }
 
   .noborder table th,
@@ -39,20 +38,19 @@
   }
 
   .desc_card_border_top {
+    margin-top: -1px;
     border-top: 1px solid @divider-color;
-    margin-top: -1px
   }
 
   .desc_card_border_top .ant-card-head {
     background-color: @background-color-light;
   }
-
 }
 
 .manytooneinfo {
   font-size: 12px;
   cursor: pointer;
-  filter: alpha(Opacity=80);
   -moz-opacity: 0.5;
   opacity: 0.5;
+  filter: alpha(opacity=80);
 }
