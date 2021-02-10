@@ -2,12 +2,7 @@ import { Reducer } from 'redux';
 import { Effect } from 'dva';
 import { CurrentUser, ListItemDataType, TagType } from '../pages/account/center/data';
 
-import {
-  queryCurrent, 
-  addTag,
-  removeTag,
-  updateSignature,
-} from '../pages/account/center/service';
+import { queryCurrent, addTag, removeTag, updateSignature } from '../pages/account/center/service';
 
 export interface ModalState {
   currentUser: Partial<CurrentUser>;
@@ -39,7 +34,6 @@ const Model: ModelType = {
   },
 
   effects: {
- 
     *fetchCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);
       yield put({
@@ -50,7 +44,7 @@ const Model: ModelType = {
         type: 'fetchUserLimits',
         payload: {
           userid: response.user.id,
-        }
+        },
       });
     },
 
@@ -61,8 +55,8 @@ const Model: ModelType = {
         payload: {
           type: 'add',
           label: payload.label,
-        }
-      })
+        },
+      });
     },
 
     *removeTag({ payload }, { call, put }) {
@@ -72,8 +66,8 @@ const Model: ModelType = {
         payload: {
           type: 'remove',
           label: payload.label,
-        }
-      })
+        },
+      });
     },
 
     *editSignature({ payload }, { call, put }) {
@@ -82,13 +76,12 @@ const Model: ModelType = {
         type: 'updateSignature',
         payload: {
           text: payload.text,
-        }
-      })
+        },
+      });
     },
   },
 
   reducers: {
-
     updateSignature(state, action) {
       const { text: signature } = action.payload;
       let { currentUser } = state as ModalState;
@@ -96,16 +89,16 @@ const Model: ModelType = {
       currentUser = { ...currentUser, personnel };
       return {
         ...(state as ModalState),
-        currentUser
-      }
+        currentUser,
+      };
     },
 
     updateTags(state, action) {
       const { type, label } = action.payload;
       let { currentUser } = state as ModalState;
-      let tags = currentUser.personnel.tags;
+      let { tags } = currentUser.personnel;
       if (type === 'add') {
-        tags = [...tags, { key: label, label: label }];
+        tags = [...tags, { key: label, label }];
       } else {
         tags = tags.filter((tag: TagType) => tag.label !== label);
       }
@@ -114,7 +107,7 @@ const Model: ModelType = {
       return {
         ...(state as ModalState),
         currentUser,
-      }
+      };
     },
 
     saveCurrentUser(state, action) {
@@ -123,7 +116,6 @@ const Model: ModelType = {
         currentUser: action.payload || {},
       };
     },
-
   },
 };
 

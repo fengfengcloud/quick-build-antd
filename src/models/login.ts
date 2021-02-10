@@ -1,17 +1,13 @@
 import { Reducer } from 'redux';
 import { Effect } from 'dva';
-import {history} from 'umi';
+import { history } from 'umi';
 // import { stringify } from 'querystring';
-import {
-  fakeAccountLogin,
-  fakeAccountLogout,
-  getFakeCaptcha
-} from '@/services/login';
+import { fakeAccountLogin, fakeAccountLogout, getFakeCaptcha } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery, encryptString } from '@/utils/utils';
 
 export interface StateType {
-  status?: 'ok' | 'error'| 'warnning';
+  status?: 'ok' | 'error' | 'warnning';
   errorcode?: string;
   type?: string;
   currentAuthority?: 'user' | 'guest' | 'admin';
@@ -41,16 +37,15 @@ const Model: LoginModelType = {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(fakeAccountLogin, payload);
-      console.log('response',response)
       // 要兼容以前的后台，登录失败返回success : false
       const responseStatus = {
         type: payload.type,
         status: response.success ? 'ok' : 'error',
         errorcode: response.data,
         currentAuthority: 'admin',
-      }
+      };
       // 单个帐号不允许同时登录时，要弹出一个对话框，确定是否强制登录
-      if (response.data == '7') responseStatus.status = 'warnning';
+      if (response.data === '7') responseStatus.status = 'warnning';
       yield put({
         type: 'changeLoginStatus',
         payload: responseStatus,
@@ -58,7 +53,8 @@ const Model: LoginModelType = {
       // Login successfully
       if (response.success === true) {
         localStorage.setItem('login-user-code', payload.usercode);
-        if (localStorage.getItem('login-allow-save-pwd') === 'true') localStorage.setItem('login-user-password', encryptString(payload.password));
+        if (localStorage.getItem('login-allow-save-pwd') === 'true')
+          localStorage.setItem('login-user-password', encryptString(payload.password));
         else localStorage.removeItem('login-user-password');
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -86,9 +82,9 @@ const Model: LoginModelType = {
     *logout(_, { call }) {
       yield call(fakeAccountLogout);
       window.location.href = `${window.location.origin}/user/login`;
-      //const { redirect } = getPageQuery();
+      // const { redirect } = getPageQuery();
       // Note: There may be security issues, please note
-      //if (window.location.pathname !== '/user/login' && !redirect) {
+      // if (window.location.pathname !== '/user/login' && !redirect) {
       //  router.replace({
       //    pathname: '/user/login',
       //    search: stringify({
@@ -115,7 +111,7 @@ const Model: LoginModelType = {
       return {
         ...state,
         status: 'error',
-      }
+      };
     },
   },
 };

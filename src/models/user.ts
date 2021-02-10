@@ -59,9 +59,8 @@ const UserModel: UserModelType = {
   },
 
   effects: {
-
     *fetchCurrent(_, { call, put, select }) {
-      let userid = yield select((state: any) => state.user.currentUser.userid);
+      const userid = yield select((state: any) => state.user.currentUser.userid);
       // 如果当前用户信息已加载，则不用重新加载了
       if (!userid) {
         const response = yield call(queryCurrent);
@@ -77,9 +76,8 @@ const UserModel: UserModelType = {
     saveCurrentUser(state, action) {
       // 将用户放到全局变量中
       const user = action.payload as CurrentUser;
-      user.needResetPassword = user.needResetPassword ||
-        user.passwordstrong == '太短' ||
-        user.passwordstrong == '弱';
+      user.needResetPassword =
+        user.needResetPassword || user.passwordstrong === '太短' || user.passwordstrong === '弱';
       apply(currentUser, user);
       return {
         ...state,
@@ -105,31 +103,31 @@ const UserModel: UserModelType = {
 
     dataRoleCheckChanged(state = {}, action) {
       const { roleId, checked } = action.payload;
-      const { currentUser } = state;
-      const canselectdatarole = currentUser?.canselectdatarole?.
-        map((role) => role.roleId === roleId ? { ...role, checked } : role);
+      const canselectdatarole = currentUser?.canselectdatarole?.map((role) =>
+        role.roleId === roleId ? { ...role, checked } : role,
+      );
       return {
         ...state,
         currentUser: {
-          ...currentUser,
-          canselectdatarole
-        }
+          ...state.currentUser,
+          canselectdatarole,
+        },
       };
     },
 
     dataRoleCheckReset(state = {}) {
-      const { currentUser } = state;
-      const canselectdatarole = currentUser?.canselectdatarole?.
-        map(role => ({ ...role, checked: false }));
+      const canselectdatarole = currentUser?.canselectdatarole?.map((role) => ({
+        ...role,
+        checked: false,
+      }));
       return {
         ...state,
         currentUser: {
-          ...currentUser,
-          canselectdatarole
-        }
+          ...state.currentUser,
+          canselectdatarole,
+        },
       };
     },
-
   },
 };
 

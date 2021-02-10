@@ -40,24 +40,23 @@ const GlobalModel: GlobalModelType = {
   },
 
   effects: {
-    *fetchNotices(_, { call, put, select }) {
+    *fetchNotices(_, { call, put }) {
       const data = yield call(queryNotices);
       let count = 0;
-      data.forEach((rec: NoticeItem) => {
+      data.forEach((record: NoticeItem) => {
+        const rec = record;
         count += rec.count || 0;
-        if (rec.type == 'event') {
+        if (rec.type === 'event') {
           rec.status = 'urgent';
           if (rec.maxhours) {
-            if (rec.maxhours >= 48)
-              rec.extra = `最长已等待${Math.floor(rec.maxhours / 24)}天`;
-            else
-              rec.extra = `最长已等待${rec.maxhours}小时`;
+            if (rec.maxhours >= 48) rec.extra = `最长已等待${Math.floor(rec.maxhours / 24)}天`;
+            else rec.extra = `最长已等待${rec.maxhours}小时`;
           }
-          if (rec.action == 'approve') {
+          if (rec.action === 'approve') {
             rec.description = `有 ${rec.data?.length} 个任务等待审批`;
-          } else if (rec.action == 'claim') {
+          } else if (rec.action === 'claim') {
             rec.description = `有 ${rec.data?.length} 个任务等待接受`;
-          } else if (rec.action == 'audit') {
+          } else if (rec.action === 'audit') {
             rec.description = `有 ${rec.count} 条记录等待审核`;
           }
         }
@@ -111,7 +110,9 @@ const GlobalModel: GlobalModelType = {
         payload: notices,
       });
       let count = 0;
-      notices.forEach(rec => count = count + (rec.count || 0))
+      notices.forEach((rec) => {
+        count += rec.count || 0;
+      });
       yield put({
         type: 'user/changeNotifyCount',
         payload: {
