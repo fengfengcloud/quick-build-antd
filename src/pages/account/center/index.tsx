@@ -1,42 +1,36 @@
-import { TagOutlined, PlusOutlined, GiftOutlined, ClusterOutlined, EnvironmentOutlined } from '@ant-design/icons';
+import {
+  TagOutlined,
+  PlusOutlined,
+  GiftOutlined,
+  ClusterOutlined,
+  EnvironmentOutlined,
+} from '@ant-design/icons';
 import { Card, Col, Divider, Input, Row, Tag, Tabs } from 'antd';
 import React, { Component } from 'react';
 import { Dispatch } from 'redux';
 import { GridContent } from '@ant-design/pro-layout';
 import { RouteChildrenProps } from 'react-router';
 import { connect } from 'dva';
-import { CurrentUser } from './data.d';
-import styles from './Center.less';
 import { ModalState } from '@/models/accountCenter';
 import { DisplayUserLimits } from '@/pages/module/additionalAction/userLimit';
 import DetailGrid, { DetailGridPrpos } from '@/pages/module/detailGrid';
 import { currentUser } from 'umi';
+import styles from './Center.less';
+import { CurrentUser } from './data.d';
 import { getCityText, getProvinceText } from '../settings/components/baseView';
 
 const operationTabList = [
   {
     key: 'userLimits',
-    tab: (
-      <span>
-        我的操作权限
-      </span>
-    ),
+    tab: <span>我的操作权限</span>,
   },
   {
     key: 'userLoginLog',
-    tab: (
-      <span>
-        我的登录日志
-      </span>
-    ),
+    tab: <span>我的登录日志</span>,
   },
   {
     key: 'userOperateLog',
-    tab: (
-      <span>
-        我的操作日志
-      </span>
-    ),
+    tab: <span>我的操作日志</span>,
   },
 ];
 
@@ -47,9 +41,9 @@ interface CenterProps extends RouteChildrenProps {
   userid: string;
 }
 interface CenterState {
-  tabKey?: 'userLimits' | 'userLoginLog' | 'userOperateLog';
-  inputVisible?: boolean;
-  inputValue?: string;
+  tabKey: 'userLimits' | 'userLoginLog' | 'userOperateLog';
+  inputVisible: boolean;
+  inputValue: string;
   signatureInputVisible: boolean;
 }
 
@@ -57,26 +51,32 @@ const { TabPane } = Tabs;
 
 class Center extends Component<CenterProps, CenterState> {
   state: CenterState = {
-    inputVisible: false,
-    signatureInputVisible: false,
-    inputValue: '',
+    // eslint-disable-next-line react/no-unused-state
     tabKey: 'userLimits',
+    inputVisible: false,
+    inputValue: '',
+    signatureInputVisible: false,
   };
 
   public input: Input | null | undefined = undefined;
+
   public signatureInput: Input | null | undefined = undefined;
 
   componentDidMount() {
-    const { dispatch, currentUser } = this.props;
-    const { personnel } = currentUser;
+    const {
+      dispatch,
+      currentUser: { personnel },
+    } = this.props;
     if (!(personnel && personnel.name)) {
       dispatch({
         type: 'accountCenter/fetchCurrent',
       });
     }
   }
+
   onTabChange = (key: string) => {
     this.setState({
+      // eslint-disable-next-line react/no-unused-state
       tabKey: key as CenterState['tabKey'],
     });
   };
@@ -91,7 +91,7 @@ class Center extends Component<CenterProps, CenterState> {
 
   saveSignatureInputRef = (input: Input | null) => {
     this.signatureInput = input;
-  }
+  };
 
   handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ inputValue: e.target.value });
@@ -100,25 +100,26 @@ class Center extends Component<CenterProps, CenterState> {
   signatureInputConfirm = () => {
     const { dispatch } = this.props;
     let text: string = this.signatureInput && this.signatureInput.state.value;
-    if (text)
-      text = text.trim();
+    if (text) text = text.trim();
     dispatch({
       type: 'accountCenter/editSignature',
       payload: {
         text: text || '',
       },
-    })
+    });
     this.setState({
       signatureInputVisible: false,
     });
-  }
+  };
 
   handleInputConfirm = () => {
     const { state } = this;
     let { inputValue } = state;
     const { dispatch } = this.props;
-    const { currentUser: { personnel } } = this.props;
-    let { tags } = personnel;
+    const {
+      currentUser: { personnel },
+    } = this.props;
+    const { tags } = personnel;
     inputValue = inputValue && inputValue.trim();
     if (inputValue && tags.filter((tag: any) => tag.label === inputValue).length === 0) {
       dispatch({
@@ -126,7 +127,7 @@ class Center extends Component<CenterProps, CenterState> {
         payload: {
           label: inputValue,
         },
-      })
+      });
     }
     this.setState({
       inputVisible: false,
@@ -141,54 +142,57 @@ class Center extends Component<CenterProps, CenterState> {
       payload: {
         label,
       },
-    })
-  }
+    });
+  };
 
   renderChildrenByTabKey = (tabKey: CenterState['tabKey'], userid: string) => {
     if (tabKey === 'userOperateLog') {
       const params: DetailGridPrpos = {
-        moduleName: "FUseroperatelog",
-        parentOperateType: "display",
+        moduleName: 'FUseroperatelog',
+        parentOperateType: 'display',
         enableUserFilter: true,
         parentFilter: {
-          moduleName: "FUser",           // 父模块名称
-          fieldahead: "FUser",           // 子模块到父模块的路径
-          fieldName: "userid",           // 子模块中的关联？
-          fieldtitle: "系统用户",
-          operator: "=",
+          moduleName: 'FUser', // 父模块名称
+          fieldahead: 'FUser', // 子模块到父模块的路径
+          fieldName: 'userid', // 子模块中的关联？
+          fieldtitle: '系统用户',
+          operator: '=',
           fieldvalue: currentUser.userid || '',
-          text: '我的操作日志'
-        }
-      }
-      return <DetailGrid {...params} key="userOperateLog" />
+          text: '我的操作日志',
+        },
+      };
+      return <DetailGrid {...params} key="userOperateLog" />;
     }
     if (tabKey === 'userLimits') {
-      return <DisplayUserLimits userid={userid} />
+      return <DisplayUserLimits userid={userid} />;
     }
     if (tabKey === 'userLoginLog') {
       const params: DetailGridPrpos = {
-        moduleName: "FUserloginlog",
-        parentOperateType: "display",
+        moduleName: 'FUserloginlog',
+        parentOperateType: 'display',
         enableUserFilter: true,
         parentFilter: {
-          moduleName: "FUser",           // 父模块名称
-          fieldahead: "FUser",           // 子模块到父模块的路径
-          fieldName: "userid",           // 子模块中的关联？
-          fieldtitle: "系统用户",
-          operator: "=",
+          moduleName: 'FUser', // 父模块名称
+          fieldahead: 'FUser', // 子模块到父模块的路径
+          fieldName: 'userid', // 子模块中的关联？
+          fieldtitle: '系统用户',
+          operator: '=',
           fieldvalue: currentUser.userid || '',
-          text: '我的登录日志'
-        }
-      }
-      return <DetailGrid {...params} key="userLoginLog" />
+          text: '我的登录日志',
+        },
+      };
+      return <DetailGrid {...params} key="userLoginLog" />;
     }
     return null;
   };
 
   render() {
     const { inputVisible, inputValue, signatureInputVisible } = this.state;
-    const { currentUser, currentUserLoading, userid } = this.props;
-    const { personnel, user } = currentUser;
+    const {
+      currentUser: { personnel, user },
+      currentUserLoading,
+      userid,
+    } = this.props;
     const dataLoading = currentUserLoading || !(personnel && Object.keys(personnel).length);
     return (
       <GridContent>
@@ -198,13 +202,15 @@ class Center extends Component<CenterProps, CenterState> {
               {!dataLoading ? (
                 <div>
                   <div className={styles.avatarHolder}>
-                    <img alt="用户头像"
+                    <img
+                      alt="用户头像"
                       src="/api/platform/systemframe/getuserfavicon.do"
-                      style={{ borderRadius: '50%' }} />
+                      style={{ borderRadius: '50%' }}
+                    />
                     <div className={styles.name}>{personnel.name}</div>
                     {signatureInputVisible ? (
                       <Input
-                        ref={ref => this.saveSignatureInputRef(ref)}
+                        ref={(ref) => this.saveSignatureInputRef(ref)}
                         type="text"
                         size="small"
                         style={{ width: '80%' }}
@@ -213,11 +219,18 @@ class Center extends Component<CenterProps, CenterState> {
                         onBlur={this.signatureInputConfirm}
                         onPressEnter={this.signatureInputConfirm}
                       />
-                    ) : <div onClick={() => {
-                      this.setState({ signatureInputVisible: true },
-                        () => this.signatureInput && this.signatureInput.focus())
-                    }}>{personnel.signature ? personnel.signature : '上善若水，厚德载物'}</div>}
-
+                    ) : (
+                      <div
+                        onClick={() => {
+                          this.setState(
+                            { signatureInputVisible: true },
+                            () => this.signatureInput && this.signatureInput.focus(),
+                          );
+                        }}
+                      >
+                        {personnel.signature ? personnel.signature : '上善若水，厚德载物'}
+                      </div>
+                    )}
                   </div>
                   <div className={styles.detail}>
                     <p>
@@ -237,14 +250,13 @@ class Center extends Component<CenterProps, CenterState> {
                   <div className={styles.tags}>
                     <div className={styles.tagsTitle}>个人标签</div>
                     {personnel.tags.map((item: any) => (
-                      <Tag key={item.key} closable
-                        onClose={() => this.removeTag(item.label)}>
+                      <Tag key={item.key} closable onClose={() => this.removeTag(item.label)}>
                         {item.label}
                       </Tag>
                     ))}
                     {inputVisible && (
                       <Input
-                        ref={ref => this.saveInputRef(ref)}
+                        ref={(ref) => this.saveInputRef(ref)}
                         type="text"
                         size="small"
                         style={{ width: 78 }}
@@ -256,10 +268,7 @@ class Center extends Component<CenterProps, CenterState> {
                       />
                     )}
                     {!inputVisible && (
-                      <Tag
-                        onClick={this.showInput}
-                        style={{ borderStyle: 'dashed' }}
-                      >
+                      <Tag onClick={this.showInput} style={{ borderStyle: 'dashed' }}>
                         <PlusOutlined />
                       </Tag>
                     )}
@@ -284,9 +293,11 @@ class Center extends Component<CenterProps, CenterState> {
           <Col lg={18} md={24}>
             <Card>
               <Tabs centered>
-                {operationTabList.map((tab) => <TabPane key={tab.key} tab={tab.tab}>
-                  {this.renderChildrenByTabKey(tab.key as CenterState['tabKey'], userid)}
-                </TabPane>)}
+                {operationTabList.map((tab) => (
+                  <TabPane key={tab.key} tab={tab.tab}>
+                    {this.renderChildrenByTabKey(tab.key as CenterState['tabKey'], userid)}
+                  </TabPane>
+                ))}
               </Tabs>
             </Card>
           </Col>
@@ -304,7 +315,7 @@ export default connect(
   }: {
     loading: { effects: { [key: string]: boolean } };
     accountCenter: ModalState;
-    user: any,
+    user: any;
   }) => ({
     userid: user.currentUser.userid,
     currentUser: accountCenter.currentUser,
