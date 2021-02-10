@@ -2,9 +2,14 @@ import { Avatar, List, Spin } from 'antd';
 
 import React from 'react';
 import classNames from 'classnames';
+import {
+  CloseCircleFilled,
+  InfoCircleFilled,
+  QuestionCircleFilled,
+  WarningFilled,
+} from '@ant-design/icons';
 import { NoticeIconData } from './index';
 import styles from './NoticeList.less';
-import { CloseCircleFilled, InfoCircleFilled, QuestionCircleFilled, WarningFilled } from '@ant-design/icons';
 
 export interface NoticeIconTabProps {
   loading?: boolean;
@@ -30,34 +35,31 @@ export interface NoticeIconTabProps {
 const NoticeList: React.SFC<NoticeIconTabProps> = ({
   data = [],
   onClick,
-  onClear,
+  // onClear,
   onRefresh,
   refreshText,
   showRefresh = true,
   title,
   onViewMore,
   emptyText,
-  showClear = true,
-  clearText,
+  // showClear = true,
+  // clearText,
   viewMoreText,
   showViewMore = false,
   loading,
 }) => {
   if (!data || data.length === 0) {
     return (
-      <Spin spinning={loading} >
+      <Spin spinning={loading}>
         <div className={styles.notFound}>
-          <img
-            src="/empty_image.svg"
-            alt="not found"
-          />
+          <img src="/empty_image.svg" alt="not found" />
           <div>{emptyText}</div>
         </div>
       </Spin>
     );
   }
   return (
-    <Spin spinning={loading} >
+    <Spin spinning={loading}>
       <List<NoticeIconData>
         className={styles.list}
         dataSource={data}
@@ -66,19 +68,19 @@ const NoticeList: React.SFC<NoticeIconTabProps> = ({
             [styles.read]: item.read,
           });
           // eslint-disable-next-line no-nested-ternary
-          let avatar = item.avatar;
-          if (avatar == 'warning') avatar = <WarningFilled style={{ color: '#fadb14' }} />;
-          if (avatar == 'info') avatar = <InfoCircleFilled style={{ color: '#1890ff' }} />;
-          if (avatar == 'error') avatar = <CloseCircleFilled style={{ color: '#f5222d' }} />;
-          if (avatar == 'question') avatar = <QuestionCircleFilled style={{ color: '#fa8c16' }} />;
-          const leftIcon = avatar ? (
-            typeof avatar === 'string' ? (
-              <Avatar className={styles.avatar} src={avatar} />
-            ) : (
+          let { avatar } = item;
+          if (avatar === 'warning') avatar = <WarningFilled style={{ color: '#fadb14' }} />;
+          if (avatar === 'info') avatar = <InfoCircleFilled style={{ color: '#1890ff' }} />;
+          if (avatar === 'error') avatar = <CloseCircleFilled style={{ color: '#f5222d' }} />;
+          if (avatar === 'question') avatar = <QuestionCircleFilled style={{ color: '#fa8c16' }} />;
+          let leftIcon = null;
+          if (avatar)
+            leftIcon =
+              typeof avatar === 'string' ? (
+                <Avatar className={styles.avatar} src={avatar} />
+              ) : (
                 <span className={styles.iconElement}>{avatar}</span>
-              )
-          ) : null;
-
+              );
           return (
             <List.Item
               className={itemCls}

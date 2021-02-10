@@ -17,9 +17,7 @@
     "lint-staged": "lint-staged",
     "lint-staged:js": "eslint --ext .js,.jsx,.ts,.tsx ",
     "lint:fix": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src && npm run lint:style",
-   
-    "lint:fix1": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src/pages/datamining/condition && npm run lint:style",
-
+    "lint:fix1": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src/components",
     "lint:js": "eslint --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src",
     "lint:prettier": "prettier --check \"**/*\" --end-of-line auto",
     "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
@@ -63,6 +61,7 @@
     "bpmn-js": "^7.3.0",
     "bpmn-js-properties-panel": "^0.35.0",
     "classnames": "^2.2.6",
+    "dva": "^2.6.0-beta.22",
     "font-awesome": "^4.7.0",
     "immutability-helper": "^3.1.1",
     "lodash": "^4.17.11",

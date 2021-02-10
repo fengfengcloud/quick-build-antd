@@ -4,12 +4,12 @@ import { Tag, message } from 'antd';
 import groupBy from 'lodash/groupBy';
 import moment from 'moment';
 import { NoticeItem } from '@/models/global';
-import { currentUser, CurrentUser } from '@/models/user';
+import { currentUser as currUser, CurrentUser } from '@/models/user';
 import { ConnectState } from '@/models/connect';
-import NoticeIcon from '../NoticeIcon';
-import styles from './index.less';
 import { ParentFilterModal } from '@/pages/module/data';
 import { getModuleUrlFormSysMenu } from '@/layouts/BasicLayout';
+import NoticeIcon from '../NoticeIcon';
+import styles from './index.less';
 
 export interface GlobalHeaderRightProps extends Partial<ConnectProps> {
   notices?: NoticeItem[];
@@ -19,18 +19,18 @@ export interface GlobalHeaderRightProps extends Partial<ConnectProps> {
   onNoticeClear?: (tabName?: string) => void;
 }
 
-let dispatch_: any = null;
+let noticeDispatch: any = null;
 export const refreshNotices = () => {
-  dispatch_({
+  noticeDispatch({
     type: 'global/fetchNotices',
   });
-}
+};
 
 class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   componentDidMount() {
     const { dispatch } = this.props;
     if (dispatch) {
-      dispatch_ = dispatch;
+      noticeDispatch = dispatch;
       dispatch({
         type: 'global/fetchNotices',
       });
@@ -127,60 +127,60 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   pushApprove = (item: NoticeItem) => {
     const { moduleName = '' } = item;
     const parentFilter: ParentFilterModal = {
-      moduleName: moduleName,
+      moduleName,
       fieldahead: null,
       fieldName: 'actAssignee',
       fieldtitle: '我可以审批的记录',
       operator: '=',
-      fieldvalue: currentUser?.userid || '',
+      fieldvalue: currUser.userid || '',
       text: '',
-    }
+    };
     this.pushModuleWithParentFilter(moduleName, parentFilter);
-  }
+  };
 
   //  // 打开我可以接受的模块，加入条件限定
   pushClaim = (item: NoticeItem) => {
     const { moduleName = '' } = item;
     const parentFilter: ParentFilterModal = {
-      moduleName: moduleName,
+      moduleName,
       fieldahead: null,
       fieldName: 'actCandidate',
       fieldtitle: '我可以接受任务的记录',
       operator: 'like',
-      fieldvalue: currentUser?.userid || '',
+      fieldvalue: currUser.userid || '',
       text: '',
-    }
+    };
     this.pushModuleWithParentFilter(moduleName, parentFilter);
-  }
+  };
 
   // 打开我可以审核的模块，加入条件限定
   pushAudit = (item: NoticeItem) => {
     const { moduleName = '' } = item;
     const parentFilter: ParentFilterModal = {
-      moduleName: moduleName,
+      moduleName,
       fieldahead: null,
       fieldName: 'canAuditingUserid',
       fieldtitle: '我可以审核的记录',
       operator: '=',
-      fieldvalue: currentUser?.userid || '',
+      fieldvalue: currUser.userid || '',
       text: '',
-    }
+    };
     this.pushModuleWithParentFilter(moduleName, parentFilter);
-  }
+  };
 
   pushQuestionModule = (item: NoticeItem) => {
     const { moduleName = '' } = item;
     const parentFilter: ParentFilterModal = {
-      moduleName: moduleName,
+      moduleName,
       fieldahead: null,
       fieldName: item.filterFieldName || '',
       fieldtitle: item.filterText || '',
       operator: item.filterFieldOperator || '',
       fieldvalue: item.filterFieldValue || '',
       text: '',
-    }
+    };
     this.pushModuleWithParentFilter(moduleName, parentFilter);
-  }
+  };
 
   // 打开一个模块加上限定条件
   pushModuleWithParentFilter = (moduleName: string, pf: ParentFilterModal) => {
@@ -189,32 +189,29 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
     history.push({
       pathname,
       state: {
-        parentFilter: parentFilterParam
-      }
+        parentFilter: parentFilterParam,
+      },
     });
-  }
+  };
 
   render() {
-    const { currentUser, fetchingNotices, onNoticeVisibleChange } = this.props;
+    const { currentUser: user, fetchingNotices, onNoticeVisibleChange } = this.props;
     const noticeData = this.getNoticeData();
     const unreadMsg = this.getUnreadData(noticeData);
     return (
       <NoticeIcon
         className={styles.action}
-        count={currentUser && currentUser.unreadCount}
+        count={user && user.unreadCount}
         onItemClick={(item_) => {
           const item = item_ as NoticeItem;
-          if (item.type == 'event') {
-            if (item.action == 'approve')
-              this.pushApprove(item);
-            else if (item.action == 'claim')
-              this.pushClaim(item);
-            else if (item.action == 'audit')
-              this.pushAudit(item);
-          } else if (item.type == 'question') {
+          if (item.type === 'event') {
+            if (item.action === 'approve') this.pushApprove(item);
+            else if (item.action === 'claim') this.pushClaim(item);
+            else if (item.action === 'audit') this.pushAudit(item);
+          } else if (item.type === 'question') {
             this.pushQuestionModule(item);
           }
-          //this.changeReadState(item);
+          // this.changeReadState(item);
         }}
         loading={fetchingNotices}
         clearText="清空"
@@ -248,7 +245,6 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
           emptyText="您已读完所有通知消息"
           showViewMore
         />
-
       </NoticeIcon>
     );
   }

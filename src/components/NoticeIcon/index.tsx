@@ -3,11 +3,11 @@ import { Badge, Tabs } from 'antd';
 import useMergeValue from 'use-merge-value';
 import React from 'react';
 import classNames from 'classnames';
+import { TextValue } from '@/pages/module/data';
 import NoticeList, { NoticeIconTabProps } from './NoticeList';
 
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
-import { TextValue } from '@/pages/module/data';
 
 const { TabPane } = Tabs;
 
@@ -31,7 +31,6 @@ export interface NoticeIconData {
   filterFieldOperator?: string;
   filterFieldValue?: string;
   filterText?: string;
-
 }
 
 export interface NoticeIconProps {
@@ -82,7 +81,9 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
       const { list, title, count, tabKey, showClear, showViewMore } = child.props;
       let len = 0;
       if (list && list.length) {
-        list.map((rec) => len = len + (rec.count || 0));
+        list.forEach((rec) => {
+          len += rec.count || 0;
+        });
       }
       const msgCount = count || count === 0 ? count : len;
       const tabTitle: string = msgCount > 0 ? `${title} (${msgCount})` : title;

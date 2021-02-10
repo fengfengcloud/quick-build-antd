@@ -13,6 +13,37 @@ export interface GlobalHeaderRightProps extends Partial<ConnectProps> {
 }
 
 class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
+  componentDidMount() {
+    const { currentUser } = this.props;
+    if (currentUser && currentUser.needResetPassword)
+      notification.warning({
+        key: 'notification_change_password',
+        top: 66,
+        style: { width: '450px' },
+        duration: null,
+        message: '您的密码需要修改',
+        description:
+          '由于您的密码是初始密码或者过于简单，为了保证帐号的安全性，' +
+          '请在“个人设置--安全设置--修改”中进行密码的修改，密码等级要求为中以上。',
+        btn: (
+          <Button
+            type="primary"
+            onClick={() => {
+              notification.close('notification_change_password');
+              history.push({
+                pathname: '/account/settings',
+                state: {
+                  type: 'security',
+                },
+              });
+            }}
+          >
+            立即去修改
+          </Button>
+        ),
+      });
+  }
+
   onMenuClick = (event: any) => {
     const { key } = event;
     if (key === 'logout') {
@@ -26,30 +57,6 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
     }
     history.push(`/account/${key}`);
   };
-
-  componentDidMount() {
-    const { currentUser } = this.props;
-    if (currentUser?.needResetPassword)
-      notification.warning({
-        key: 'notification_change_password',
-        top: 66,
-        style: { width: '450px' },
-        duration: null,
-        message: '您的密码需要修改',
-        description:
-          '由于您的密码是初始密码或者过于简单，为了保证帐号的安全性，' +
-          '请在“个人设置--安全设置--修改”中进行密码的修改，密码等级要求为中以上。',
-        btn: <Button type="primary" onClick={() => {
-          notification.close('notification_change_password');
-          history.push({
-            pathname: '/account/settings',
-            state: {
-              type: 'security'
-            }
-          });
-        }}>立即去修改</Button>
-      });
-  }
 
   render(): React.ReactNode {
     const {
@@ -83,13 +90,18 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
     return currentUser && currentUser.username ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>
-          <Avatar size="small" className={styles.avatar} src="/api/platform/systemframe/getuserfavicon.do" alt="avatar" />
+          <Avatar
+            size="small"
+            className={styles.avatar}
+            src="/api/platform/systemframe/getuserfavicon.do"
+            alt="avatar"
+          />
           <span className={styles.name}>{currentUser.username}</span>
         </span>
       </HeaderDropdown>
     ) : (
-        <Spin size="small" style={{ marginLeft: 8, marginRight: 8 }} />
-      );
+      <Spin size="small" style={{ marginLeft: 8, marginRight: 8 }} />
+    );
   }
 }
 
