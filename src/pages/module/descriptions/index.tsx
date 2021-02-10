@@ -20,7 +20,7 @@ import { DrawerRecordPdfScheme } from '../toolbar/export/DrawerRecordPdfScheme';
 import ProgressField from '../form/field/ProgressField';
 import { isAudited } from '../audit/utils';
 import { execPrintRecordScheme } from '../toolbar/export/PrintRecordScheme';
-import { Audit_Finished, Audit_Waititng } from '../constants';
+import { AuditFinished, AuditWaititng } from '../constants';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -200,7 +200,7 @@ const Description = ({ moduleInfo, record, dispatch, disableTitle, setVisible, i
                     : null
                 }
                 {moduleInfo.moduleLimit.hasaudit && record[primarykey] ? !isAudited(record) ?
-                    Audit_Waititng : Audit_Finished : null
+                    AuditWaititng : AuditFinished : null
                 }
             </Space>
         }

@@ -4,6 +4,8 @@ import { CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icon
 
 
 
-export const Audit_Waititng = <Tag icon={<ExclamationCircleOutlined />} color="warning">未审核</Tag>;
+export const NAME = 'name';
 
-export const Audit_Finished = <Tag icon={<CheckCircleOutlined />} color="success">已审核</Tag>;
+export const AuditWaititng = <Tag icon={<ExclamationCircleOutlined />} color="warning">未审核</Tag>;
+
+export const AuditFinished = <Tag icon={<CheckCircleOutlined />} color="success">已审核</Tag>;

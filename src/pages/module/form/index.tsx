@@ -24,7 +24,7 @@ import { DrawerRecordPdfScheme } from '../toolbar/export/DrawerRecordPdfScheme';
 import { isAudited, canAudited, canCancelAudited, auditRecord, cancelAudit } from '../audit/utils';
 import { businessActionButtons } from '../additionalAction/businessAction';
 import { execPrintRecordScheme } from '../toolbar/export/PrintRecordScheme';
-import { Audit_Finished, Audit_Waititng } from '../constants';
+import { AuditFinished, AuditWaititng } from '../constants';
 
 interface ModuleFormProps {
     moduleInfo: ModuleModal,
@@ -118,7 +118,7 @@ const ModuleForm: React.FC<ModuleFormProps> = ({ moduleInfo, moduleState, dispat
                 : null
             }
             {moduleInfo.moduleLimit.hasaudit && currRecord[primarykey] ? !isAudited(currRecord) ?
-                 Audit_Waititng : Audit_Finished : null
+                 AuditWaititng : AuditFinished : null
             }
         </Space >
     }

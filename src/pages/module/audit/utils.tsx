@@ -1,12 +1,17 @@
 import React from 'react';
 import { Dispatch } from 'redux';
-import { ModuleModal, ModuleState } from '../data';
-import { getModuleInfo } from '../modules';
 import { currentUser } from 'umi';
 import { Card, message, Modal, Popconfirm, Popover, Space, Steps, Tooltip } from 'antd';
 import { CheckCircleOutlined, CheckOutlined, InfoCircleOutlined, QuestionCircleOutlined, UndoOutlined } from '@ant-design/icons';
 import { deleteSecond, showResultInfo } from '@/utils/utils';
 import request from '@/utils/request';
+import { ModuleModal, ModuleState } from '../data';
+import { getModuleInfo } from '../modules';
+
+const AUDITINGDATE = 'auditingDate';
+const AUDITINGNAME = 'auditingName';
+const AUDITINGUSERID = 'auditingUserid';
+const AUDITINGREMARK = 'auditingRemark';
 
 interface AuditRenderProps {
     moduleState: ModuleState,
@@ -20,17 +25,17 @@ interface AuditRenderProps {
 
 // 是否审核过了
 export const isAudited = (record: any) => {
-    return !!record['auditingDate'];
+    return !!record[AUDITINGDATE];
 }
 
 // 当前用户可以审核
 export const canAudited = (record: any) => {
-    return !isAudited(record) && (record['auditingUserid'] === currentUser.userid);
+    return !isAudited(record) && (record[AUDITINGUSERID] === currentUser.userid);
 }
 
 // 当前用户可以取消审核
 export const canCancelAudited = (record: any) => {
-    return isAudited(record) && (record['auditingUserid'] === currentUser.userid);
+    return isAudited(record) && (record[AUDITINGUSERID] === currentUser.userid);
 }
 
 /**
@@ -64,21 +69,19 @@ const getAuditIconClass = (record: any): string => {
     if (!isAudited(record)) {
         if (canAudited(record))
             return 'approveaction x-fa fa-pencil fa-fw';      // 可以启动
-        else
-            return 'actionyellow x-fa fa-exclamation-triangle fa-fw'        //不能启动
-    } else
-        return 'actionblue x-fa fa-check fa-fw'
+        return 'actionyellow x-fa fa-exclamation-triangle fa-fw'        // 不能启动
+    }
+    return 'actionblue x-fa fa-check fa-fw'
 }
-
 
 /**
  * 尚未启动审批流程的，可以启动与不能启动流程的二种情况
  * @param param0 
  */
-const getCanStartPopover = ({ moduleState, moduleInfo, record, className, dispatch }:
-    { moduleState: ModuleState, moduleInfo: ModuleModal, record: any, className: string, dispatch: Dispatch }) => {
+const getCanStartPopover = ({ moduleState, record, className, dispatch }:
+    { moduleState: ModuleState, record: any, className: string, dispatch: Dispatch }) => {
     const state = '未审核';
-    const doAudit = () => executeAudit(moduleState, record, dispatch); //startProcess(moduleInfo, record, dispatch);
+    const doAudit = () => executeAudit(moduleState, record, dispatch);
     return canAudited(record) ?
         <Popover content={
             <span>{state}
@@ -86,12 +89,12 @@ const getCanStartPopover = ({ moduleState, moduleInfo, record, className, dispat
                     <a onClick={doAudit}>现在审核</a>
                 </span>
             </span>}>
-            <a onClick={doAudit}><span className={className} ></span></a >
+            <a onClick={doAudit}><span className={className} /></a >
         </Popover> :
         <Popover placement="rightTop" trigger='hover'
             content={<>{state}
-                <span style={{ marginLeft: '12px' }}>{`正在等待 ${record['auditingName']} 进行审核`}</span></>}>
-            <span className={className}></span >
+                <span style={{ marginLeft: '12px' }}>{`正在等待 ${record[AUDITINGNAME]} 进行审核`}</span></>}>
+            <span className={className} />
         </Popover >
 }
 
@@ -104,7 +107,7 @@ export const auditRecord = (record: any, moduleInfo: ModuleModal, dispatch: Disp
         }
     }).then((response) => {
         if (response.success) {
-            message.success(record[moduleInfo.namefield] + ' 已审核！');
+            message.success(`${record[moduleInfo.namefield]} 已审核！`);
             showResultInfo(response.resultInfo);
             dispatch({
                 type: 'modules/refreshRecord',
@@ -116,8 +119,10 @@ export const auditRecord = (record: any, moduleInfo: ModuleModal, dispatch: Disp
         } else {
             Modal.warning({
                 okText: '知道了',
-                title: record[moduleInfo.namefield] + ' 审核失败',
-                content: <span dangerouslySetInnerHTML={{ __html: response.msg }}></span>,
+                title: `${record[moduleInfo.namefield]} 审核失败`,
+                /* eslint-disable */
+                content: <span dangerouslySetInnerHTML={{ __html: response.msg }} />,
+                /* eslint-enable */
             });
         }
     })
@@ -132,7 +137,7 @@ export const cancelAudit = (record: any, moduleInfo: ModuleModal, dispatch: Disp
         }
     }).then((response) => {
         if (response.success) {
-            message.success(record[moduleInfo.namefield] + ' 的审核已取消！');
+            message.success(`${record[moduleInfo.namefield]} 的审核已取消！`);
             showResultInfo(response.resultInfo);
             dispatch({
                 type: 'modules/refreshRecord',
@@ -144,31 +149,32 @@ export const cancelAudit = (record: any, moduleInfo: ModuleModal, dispatch: Disp
         } else {
             Modal.warning({
                 okText: '知道了',
-                title: record[moduleInfo.namefield] + ' 取消审核失败',
-                content: <span dangerouslySetInnerHTML={{ __html: response.msg }}></span>,
+                title: `${record[moduleInfo.namefield]} 取消审核失败`,
+                /* eslint-disable */
+                content: <span dangerouslySetInnerHTML={{ __html: response.msg }} />,
+                /* eslint-enable */
             });
         }
     })
 }
 
-const MAXTITLELENGTH = 30;          //审批内容的最大长度，超出之后显示一个tooltip
+const MAXTITLELENGTH = 30;          // 审批内容的最大长度，超出之后显示一个tooltip
 
 /**
  * 审核的字段
  * @param param0 
  */
-export const auditRenderer: React.FC<AuditRenderProps> = ({ value = [], record,
-    moduleState, dispatch, isLink = true, readonly = false }) => {
+export const auditRenderer: React.FC<AuditRenderProps> = ({ record, moduleState, dispatch, }) => {
     if (!record) return null;
     const { moduleName } = moduleState;
     const moduleInfo = getModuleInfo(moduleName);
     const className = getAuditIconClass(record);
-    const text = "『" + record[moduleInfo.namefield] + '』';
+    const text = `『${record[moduleInfo.namefield]}』`;
     // 流程还没有启动
     if (!isAudited(record)) {
-        return getCanStartPopover({ moduleState, moduleInfo, record, className, dispatch });
+        return getCanStartPopover({ moduleState, record, className, dispatch });
     }
-    const remark = record['auditingRemark'];
+    const remark = record[AUDITINGREMARK];
     const tips = (
         <Card title={<><CheckCircleOutlined /> 审核信息</>}
             extra={<Space>
@@ -176,7 +182,7 @@ export const auditRenderer: React.FC<AuditRenderProps> = ({ value = [], record,
                     <Tooltip title="取消审核" placement="bottom">
                         <Popconfirm
                             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                            title={'要取消 ' + text + ' 的审核吗?'}
+                            title={`要取消 ${text} 的审核吗?`}
                             onConfirm={() => cancelAudit(record, moduleInfo, dispatch)}
                         >
                             <UndoOutlined />
@@ -185,11 +191,11 @@ export const auditRenderer: React.FC<AuditRenderProps> = ({ value = [], record,
             </Space>}
         >
             <Steps size="small" key="audit_info" direction="vertical" >
-                <Steps.Step title='已审核' key="audit_finished"
+                <Steps.Step title='已审核' key="AuditFinished"
                     icon={<CheckCircleOutlined />}
                     status='finish'
                     description={<span>
-                        {record['auditingName'] + '(' + deleteSecond(record['auditingDate']) + ')'}
+                        {`${record[AUDITINGNAME]}(${deleteSecond(record[AUDITINGDATE])})`}
                         <br />
                         {remark && remark.length > MAXTITLELENGTH ?
                             <Tooltip title={remark}>
