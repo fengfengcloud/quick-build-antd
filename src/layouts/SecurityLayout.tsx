@@ -40,8 +40,12 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
       redirect: window.location.href,
     });
     if ((!currentUser.userid && loading) || !isReady) {
-      return <div style={{textAlign : 'center' , padding : '50px'}}><Spin /></div>
-      //<PageLoading />;
+      return (
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <Spin />
+        </div>
+      );
+      // <PageLoading />;
     }
     if (!currentUser.userid) {
       return <Redirect to={`/user/login?${queryString}`} />;

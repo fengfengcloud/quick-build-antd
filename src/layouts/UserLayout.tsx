@@ -3,9 +3,9 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useIntl, ConnectProps, connect } from 'umi';
 import React, { useEffect } from 'react';
 import { ConnectState } from '@/models/connect';
+import { SystemInfo } from '@/models/systeminfo';
 import { footerRender } from './BasicLayout';
 import styles from './UserLayout.less';
-import { SystemInfo } from '@/models/systeminfo';
 
 export interface UserLayoutProps extends Partial<ConnectProps> {
   breadcrumbNameMap: {
@@ -19,7 +19,7 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
     route = {
       routes: [],
     },
-    dispatch = () => { },
+    dispatch = () => {},
     systemInfo,
   } = props;
   const { routes = [] } = route;
@@ -50,7 +50,7 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
         },
       });
     }
-  })
+  });
 
   return (
     <HelmetProvider>
@@ -69,13 +69,13 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
           </div>
           {children}
         </div>
-        <div style={{ marginBottom: 30 }}>
-          {footerRender(props)}
-        </div>
+        <div style={{ marginBottom: 30 }}>{footerRender(props)}</div>
       </div>
     </HelmetProvider>
   );
 };
 
-export default connect(({ settings, systemInfo }: ConnectState) =>
-  ({ ...settings, ...systemInfo }))(UserLayout);
+export default connect(({ settings, systemInfo }: ConnectState) => ({
+  ...settings,
+  ...systemInfo,
+}))(UserLayout);
