@@ -6,12 +6,12 @@ import {
 } from '@ant-design/icons';
 // https://github.com/Caldis/react-zmage
 import Zmage from 'react-zmage';
+import { Dispatch } from 'redux';
+import { apply, getLastLevelLabel } from '@/utils/utils';
 import { ModuleModal, ModuleFieldType } from '../data';
 import { fetchObjectRecord, downloadRecordExcel, fetchObjectRecordSync } from '../service';
 import { getModuleInfo, addParentAdditionField, getFieldDefine, } from '../modules';
 import { AttachemntRenderer } from '../attachment/utils';
-import { Dispatch } from 'redux';
-import { apply, getLastLevelLabel } from '@/utils/utils';
 import styles from './index.less';
 import { getModuleNameFromOneToMany } from '../moduleUtils';
 import { isStartProcess, getApproveSteps, getApproveIconClass } from '../approve/utils';
@@ -45,8 +45,8 @@ const getAttachmentButton = ({ moduleInfo, record, dispatch }:
         return <AttachemntRenderer value={record?.attachmentdata} record={record} _recno={0}
             moduleInfo={moduleInfo} dispatch={dispatch} isLink={false} readonly
             key={'_attachment_button_'} />
-    } else
-        return null;
+    }
+    return null;
 }
 
 /**
