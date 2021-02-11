@@ -58,7 +58,7 @@ const getFormItemOptions = ({
   return options;
 };
 
-const LoginItem: React.FC<LoginItemProps> = props => {
+const LoginItem: React.FC<LoginItemProps> = (props) => {
   const [count, setCount] = useState<number>(props.countDown || 0);
   const [timing, setTiming] = useState(false);
   // 这么写是为了防止restProps中 带入 onChange, defaultValue, rules props tabUtil
@@ -90,7 +90,7 @@ const LoginItem: React.FC<LoginItemProps> = props => {
     const { countDown } = props;
     if (timing) {
       interval = window.setInterval(() => {
-        setCount(preSecond => {
+        setCount((preSecond) => {
           if (preSecond <= 1) {
             setTiming(false);
             clearInterval(interval);
@@ -140,9 +140,9 @@ const LoginItem: React.FC<LoginItemProps> = props => {
       </FormItem>
     );
   }
-  //FormItem中的defaultValue ，要放到Input中才有效，但是还会检测没有值，从antd3转到antd4时的问题
+  // FormItem中的defaultValue ，要放到Input中才有效，但是还会检测没有值，从antd3转到antd4时的问题
   if (customProps && options.defaultValue) {
-    customProps['defaultValue'] = options.defaultValue;
+    customProps.defaultValue = options.defaultValue;
     delete options.defaultValue;
   }
   return (
@@ -154,11 +154,11 @@ const LoginItem: React.FC<LoginItemProps> = props => {
 
 const LoginItems: Partial<LoginItemType> = {};
 
-Object.keys(ItemMap).forEach(key => {
+Object.keys(ItemMap).forEach((key) => {
   const item = ItemMap[key];
   LoginItems[key] = (props: LoginItemProps) => (
     <LoginContext.Consumer>
-      {context => (
+      {(context) => (
         <LoginItem
           customProps={item.props}
           rules={item.rules}

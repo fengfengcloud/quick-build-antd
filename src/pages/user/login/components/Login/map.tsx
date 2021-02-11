@@ -1,15 +1,19 @@
-import { LockTwoTone, MailTwoTone, MobileTwoTone, UserOutlined } from '@ant-design/icons';
 import React from 'react';
+import {
+  LockTwoTone,
+  MailTwoTone,
+  MobileTwoTone,
+  UserOutlined,
+  NumberOutlined,
+} from '@ant-design/icons';
 import styles from './index.less';
-import { NumberOutlined } from '@ant-design/icons';
-import { decryptString } from '@/utils/utils';
 
 export default {
   UserCode: {
     props: {
       size: 'large',
       name: 'usercode',
-      //defaultValue: localStorage.getItem('login-user-code') || undefined,
+      // defaultValue: localStorage.getItem('login-user-code') || undefined,
       prefix: (
         <UserOutlined
           style={{
@@ -32,7 +36,7 @@ export default {
       prefix: <LockTwoTone className={styles.prefixIcon} />,
       type: 'password',
       name: 'password',
-      //defaultValue : decryptString(localStorage.getItem('login-user-password') || ''),
+      // defaultValue : decryptString(localStorage.getItem('login-user-password') || ''),
     },
     rules: [
       {
@@ -45,7 +49,7 @@ export default {
     props: {
       size: 'large',
       id: 'identifingcode',
-      icon : <NumberOutlined />,
+      icon: <NumberOutlined />,
       placeholder: 'identifingcode',
     },
     rules: [

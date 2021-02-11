@@ -1,4 +1,4 @@
-//import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
+// import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
 import { Alert, Checkbox, Row, Col, Button, Popover, Modal, Form } from 'antd';
 import React, { useState } from 'react';
 import { useIntl } from 'umi';
@@ -9,9 +9,9 @@ import { StateType } from '@/models/login';
 import { LoginParamsType } from '@/services/login';
 import { ConnectState } from '@/models/connect';
 import { SystemInfo } from '@/models/systeminfo';
-import LoginFrom from './components/Login';
 import { decryptString } from '@/utils/utils';
 import { WarningOutlined } from '@ant-design/icons';
+import LoginFrom from './components/Login';
 import styles from './style.less';
 
 const { Tab, UserCode, Password, Mobile, Captcha, Submit, IdentifingCode } = LoginFrom;
@@ -39,20 +39,27 @@ const renderMessage = (content: string) => (
   <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />
 );
 
-const Login: React.FC<LoginProps> = props => {
-  const { dispatch, userLogin, submitting,
-    systemInfo: { systeminfo: { forgetpassword = '' } },
-    systemInfo: { loginsettinginfo } } = props;
+const Login: React.FC<LoginProps> = (props) => {
+  const {
+    dispatch,
+    userLogin,
+    submitting,
+    systemInfo: {
+      systeminfo: { forgetpassword = '' },
+    },
+    systemInfo: { loginsettinginfo },
+  } = props;
   const { alwaysneedidentifingcode, needidentifingcode, allowsavepassword } = loginsettinginfo;
 
   const { status, errorcode, type: loginType } = userLogin;
   const [type, setType] = useState<string>('account');
-  const [savePassword, setSavePassword] = useState<boolean>(localStorage.getItem('login-allow-save-pwd') === 'true');
+  const [savePassword, setSavePassword] = useState<boolean>(
+    localStorage.getItem('login-allow-save-pwd') === 'true',
+  );
   const [identifingcodeT] = useState<number>(new Date().getTime());
   const loginValidationCodeId = 'login_validation_code';
 
   const handleSubmit = (values: LoginParamsType) => {
-    const { dispatch } = props;
     dispatch({
       type: 'login/login',
       payload: { ...values, type },
@@ -65,24 +72,32 @@ const Login: React.FC<LoginProps> = props => {
     setSavePassword(e.target.checked);
   };
 
-  const [form] = Form.useForm();  //form为下面LoginFrom的实例
-  const { formatMessage} = useIntl();
+  const [form] = Form.useForm(); // form为下面LoginFrom的实例
+  const { formatMessage } = useIntl();
   return (
     <div className={styles.main}>
-      <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit} from={form}
+      <LoginFrom
+        activeKey={type}
+        onTabChange={setType}
+        onSubmit={handleSubmit}
+        from={form}
         initialValues={{
           usercode: localStorage.getItem('login-user-code') || undefined,
-          password: savePassword ? decryptString(localStorage.getItem('login-user-password') || '')
-            : ''
+          password: savePassword
+            ? decryptString(localStorage.getItem('login-user-password') || '')
+            : '',
         }}
       >
         <Tab key="account" tab={formatMessage({ id: 'user-login.login.tab-login-credentials' })}>
-          {status === 'error' && loginType === 'account' && !submitting && renderMessage(
-            formatMessage({ id: `user-login.login.message-invalid-code-${errorcode}` }),
-          )}
+          {status === 'error' &&
+            loginType === 'account' &&
+            !submitting &&
+            renderMessage(
+              formatMessage({ id: `user-login.login.message-invalid-code-${errorcode}` }),
+            )}
           <UserCode
             name="usercode"
-            //defaultValue={localStorage.getItem('login-user-code') || undefined}   4.x这里无效应该是bug
+            // defaultValue={localStorage.getItem('login-user-code') || undefined}   4.x这里无效应该是bug
             placeholder={formatMessage({ id: 'user-login.login.usercode' })}
             rules={[
               {
@@ -93,7 +108,7 @@ const Login: React.FC<LoginProps> = props => {
           />
           <Password
             name="password"
-            //defaultValue={savePassword ? decryptString(localStorage.getItem('login-user-password') || '')
+            // defaultValue={savePassword ? decryptString(localStorage.getItem('login-user-password') || '')
             //  : ''}  4.x这里无效，应该是bug
             placeholder={formatMessage({ id: 'user-login.login.password' })}
             rules={[
@@ -104,7 +119,8 @@ const Login: React.FC<LoginProps> = props => {
             ]}
           />
 
-          {alwaysneedidentifingcode || (status === 'error' && loginType === 'account' && needidentifingcode) ?
+          {alwaysneedidentifingcode ||
+          (status === 'error' && loginType === 'account' && needidentifingcode) ? (
             <Row>
               <Col span={9}>
                 <IdentifingCode
@@ -120,38 +136,58 @@ const Login: React.FC<LoginProps> = props => {
                       message: formatMessage({ id: 'user-login.verification-code.max4' }),
                     },
                   ]}
-                /></Col>
-              <Col span={7}><img id={loginValidationCodeId}
-                style={{ height: '38px', width: '100px', paddingLeft: 10 }}
-                src={`/api/login/validatecode.do?t=${identifingcodeT}`} />
+                />
+              </Col>
+              <Col span={7}>
+                <img
+                  id={loginValidationCodeId}
+                  alt=""
+                  style={{ height: '38px', width: '100px', paddingLeft: 10 }}
+                  src={`/api/login/validatecode.do?t=${identifingcodeT}`}
+                />
               </Col>
               <Col span={6}>
-                <Button type="link"
-                  onClick={
-                    () => {
-                      const node: any = document.getElementById(loginValidationCodeId);
-                      node.src = `/api/login/validatecode.do?t=${new Date().getTime()}`
-                    }}>
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const node: any = document.getElementById(loginValidationCodeId);
+                    node.src = `/api/login/validatecode.do?t=${new Date().getTime()}`;
+                  }}
+                >
                   换一张
                 </Button>
               </Col>
-            </Row> : null
-          }
+            </Row>
+          ) : null}
           <div>
-            <Checkbox checked={savePassword} onChange={changeSavePassword}
-              style={{ visibility: allowsavepassword ? 'visible' : 'hidden' }} >
-              {formatMessage( {id:"user-login.login.remember-password"})}
+            <Checkbox
+              checked={savePassword}
+              onChange={changeSavePassword}
+              style={{ visibility: allowsavepassword ? 'visible' : 'hidden' }}
+            >
+              {formatMessage({ id: 'user-login.login.remember-password' })}
             </Checkbox>
-            <Popover trigger="click" content={
-              <div style={{ padding: 5 }} dangerouslySetInnerHTML={{ __html: forgetpassword }} />}
-              title={<div><WarningOutlined style={{ color: 'red' }} />
-                {` ${formatMessage({ id: 'user-login.login.forgot-password' })}?`}</div>} >
+            <Popover
+              trigger="click"
+              content={
+                <div
+                  style={{ padding: 5 }}
+                  // eslint-disable-next-line
+                  dangerouslySetInnerHTML={{ __html: forgetpassword }}
+                />
+              }
+              title={
+                <div>
+                  <WarningOutlined style={{ color: 'red' }} />
+                  {` ${formatMessage({ id: 'user-login.login.forgot-password' })}?`}
+                </div>
+              }
+            >
               <a style={{ float: 'right' }} href="">
-              {formatMessage( {id:"user-login.login.forgot-password"})}
+                {formatMessage({ id: 'user-login.login.forgot-password' })}
               </a>
             </Popover>
           </div>
-
         </Tab>
         <Tab key="mobile" tab="手机号登录" disabled>
           {status === 'error' && loginType === 'mobile' && !submitting && (
@@ -223,12 +259,11 @@ const Login: React.FC<LoginProps> = props => {
         onCancel={() => {
           dispatch({
             type: 'login/loginErrorCode7',
-          })
+          });
         }}
       >
-        {formatMessage( {id:"user-login.login.message-invalidate"})}
+        {formatMessage({ id: 'user-login.login.message-invalidate' })}
       </Modal>
-
     </div>
   );
 };
