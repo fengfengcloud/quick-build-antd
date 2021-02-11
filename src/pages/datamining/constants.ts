@@ -1,4 +1,3 @@
-
 export const ROOTROWID = 'd41d8cd98f00b204e9800998ecf8427e';
 export const ROWID = 'rowid';
 export const PARENT_ROWID = 'p_rowid';
@@ -6,8 +5,10 @@ export const PARENTNODE = 'parentNode';
 export const CHILDREN = 'children';
 export const VALUE = 'value';
 export const TEXT = 'text';
+export const TEXTUNDERLINE = 'text_';
 export const TITLE = 'title';
 export const SELECTED = 'selected';
+export const LEVELUNDERLINE = 'level_';
 
 // 拖动过程中分组字段拖动的type值
 export const DRAG_ITEM_GROUPFIELD = 'drag_item_group_field';

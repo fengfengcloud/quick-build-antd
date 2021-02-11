@@ -20,6 +20,7 @@ import {
   TEXT,
   TITLE,
   DRAG_NAVIGATE_RECORD,
+  LEVELUNDERLINE,
 } from '../constants';
 import { DataminingNavigateModal, NavigateConditionModal } from './data';
 import { DataminingModal, ExpandGroupFieldModal } from '../data';
@@ -54,7 +55,6 @@ const combineCondition = (conditions: NavigateConditionModal[]): NavigateConditi
  * 返回所有节点，在总节点比较少的情况下就是这样
  * @param nodes
  */
-const LEVEL = 'level_';
 export const genAllTreeData = (
   nodes: any[],
   navigateGroup: ExpandGroupFieldModal,
@@ -70,7 +70,8 @@ export const genAllTreeData = (
       key: node.rowid,
     };
     // 全自动生级的，加入当前级数
-    if (node[LEVEL]) result.groupfieldid = groupFieldid.replace('-all', `-${node[LEVEL]}`);
+    if (node[LEVELUNDERLINE])
+      result.groupfieldid = groupFieldid.replace('-all', `-${node[LEVELUNDERLINE]}`);
     else result.groupfieldid = groupFieldid;
     result.grouptitle = groupTitle;
     result.title = (
