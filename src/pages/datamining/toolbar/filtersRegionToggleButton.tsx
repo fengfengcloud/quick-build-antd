@@ -22,8 +22,9 @@ const FiltersRegionToggleButton = ({
     <Tooltip title={visible ? '隐藏条件列表' : '显示条件列表'}>
       <Button type={visible ? 'link' : 'text'} size="small" onClick={changeVisible}>
         <LinkOutlined /> 条件
-          {state.filterDataSource.length ? <Badge dot={true} status='success'
-          style={{ marginLeft: '4px' }}></Badge> : null}
+        {state.filterDataSource.length ? (
+          <Badge dot status="success" style={{ marginLeft: '4px' }} />
+        ) : null}
       </Button>
     </Tooltip>
   );

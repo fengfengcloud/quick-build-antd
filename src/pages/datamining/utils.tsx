@@ -1,8 +1,20 @@
-import { DataminingModal, SchemeSettingModal } from './data';
 import moment from 'moment';
+import { DataminingModal, SchemeSettingModal } from './data';
 import { getMonetary } from '../module/grid/monetary';
-import { getFilterRestHidden, getFilterRestNumber, getModuleInfo, getSqlParamDefaultValue } from '../module/modules';
-import { ACT_FETCH_LOADING_CHANGED, PARENTNODE, ROOTROWID, ROWID, SELECTED } from './constants';
+import {
+  getFilterRestHidden,
+  getFilterRestNumber,
+  getModuleInfo,
+  getSqlParamDefaultValue,
+} from '../module/modules';
+import {
+  ACT_FETCH_LOADING_CHANGED,
+  PARENTNODE,
+  ROOTROWID,
+  ROWID,
+  SELECTED,
+  TEXTUNDERLINE,
+} from './constants';
 import { getAllFilterExportString } from './condition/conditionUtils';
 import { rebuildColumns } from './resultTree/columnFactory';
 import { getSqlparamExportStr } from './resultTree/sqlparams';
@@ -23,10 +35,29 @@ export const setFetchLoading = ({
   });
 };
 
+export const getDefaultDataminingSetting = (): SchemeSettingModal => {
+  return {
+    showdetail: 'no',
+    expandRowAddGroupName: 'no',
+    expandColAddGroupName: 'yes',
+    expandColAddFilter: 'no',
+    expandMaxCol: 12,
+    expandMaxRow: 0,
+    expandMaxLevel: 0,
+    autoHiddenZeroCol: 'yes',
+    refreshMode: 'expandpath',
+    expandMultiGroup: 'no',
+    expandItemDirection: 'asc',
+    expandItemMode: 'text',
+    addCountSumPercent: 'yes',
+    addNumberTip: 'yes',
+    leafColumnCharSize: 6,
+  };
+};
+
 export const getInitDataminingState = (moduleName: string): DataminingModal => {
   let moduleInfo: any;
-  if (moduleName !== 'undefined')
-    moduleInfo = getModuleInfo(moduleName);
+  if (moduleName !== 'undefined') moduleInfo = getModuleInfo(moduleName);
   const result: DataminingModal = {
     moduleName,
     fromCache: false,
@@ -59,10 +90,12 @@ export const getInitDataminingState = (moduleName: string): DataminingModal => {
       ],
       rowGroup: [],
       setting: getDefaultDataminingSetting(),
-      sorts: [{
-        property: undefined,
-        direction: 'ASC',
-      }]
+      sorts: [
+        {
+          property: undefined,
+          direction: 'ASC',
+        },
+      ],
     },
     filters: {
       navigatefilters: [],
@@ -71,8 +104,10 @@ export const getInitDataminingState = (moduleName: string): DataminingModal => {
         viewschemeid: undefined,
       },
       userfilter: [],
-      sqlparam: moduleInfo && moduleInfo.moduleLimit && moduleInfo.moduleLimit.hassqlparam ?
-        getSqlParamDefaultValue(moduleInfo) : null,
+      sqlparam:
+        moduleInfo && moduleInfo.moduleLimit && moduleInfo.moduleLimit.hassqlparam
+          ? getSqlParamDefaultValue(moduleInfo)
+          : null,
     },
     filterDataSource: [],
     navigates: [],
@@ -98,55 +133,36 @@ export const getInitDataminingState = (moduleName: string): DataminingModal => {
       autofitwidth: true,
       scale: 100,
       disablecollapsed: false,
-    }
+    },
   };
   return result;
-};
-
-export const getDefaultDataminingSetting = (): SchemeSettingModal => {
-  return {
-    showdetail: 'no',
-    expandRowAddGroupName: 'no',
-    expandColAddGroupName: 'yes',
-    expandColAddFilter: 'no',
-    expandMaxCol: 12,
-    expandMaxRow: 0,
-    expandMaxLevel: 0,
-    autoHiddenZeroCol: 'yes',
-    refreshMode: 'expandpath',
-    expandMultiGroup: 'no',
-    expandItemDirection: 'asc',
-    expandItemMode: 'text',
-    addCountSumPercent: 'yes',
-    addNumberTip: 'yes',
-    leafColumnCharSize: 6,
-  };
 };
 
 // 将前01个月，下01个月，改为实际的月份
 const transformArray: any[] = [];
 export const fieldTitleTransform = (title: string) => {
-  //const now = new Date();
-  if (transformArray.length == 0) {
-    for (let i = 1; i <= 12; i++) {
+  // const now = new Date();
+  let result = title;
+  if (transformArray.length === 0) {
+    for (let i = 1; i <= 12; i += 1) {
       transformArray.push({
-        sour: '前' + (i < 10 ? '0' : '') + i + '个月',
+        sour: `前${i < 10 ? '0' : ''}${i}个月`,
         tranto: moment().add(-i, 'month').format('YYYY年MM月'),
         // Ext.Date.format(Ext.Date.add(now, 'mo', -i), "y年m月")
       });
       transformArray.push({
-        sour: '下' + (i < 10 ? '0' : '') + i + '个月',
+        sour: `下${i < 10 ? '0' : ''}${i}个月`,
         tranto: moment().add(i, 'month').format('YYYY年MM月'),
-        //Ext.Date.format(Ext.Date.add(now, 'mo', i), "y年m月")
+        // Ext.Date.format(Ext.Date.add(now, 'mo', i), "y年m月")
       });
     }
   }
-  if (title) {
-    for (let i = 0; i < transformArray.length; i++) {
-      title = title.replace(transformArray[i].sour, transformArray[i].tranto);
+  if (result) {
+    for (let i = 0; i < transformArray.length; i += 1) {
+      result = result.replace(transformArray[i].sour, transformArray[i].tranto);
     }
   }
-  return title;
+  return result;
 };
 
 // 在树形结构中找到主键是pinkey的记录并返回
@@ -170,15 +186,13 @@ export const getAllLeafRecords = (dataSource: any[]): any[] => {
   const result: any[] = [];
   const getLeafs = (recs: any[]) => {
     recs.forEach((rec: any) => {
-      if (rec.children && Array.isArray(rec.children))
-        getLeafs(rec.children)
-      else
-        result.push(rec);
+      if (rec.children && Array.isArray(rec.children)) getLeafs(rec.children);
+      else result.push(rec);
     });
   };
   getLeafs(dataSource);
   return result;
-}
+};
 
 // 返回所有的子节点的id值
 export const getAllChildRowids = (record: any): string[] => {
@@ -189,8 +203,7 @@ export const getAllChildRowids = (record: any): string[] => {
       if (rec.children && Array.isArray(rec.children)) getChildRowids(rec.children);
     });
   };
-  if (record.children)
-    getChildRowids(record.children);
+  if (record.children) getChildRowids(record.children);
   return result;
 };
 
@@ -198,31 +211,29 @@ export const getAllChildRowids = (record: any): string[] => {
 export const getAllhasChildrenRowids = (datasource: any[]): string[] => {
   const result: string[] = [];
   const getRowids = (recs: any[]) => {
-    recs.forEach(rec => {
+    recs.forEach((rec) => {
       if (rec.children) {
-        result.push(rec[ROWID])
+        result.push(rec[ROWID]);
         getRowids(rec.children);
       }
-    })
-  }
+    });
+  };
   getRowids(datasource);
   return result;
-}
+};
 
 // 返回所有的叶节点的rowid数组
 export const getAllleafRowids = (datasource: any[]): string[] => {
   const result: string[] = [];
   const getRowids = (recs: any[]) => {
-    recs.forEach(rec => {
-      if (rec.children)
-        getRowids(rec.children);
-      else
-        result.push(rec[ROWID])
-    })
-  }
+    recs.forEach((rec) => {
+      if (rec.children) getRowids(rec.children);
+      else result.push(rec[ROWID]);
+    });
+  };
   getRowids(datasource);
   return result;
-}
+};
 
 /**
  * 对一个树形结构的每一层按照field,asc进行排序
@@ -238,43 +249,51 @@ export const sortTree = (dataSource: any[], field: string, order: 1 | -1): any[]
       }
     });
     children.sort((a, b) => {
-      if (typeof a[field] === 'string')               // 按照本地化进行排序
-        return (a[field] as string).localeCompare(b[field]) * order
-      else
-        return ((a[field] || 0) > (b[field] || 0) ? order : -order);
-    })
+      if (typeof a[field] === 'string')
+        // 按照本地化进行排序
+        return (a[field] as string).localeCompare(b[field]) * order;
+      return (a[field] || 0) > (b[field] || 0) ? order : -order;
+    });
   };
   sortChildren(dataSource);
   return [...dataSource];
 };
 
-export const removeFromParentNode = (node: any): any => {
+export const removeFromParentNode = (anode: any): any => {
+  const node = anode;
   if (node[PARENTNODE]) {
     const parentChildren: any[] = node[PARENTNODE].children;
     if (Array.isArray(parentChildren)) {
-      parentChildren.splice(parentChildren.findIndex(item => item === node), 1);
+      parentChildren.splice(
+        parentChildren.findIndex((item) => item === node),
+        1,
+      );
       if (parentChildren.length === 0) {
-        delete node[PARENTNODE].children
+        delete node[PARENTNODE].children;
       }
     }
   }
   return node;
-}
+};
 
 /**
  * 取得树形结构所有selectField为true的keyField的值
- * @param records 
- * @param keyField 
- * @param selectField 
+ * @param records
+ * @param keyField
+ * @param selectField
  */
-export const getTreeSelectedKeys = (records: any[], keyField: string, selectField: string = SELECTED): string[] => {
+export const getTreeSelectedKeys = (
+  records: any[],
+  keyField: string,
+  selectField: string = SELECTED,
+): string[] => {
   const result: string[] = [];
   const getSelectedKeys = (recs: any[]) => {
     recs.forEach((rec: any) => {
-      rec[selectField] && result.push(rec[keyField]);
-      rec.children && getSelectedKeys(rec.children);
-    })
-  }
+      if (rec[selectField]) result.push(rec[keyField]);
+      if (rec.children) getSelectedKeys(rec.children);
+    });
+  };
   getSelectedKeys(records);
   return result;
 };
@@ -287,99 +306,23 @@ export const getRestTitles = (children: any[], index: number): string | undefine
   const showCount = 5;
   if (index > children.length) return undefined;
   const array: string[] = [];
-  for (let i = index; i < Math.min(children.length, index + showCount); i++) {
+  for (let i = index; i < Math.min(children.length, index + showCount); i += 1) {
     array.push(children[i].text);
   }
-  return array.join(' , ') + (children.length - showCount > index ? `等${children.length - index}个分组` : '');
-}
+  return (
+    array.join(' , ') +
+    (children.length - showCount > index ? `等${children.length - index}个分组` : '')
+  );
+};
 
-
-/**
- * 导出数据分析结果到excel或pdf
- * @param {} menuitem
- */
-export const exportExcelOrPdf = (state: DataminingModal, topdf: boolean) => {
-  const { moduleName, exportSetting, monetary, filters } = state;
-  const moduleInfo = getModuleInfo(moduleName);
-  const leafcolumns: any[] = [];
-  const columns = getExportGridColumns(state, leafcolumns);
-  const treedata = getTreeExportData(state, state.schemeState.dataSource[0], leafcolumns, exportSetting.disablecollapsed);
-  const params: any = {
-    topdf: topdf,
-    moduletitle: moduleInfo.title,
-    schemename: state.currentScheme.title || '未保存的数据分析方案',
-    conditions: JSON.stringify(getSqlparamExportStr(filters.sqlparam).
-      concat(getAllFilterExportString(state.filterDataSource))),
-    colorless: exportSetting.colorless,
-    monerary: monetary.monetaryUnit,
-    moneraryText: monetary.monetaryUnit == 1 ? '' : monetary.unittext,
-
-    disablerowgroup: exportSetting.disablerowgroup,
-    unittextalone: exportSetting.unittextalone,
-    pagesize: exportSetting.pagesize,
-    autofitwidth: exportSetting.autofitwidth,
-    scale: exportSetting.scale,
-
-    columns: JSON.stringify(columns),
-    leafcolumns: JSON.stringify(leafcolumns),
-    data: JSON.stringify(treedata),
-  };
-
-  const children: any[] = [];
-  for (let i in params) {
-    const node = window.document.createElement("input");
-    node.type = 'hidden';
-    node.name = i;
-    node.value = typeof params[i] === 'string' ? params[i].replace(new RegExp('"', 'gm'), "'") : params[i];
-    children.push(node)
-  }
-  const form = window.document.createElement("form");
-  form.method = 'post';
-  form.action = '/api/platform/datamining/exporttoexcel.do';
-  children.forEach(child => form.appendChild(child));
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
-}
-
-
-const getTreeExportData = (state: DataminingModal, node: any, leafcolumns: any[], disablecollapsed: boolean) => {
-  const result: any = {},
-    data: any[] = [];
-  if (node) {
-    leafcolumns.forEach(column => {
-      if (column.dataIndex == 'text') data.push(node['text_'] || node[column.dataIndex]);
-      else data.push(node[column.dataIndex]);
-    })
-    result.data = data;
-    if (node.children) {
-      if (!(disablecollapsed && !state.expandedRowKeys.find(k => k === node[ROWID]))) {
-        result.children = [];
-        node.children.forEach((child: any) => {
-          result.children.push(getTreeExportData(state, child, leafcolumns, disablecollapsed));
-        })
-      }
-    }
-  }
-  return result;
-}
-
-
-
-const getExportGridColumns = (state: DataminingModal, leafColumns: any[]) => {
-  const { schemeState } = state;
-  const gridColumns = rebuildColumns(schemeState.fieldGroup, schemeState.columnGroup, state, () => { });
-  return _getExportGridColumns(gridColumns, leafColumns);
-}
-
-const regexp = new RegExp('<[^>]*>', 'gm');// 把所有的超文本标记全部删掉
-const _getExportGridColumns = (items: any[], leafColumns: any[]) => {
+const regexp = new RegExp('<[^>]*>', 'gm'); // 把所有的超文本标记全部删掉
+const getExportGridColumnsLeaf = (items: any[], leafColumns: any[]) => {
   const result: any[] = [];
   items.forEach((item) => {
-    if (item.hidden) return;          // 如果隐藏了就不显示了,看到什么字段就导出什么字段
-    const t = item.text_ || item.menuText || item.text;
+    if (item.hidden) return; // 如果隐藏了就不显示了,看到什么字段就导出什么字段
+    const t = item[TEXTUNDERLINE] || item.menuText || item.text;
     const column: any = {
-      text: t ? t.replace(regexp, '') : ''
+      text: t ? t.replace(regexp, '') : '',
     };
     if (!item.children) {
       //  最底层的节点
@@ -396,15 +339,109 @@ const _getExportGridColumns = (items: any[], leafColumns: any[]) => {
           ismonetary: item.ismonetary,
           unittext: item.unittext,
           aggregate: item.aggregate,
-          fieldtype: item.fieldtype
-        })
+          fieldtype: item.fieldtype,
+        });
       }
     } else {
-      column.items = _getExportGridColumns(item.children, leafColumns);
+      column.items = getExportGridColumnsLeaf(item.children, leafColumns);
     }
-    if ((column.dataIndex || column.items)) {
+    if (column.dataIndex || column.items) {
       result.push(column);
     }
-  })
+  });
   return result;
-}
+};
+
+const getExportGridColumns = (state: DataminingModal, leafColumns: any[]) => {
+  const { schemeState } = state;
+  const gridColumns = rebuildColumns(
+    schemeState.fieldGroup,
+    schemeState.columnGroup,
+    state,
+    () => {},
+  );
+  return getExportGridColumnsLeaf(gridColumns, leafColumns);
+};
+
+const getTreeExportData = (
+  state: DataminingModal,
+  node: any,
+  leafcolumns: any[],
+  disablecollapsed: boolean,
+) => {
+  const result: any = {};
+  const data: any[] = [];
+  if (node) {
+    leafcolumns.forEach((column) => {
+      if (column.dataIndex === 'text') data.push(node[TEXTUNDERLINE] || node[column.dataIndex]);
+      else data.push(node[column.dataIndex]);
+    });
+    result.data = data;
+    if (node.children) {
+      if (!(disablecollapsed && !state.expandedRowKeys.find((k) => k === node[ROWID]))) {
+        result.children = [];
+        node.children.forEach((child: any) => {
+          result.children.push(getTreeExportData(state, child, leafcolumns, disablecollapsed));
+        });
+      }
+    }
+  }
+  return result;
+};
+
+/**
+ * 导出数据分析结果到excel或pdf
+ * @param {} menuitem
+ */
+export const exportExcelOrPdf = (state: DataminingModal, topdf: boolean) => {
+  const { moduleName, exportSetting, monetary, filters } = state;
+  const moduleInfo = getModuleInfo(moduleName);
+  const leafcolumns: any[] = [];
+  const columns = getExportGridColumns(state, leafcolumns);
+  const treedata = getTreeExportData(
+    state,
+    state.schemeState.dataSource[0],
+    leafcolumns,
+    exportSetting.disablecollapsed,
+  );
+  const params: any = {
+    topdf,
+    moduletitle: moduleInfo.title,
+    schemename: state.currentScheme.title || '未保存的数据分析方案',
+    conditions: JSON.stringify(
+      getSqlparamExportStr(filters.sqlparam).concat(
+        getAllFilterExportString(state.filterDataSource),
+      ),
+    ),
+    colorless: exportSetting.colorless,
+    monerary: monetary.monetaryUnit,
+    moneraryText: monetary.monetaryUnit === 1 ? '' : monetary.unittext,
+
+    disablerowgroup: exportSetting.disablerowgroup,
+    unittextalone: exportSetting.unittextalone,
+    pagesize: exportSetting.pagesize,
+    autofitwidth: exportSetting.autofitwidth,
+    scale: exportSetting.scale,
+
+    columns: JSON.stringify(columns),
+    leafcolumns: JSON.stringify(leafcolumns),
+    data: JSON.stringify(treedata),
+  };
+
+  const children: any[] = [];
+  Object.keys(params).forEach((i) => {
+    const node = window.document.createElement('input');
+    node.type = 'hidden';
+    node.name = i;
+    node.value =
+      typeof params[i] === 'string' ? params[i].replace(new RegExp('"', 'gm'), "'") : params[i];
+    children.push(node);
+  });
+  const form = window.document.createElement('form');
+  form.method = 'post';
+  form.action = '/api/platform/datamining/exporttoexcel.do';
+  children.forEach((child) => form.appendChild(child));
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+};

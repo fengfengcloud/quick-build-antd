@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
 import { Layout, PageHeader, Typography } from 'antd';
+import HOCDndProvider from '@/utils/HOCDndProvider';
+import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { getFilterScheme, getModuleInfo } from '../module/modules';
 import UserDefineFilter from '../module/UserDefineFilter';
 import { DataminingModal } from './data';
@@ -9,11 +11,9 @@ import ResultTree from './resultTree/index';
 import { currentSchemeChanged, refreshAllDataminingData } from './schemeUtils';
 import Toolbar from './toolbar';
 import { getInitDataminingState } from './utils';
-import HOCDndProvider from '@/utils/HOCDndProvider';
 import { ConditionGrid } from './condition';
 import { refreshFilterCount } from './condition/conditionUtils';
-import { DataminingNavigate } from './navigate'
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { DataminingNavigate } from './navigate';
 import { ACT_DATAMINING_FETCH_SCHEMES } from './constants';
 import { getModuleIcon } from '../module/moduleUtils';
 import styles from './index.less';
@@ -36,7 +36,7 @@ import styles from './index.less';
 
 interface DataminingParams {
   moduleName: string;
-  inTab?: boolean;              // 是否是独立的一页，如果否，则表示在tab页中
+  inTab?: boolean; // 是否是独立的一页，如果否，则表示在tab页中
 }
 
 // DataminingContext 中存放的上下文的字段值
@@ -48,11 +48,11 @@ export interface DataminingStateContext {
 // DataminingContext 的上下文
 export const DataminingContext = createContext<DataminingStateContext>({
   state: getInitDataminingState('undefined'),
-  dispatch: () => { },
+  dispatch: () => {},
 });
 
 export const Datamining: React.FC<DataminingParams> = ({ moduleName, inTab }) => {
-  //console.log("初始化DataminingModelProvider");
+  // console.log("初始化DataminingModelProvider");
   const [state, dispatch] = useReducer(DataminingReducer, getDataminingModal(moduleName));
   return (
     <HOCDndProvider>
@@ -68,9 +68,8 @@ const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
   const { state, dispatch } = context;
   const { moduleName, currentScheme } = state;
   const moduleInfo = getModuleInfo(moduleName);
-  console.log('datamining rerender..........');
-  console.log(state);
-
+  // console.log('datamining rerender..........');
+  // console.log(state);
   useEffect(() => {
     if (!state.schemes.length) {
       dispatch({
@@ -83,7 +82,7 @@ const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
   // 筛选方案改变了以后
   useEffect(() => {
     if (!state.fromCache) {
-      if (currentScheme.schemeid || (!currentScheme.schemeid && state.schemes.length == 0)) {
+      if (currentScheme.schemeid || (!currentScheme.schemeid && state.schemes.length === 0)) {
         currentSchemeChanged(state, dispatch);
       }
     }
@@ -92,7 +91,7 @@ const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
   useEffect(() => {
     if (!state.fromCache) {
       if (state.refreshAllCount > 0) {
-        console.log(`需要刷新所有数据，刷新所有的数据`);
+        // console.log(`需要刷新所有数据，刷新所有的数据`);
         // message.info('refresh all:' + state.refreshAllCount);
         refreshAllDataminingData(state, dispatch);
       }
@@ -104,7 +103,7 @@ const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
     if (!state.fromCache) {
       if (state.refreshFilterDataSourceCount > 0) {
         if (state.currSetting.filtersRegionVisible) {
-          console.log(`需要刷新所有条件的记录值`);
+          // console.log(`需要刷新所有条件的记录值`);
           // message.info('refresh all filter datasource count:' + state.refreshFilterDataSourceCount);
           setTimeout(() => {
             refreshFilterCount(state, dispatch);
@@ -117,8 +116,11 @@ const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
   // 在筛选条件列表显示时，如果未刷新，则进行刷新
   useEffect(() => {
     if (!state.fromCache) {
-      if (state.currSetting.filtersRegionVisible && state.filterDataSource.length &&
-        state.filterDataSource[0].recordnum === -1) {
+      if (
+        state.currSetting.filtersRegionVisible &&
+        state.filterDataSource.length &&
+        state.filterDataSource[0].recordnum === -1
+      ) {
         // console.log(`需要刷新所有条件的记录值`);
         // message.info('refresh all filter datasource count:' + state.refreshFilterDataSourceCount);
         refreshFilterCount(state, dispatch);
@@ -126,16 +128,28 @@ const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
     }
   }, [state.currSetting.filtersRegionVisible]);
 
-  const resultTree = useMemo(() => <ResultTree state={state} dispatch={dispatch} />,
-    [state.schemeState.dataSource, state.selectedRowKeys, state.expandedRowKeys,
-    state.fetchLoading, state.monetary, state.monetaryPosition, state.schemeState.columnGroup,
-    state.schemeState.fieldGroup, state.currSetting.fieldGroupFixedLeft]);
-  const title = <span>{getModuleIcon(moduleInfo)} {moduleInfo.title}
-    <Typography.Text type="secondary"
-      style={{ fontSize: '14px', marginLeft: '24px', fontWeight: 400 }}>
-      {state.currentScheme.title}
-    </Typography.Text>
-  </span>;
+  const resultTree = useMemo(() => <ResultTree state={state} dispatch={dispatch} />, [
+    state.schemeState.dataSource,
+    state.selectedRowKeys,
+    state.expandedRowKeys,
+    state.fetchLoading,
+    state.monetary,
+    state.monetaryPosition,
+    state.schemeState.columnGroup,
+    state.schemeState.fieldGroup,
+    state.currSetting.fieldGroupFixedLeft,
+  ]);
+  const title = (
+    <span>
+      {getModuleIcon(moduleInfo)} {moduleInfo.title}
+      <Typography.Text
+        type="secondary"
+        style={{ fontSize: '14px', marginLeft: '24px', fontWeight: 400 }}
+      >
+        {state.currentScheme.title}
+      </Typography.Text>
+    </span>
+  );
   const dataminingComponent = (
     <React.Fragment>
       <GroupRegion state={state} dispatch={dispatch} key={state.moduleName} />
@@ -143,12 +157,13 @@ const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
         <DataminingNavigate />
         <Layout.Content>
           {getFilterScheme(moduleInfo) ? (
-            <div className='dataminingcard'>
+            <div className="dataminingcard">
               <UserDefineFilter
                 visible={state.currSetting.userFilterRegionVisible}
                 moduleState={state}
                 dispatch={dispatch}
-              /></div>
+              />
+            </div>
           ) : null}
           {state.currSetting.filtersRegionVisible ? <ConditionGrid /> : null}
           {resultTree}
@@ -157,22 +172,17 @@ const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
       </Layout>
     </React.Fragment>
   );
-  return (
-    inTab ? <div>
-      <PageHeader title={title}
-        extra={<Toolbar state={state} dispatch={dispatch}></Toolbar>}>
-      </PageHeader>
-      <div className={styles.dataminingcard}>
-        {dataminingComponent}
-      </div>
-    </div> :
-      <PageHeaderWrapper title={title}
-        extra={<Toolbar state={state} dispatch={dispatch}></Toolbar>}>
-        {dataminingComponent}
-      </PageHeaderWrapper>
+  return inTab ? (
+    <div>
+      <PageHeader title={title} extra={<Toolbar state={state} dispatch={dispatch} />} />
+      <div className={styles.dataminingcard}>{dataminingComponent}</div>
+    </div>
+  ) : (
+    <PageHeaderWrapper title={title} extra={<Toolbar state={state} dispatch={dispatch} />}>
+      {dataminingComponent}
+    </PageHeaderWrapper>
   );
 };
-
 
 // 从菜单进入
 interface DataminingProps {
@@ -183,7 +193,7 @@ interface DataminingProps {
 const DataminingUrlEntry: React.FC<DataminingProps> = (params) => {
   const { route, match } = params;
   const moduleName = route.name || match.params.moduleName;
-  return <Datamining moduleName={moduleName} key={moduleName} ></Datamining>
-}
+  return <Datamining moduleName={moduleName} key={moduleName} />;
+};
 
 export default DataminingUrlEntry;

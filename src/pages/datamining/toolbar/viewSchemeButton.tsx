@@ -42,7 +42,7 @@ const ViewSchemeButton: React.FC = () => {
         {getViewSchemes(viewschemes).map((scheme) => (
           <Menu.Item
             key={scheme.value}
-            icon={viewscheme.viewschemeid == scheme.value ? selectIcon : spaceIcon}
+            icon={viewscheme.viewschemeid === scheme.value ? selectIcon : spaceIcon}
           >
             {scheme.text}
           </Menu.Item>
@@ -53,7 +53,7 @@ const ViewSchemeButton: React.FC = () => {
   return (
     <Dropdown overlay={menu}>
       <Button size="small" type={viewscheme.title ? 'link' : 'text'}>
-        <ApiOutlined /> 视图方案 {viewscheme.title ? '：' + viewscheme.title : null}
+        <ApiOutlined /> 视图方案 {viewscheme.title ? `：${viewscheme.title}` : null}
       </Button>
     </Dropdown>
   );

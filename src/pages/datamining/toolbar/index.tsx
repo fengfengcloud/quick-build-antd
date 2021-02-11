@@ -1,11 +1,11 @@
 import React from 'react';
 import { Space } from 'antd';
+import { getFilterScheme, getModuleInfo } from '@/pages/module/modules';
+import UserDefineFilterButton from '@/pages/module/PageHeaderToolbar/UserDefineFilterButton';
 import { DataminingModal } from '../data';
 import SelectScheme from './selectScheme';
 import DataminingSetting from './setting';
 import ViewSchemeButton from './viewSchemeButton';
-import { getFilterScheme, getModuleInfo } from '@/pages/module/modules';
-import UserDefineFilterButton from '@/pages/module/PageHeaderToolbar/UserDefineFilterButton';
 import GroupRegionToggleButton from './groupRegionToggleButton';
 import FiltersRegionToggleButton from './filtersRegionToggleButton';
 import { RowActionHistoryButton } from '../rowActionHistory';
@@ -26,7 +26,9 @@ const Toolbar: React.FC<ToolbarParams> = ({ state, dispatch }) => {
       <SelectScheme />
       {getViewSchemes(moduleInfo.viewschemes).length ? <ViewSchemeButton /> : null}
       <NavigateButton state={state} dispatch={dispatch} />
-      {getFilterScheme(moduleInfo) ? <UserDefineFilterButton moduleState={state} dispatch={dispatch} /> : null}
+      {getFilterScheme(moduleInfo) ? (
+        <UserDefineFilterButton moduleState={state} dispatch={dispatch} />
+      ) : null}
       <FiltersRegionToggleButton state={state} dispatch={dispatch} />
       <GroupRegionToggleButton state={state} dispatch={dispatch} />
       <RowActionHistoryButton />

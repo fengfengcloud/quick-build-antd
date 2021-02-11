@@ -100,7 +100,7 @@ export interface ExpandGroupTreeFieldModal {
   menu?: ExpandGroupTreeFieldModal[];
 }
 
-interface SchemeSettingModal {
+export interface SchemeSettingModal {
   expandItemMode: 'code' | 'text' | 'value';
   expandMaxRow: number;
   showdetail: 'yes' | 'no';
@@ -118,7 +118,7 @@ interface SchemeSettingModal {
   leafColumnCharSize: number;
 }
 
-interface CurrentSchemeModal {
+export interface CurrentSchemeModal {
   columnGroup: ColumnGroupModal[]; // 所有的列展开的分组定义
   fieldGroup: FieldModal[]; // 所有选中的聚合字段
   rowGroup: RowGroupModal[];

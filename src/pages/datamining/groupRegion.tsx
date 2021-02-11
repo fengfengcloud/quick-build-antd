@@ -17,7 +17,7 @@ const GroupTag: React.FC<any> = ({ fieldid, title, iconCls, dispatch }) => {
   const [{ isDragging }, drag] = useDrag({
     item: { type: DRAG_ITEM_GROUPFIELD, fieldid, title },
     options: {
-      dropEffect: 'copy', //'copy' : 'move'
+      dropEffect: 'copy', // 'copy' : 'move'
     },
     canDrag: true,
     collect: (monitor) => {
@@ -36,10 +36,12 @@ const GroupTag: React.FC<any> = ({ fieldid, title, iconCls, dispatch }) => {
             type: ACT_NAVIGATE_ADD_GROUP,
             payload: {
               navigateGroup: {
-                fieldid, title, iconCls
-              }
-            }
-          })
+                fieldid,
+                title,
+                iconCls,
+              },
+            },
+          });
         }}
         color={isDragging ? 'warning' : 'default'}
       >
@@ -78,7 +80,9 @@ const GroupRegion: React.FC<GroupRegionProps> = ({ state, dispatch }) => {
     >
       <Rnd
         style={{ zIndex: 10001 }}
-        ref={(c) => { rndRef = c; }}
+        ref={(c) => {
+          rndRef = c;
+        }}
         enableResizing={false}
         default={{
           x: 0,
@@ -86,8 +90,10 @@ const GroupRegion: React.FC<GroupRegionProps> = ({ state, dispatch }) => {
           width: '100%',
           height: '24px',
         }}
-        onDragStart={() => { setBgc('#fafafa'); }}
-        onDrag={(e, d) => { }}
+        onDragStart={() => {
+          setBgc('#fafafa');
+        }}
+        onDrag={() => {}}
         onDragStop={(e, d) => {
           rndRef.updatePosition({ x: 0, y: 0 });
           setBgc('#fff');
@@ -100,20 +106,24 @@ const GroupRegion: React.FC<GroupRegionProps> = ({ state, dispatch }) => {
         <div style={{ height: '24px', backgroundColor: '#e0e2e5' }}>
           <span className={styles.groupregiontitle}>可分组项目</span>
           <CloseOutlined className={styles.tool} onClick={toggleVisible} />
-          {collapse ?
+          {collapse ? (
             <ArrowsAltOutlined className={styles.tool} onClick={toggleCollapse} />
-            :
+          ) : (
             <ShrinkOutlined className={styles.tool} onClick={toggleCollapse} />
-          }
+          )}
         </div>
       </Rnd>
-      <div className={styles.groupregindeephead}></div>
-      <div className={styles.groupregionbody}
-        style={{ display: collapse ? 'none' : 'block' }}>
-        <Space size={[6, 6]} wrap={true}>
+      <div className={styles.groupregindeephead} />
+      <div className={styles.groupregionbody} style={{ display: collapse ? 'none' : 'block' }}>
+        <Space size={[6, 6]} wrap>
           {state.expandGroupFields?.map((group) => (
-            <GroupTag key={group.fieldid} fieldid={group.fieldid} title={group.title}
-              iconCls={group.iconCls} dispatch={dispatch}></GroupTag>
+            <GroupTag
+              key={group.fieldid}
+              fieldid={group.fieldid}
+              title={group.title}
+              iconCls={group.iconCls}
+              dispatch={dispatch}
+            />
           ))}
         </Space>
       </div>
