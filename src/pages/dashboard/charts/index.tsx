@@ -7,30 +7,42 @@ import styles from './index.less';
 import PmAgreementPlan from './PmAgreementPlan';
 
 export default (): React.ReactNode => (
-  //<PageHeaderWrapper title={<span style={{ display: 'none' }}></span>}  >
-  <Card bordered={false} bodyStyle={{ paddingTop: 0 }} style={{ margin: "-8px" }}>
+  // <PageHeaderWrapper title={<span style={{ display: 'none' }}></span>}  >
+  <Card bordered={false} bodyStyle={{ paddingTop: 0 }} style={{ margin: '-8px' }}>
     <Tabs>
-      <Tabs.TabPane tabKey="PmAgreement" key="PmAgreement"
+      <Tabs.TabPane
+        tabKey="PmAgreement"
+        key="PmAgreement"
         tab="项目合同分析"
-        className={styles.dashboardcard}>
+        className={styles.dashboardcard}
+      >
         <PmAgreement />
       </Tabs.TabPane>
-      <Tabs.TabPane tabKey="PmAgreementPlan" key="PmAgreementPlan"
+      <Tabs.TabPane
+        tabKey="PmAgreementPlan"
+        key="PmAgreementPlan"
         tab="合同付款计划分析"
-        className={styles.dashboardcard} >
+        className={styles.dashboardcard}
+      >
         <PmAgreementPlan />
       </Tabs.TabPane>
-      <Tabs.TabPane tabKey="PmAgreementPayout" key="PmAgreementPayout"
+      <Tabs.TabPane
+        tabKey="PmAgreementPayout"
+        key="PmAgreementPayout"
         tab="合同付款分析"
-        className={styles.dashboardcard} >
+        className={styles.dashboardcard}
+      >
         <PmAgreementPayout />
       </Tabs.TabPane>
-      <Tabs.TabPane tabKey="PmAgreementApprove" key="PmAgreementApprove"
+      <Tabs.TabPane
+        tabKey="PmAgreementApprove"
+        key="PmAgreementApprove"
         tab="文件审批表分析"
-        className={styles.dashboardcard}>
+        className={styles.dashboardcard}
+      >
         <PmAgreementApprove />
       </Tabs.TabPane>
     </Tabs>
   </Card>
-  //</PageHeaderWrapper>
+  // </PageHeaderWrapper>
 );
