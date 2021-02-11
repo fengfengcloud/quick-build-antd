@@ -5,7 +5,7 @@ import { uuid } from '@/utils/utils';
 import { serialize } from 'object-to-formdata';
 import { ACT_FILTER_DATASOURCE_UPDATE } from '../constants';
 import { DataminingModal, FilterDataSourceModal, FiltersModal } from '../data';
-import { navigateConditionModal } from '../navigate/data';
+import { NavigateConditionModal } from '../navigate/data';
 import { navigateCheckedChange } from '../navigate/navigateTree';
 import { getWholeConditionText } from '../navigate/navigateUtils';
 
@@ -173,7 +173,7 @@ export const getFilterDataSource = (
       property: navfilter.groupFieldid,
       fieldtitle: navfilter.title,
       operator: getOperateTitle(navfilter.operator as string),
-      displaycond: getWholeConditionText(navfilter.children as navigateConditionModal[]),
+      displaycond: getWholeConditionText(navfilter.children as NavigateConditionModal[]),
       originfilter: navfilter,
       recordnum: -1,
     };

@@ -4,7 +4,7 @@
 
 import { SortModal, ViewSchemeType } from '../module/data';
 import { MonetaryType } from '../module/grid/monetary';
-import { DataminingNavigateModal, navigateConditionModal } from './navigate/data';
+import { DataminingNavigateModal, NavigateConditionModal } from './navigate/data';
 
 declare const HeaderCellTypes: ['sumfield' | 'subfield' | 'group' | 'fieldingroup'];
 export declare type HeaderCellType = typeof HeaderCellTypes[number];
@@ -158,7 +158,7 @@ interface DataminingSetting {
 }
 
 export interface FiltersModal {
-  navigatefilters: navigateConditionModal[];
+  navigatefilters: NavigateConditionModal[];
   viewscheme: ViewSchemeType;
   userfilter: any[];
   sqlparam: any;
