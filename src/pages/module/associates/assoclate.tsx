@@ -1,11 +1,35 @@
 import React from 'react';
 import { Card, Tabs } from 'antd';
-import { ModuleModal, ModuleState } from '../data';
+import { ModuleModal } from '../data';
 import { getAssociatesSouth, getModuleInfo } from '../modules';
 import DetailGrid from '../detailGrid';
 
-
-
+const getDetailGrid = ({
+  moduleInfo,
+  item,
+  record,
+  parentOperateType,
+}: {
+  moduleInfo: ModuleModal;
+  item: any;
+  record: any;
+  parentOperateType: any;
+}) => {
+  const config = {
+    moduleName: item.subobjectname,
+    parentOperateType, // 父模块的form当前操作类型
+    parentFilter: {
+      moduleName: moduleInfo.objectname, // 父模块的名称
+      fieldahead: item.fieldahead.split('.with.')[1],
+      fieldName: moduleInfo.primarykey, // 父模块的限定字段,父模块主键
+      fieldtitle: moduleInfo.title, // 父模块的标题
+      operator: '=',
+      text: record[moduleInfo.namefield],
+      fieldvalue: record[moduleInfo.primarykey], // 父模块的记录id
+    },
+  };
+  return <DetailGrid {...config} />;
+};
 
 /**
  * 
@@ -23,48 +47,36 @@ import DetailGrid from '../detailGrid';
 
     一个放在table里面，二个放在Tabs里面
  */
-export const getAssociatesSouthDetails = ({ record, moduleInfo, dispatch, moduleState }:
-    { record: any, moduleInfo: ModuleModal, dispatch: any, moduleState: ModuleState }) => {
-    const parentOperateType = 'display';
-    const associates = getAssociatesSouth(moduleInfo);
-    if (associates.length == 1) {
-        const item = associates[0];
-        const subModuleInfo = getModuleInfo(item.subobjectname);
-        return (
-            <Card title={subModuleInfo.title}>
-                {getDetailGrid({ moduleInfo, item, record, parentOperateType })}
-            </Card>
-        )
-    } else {
-        return <Card><Tabs>
-            {associates.map((item: any) => {
-                const subModuleInfo = getModuleInfo(item.subobjectname);
-                return (
-                    <Tabs.TabPane
-                        key={item.associatedetailid}
-                        tab={subModuleInfo.title}>
-                        {getDetailGrid({ moduleInfo, item, record, parentOperateType })}
-                    </Tabs.TabPane>
-                )
-            })}
-        </Tabs></Card>
-    }
-}
-
-const getDetailGrid = ({ moduleInfo, item, record, parentOperateType }:
-    { moduleInfo: ModuleModal, item: any, record: any, parentOperateType: any }) => {
-    const config = {
-        moduleName: item.subobjectname,
-        parentOperateType, // 父模块的form当前操作类型
-        parentFilter: {
-            moduleName: moduleInfo.objectname, // 父模块的名称
-            fieldahead: item.fieldahead.split('.with.')[1],
-            fieldName: moduleInfo.primarykey, // 父模块的限定字段,父模块主键
-            fieldtitle: moduleInfo.title, // 父模块的标题
-            operator: "=",
-            text: record[moduleInfo.namefield],
-            fieldvalue: record[moduleInfo.primarykey], // 父模块的记录id
-        }
-    }
-    return <DetailGrid {...config} />
-} 
+export const getAssociatesSouthDetails = ({
+  record,
+  moduleInfo,
+}: {
+  record: any;
+  moduleInfo: ModuleModal;
+}) => {
+  const parentOperateType = 'display';
+  const associates = getAssociatesSouth(moduleInfo);
+  if (associates.length === 1) {
+    const item = associates[0];
+    const subModuleInfo = getModuleInfo(item.subobjectname);
+    return (
+      <Card title={subModuleInfo.title}>
+        {getDetailGrid({ moduleInfo, item, record, parentOperateType })}
+      </Card>
+    );
+  }
+  return (
+    <Card>
+      <Tabs>
+        {associates.map((item: any) => {
+          const subModuleInfo = getModuleInfo(item.subobjectname);
+          return (
+            <Tabs.TabPane key={item.associatedetailid} tab={subModuleInfo.title}>
+              {getDetailGrid({ moduleInfo, item, record, parentOperateType })}
+            </Tabs.TabPane>
+          );
+        })}
+      </Tabs>
+    </Card>
+  );
+};
