@@ -8,8 +8,8 @@ const { REACT_APP_ENV } = process.env;
 export default defineConfig({
   hash: true,
   antd: {
-    //dark: true, // 开启暗色主题
-    //compact: true, // 开启紧凑主题
+    // dark: true, // 开启暗色主题
+    // compact: true, // 开启紧凑主题
   },
   dva: {
     hmr: true,
@@ -39,7 +39,7 @@ export default defineConfig({
       ],
     },
     {
-      path: '/attachment/preview',   // 附件预览,可以不用判断权限，权限在后台判断
+      path: '/attachment/preview', // 附件预览,可以不用判断权限，权限在后台判断
       name: '附件预览',
       component: './module/attachment/preview.tsx',
     },
@@ -58,55 +58,61 @@ export default defineConfig({
             {
               path: '/dashboard',
               name: 'menu.dashboard',
-              routes: [{
-                name: 'menu.dashboard.charts',
-                path: '/dashboard/charts',
-                component: './dashboard/charts'
-              }, {
-                name: 'menu.dashboard.analysis',
-                path: '/dashboard/analysis',
-                component: './dashboard/analysis'
-              },
-              {
-                name: 'menu.dashboard.monitor',
-                path: '/dashboard/monitor',
-                component: './dashboard/monitor'
-              }, {
-                name: 'menu.dashboard.workplace',
-                path: '/dashboard/workplace',
-                component: './dashboard/workplace'
-              }]
+              routes: [
+                {
+                  name: 'menu.dashboard.charts',
+                  path: '/dashboard/charts',
+                  component: './dashboard/charts',
+                },
+                {
+                  name: 'menu.dashboard.analysis',
+                  path: '/dashboard/analysis',
+                  component: './dashboard/analysis',
+                },
+                {
+                  name: 'menu.dashboard.monitor',
+                  path: '/dashboard/monitor',
+                  component: './dashboard/monitor',
+                },
+                {
+                  name: 'menu.dashboard.workplace',
+                  path: '/dashboard/workplace',
+                  component: './dashboard/workplace',
+                },
+              ],
             },
             {
               name: 'account',
               icon: 'user',
               path: '/account',
-              routes: [{
-                name: 'center',
-                path: '/account/center',
-                component: './account/center',
-              },
-              {
-                name: 'settings',
-                path: '/account/settings',
-                component: './account/settings',
-              },],
+              routes: [
+                {
+                  name: 'center',
+                  path: '/account/center',
+                  component: './account/center',
+                },
+                {
+                  name: 'settings',
+                  path: '/account/settings',
+                  component: './account/settings',
+                },
+              ],
             },
             {
               path: '*/module/:moduleName?',
               component: './module/index',
             },
             {
-              path: "/module/:moduleName?",
-              component: './module/index'
+              path: '/module/:moduleName?',
+              component: './module/index',
             },
             {
               path: '*/datamining/:moduleName?',
               component: './datamining/index',
             },
             {
-              path: "/datamining/:moduleName?",
-              component: './datamining/index'
+              path: '/datamining/:moduleName?',
+              component: './datamining/index',
             },
             {
               component: './404',
@@ -120,7 +126,8 @@ export default defineConfig({
     },
     {
       component: './404',
-    },],
+    },
+  ],
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     // ...darkTheme,
