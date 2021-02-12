@@ -8,6 +8,6 @@ export async function queryCurrent(): Promise<any> {
 }
 
 export async function queryNotices(): Promise<any> {
-  //return request('/api/notices');
+  // return request('/api/notices');
   return request('/api/platform/systemframe/getapprovequestioninfo.do');
 }

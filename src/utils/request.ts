@@ -24,26 +24,28 @@ const codeMessage = {
   999: '用户尚未得到授权',
 };
 
+let isAlert = false;
+
 /**
  * 异常处理程序
  */
 const errorHandler = (error: { response: Response }): Response => {
-  console.log(error);
   const { response } = error;
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
-    if (url.indexOf("getuserbean.do") == -1 && url.indexOf("logout") == -1) {
-      //&& window.location.href.indexOf('user/login') == -1
-      //不加&& window.location.href.indexOf('user/login') == -1 ie11 运行不正常，ie11中url  为空
+    if (url.indexOf('getuserbean.do') === -1 && url.indexOf('logout') === -1) {
+      // && window.location.href.indexOf('user/login') === -1
+      // 不加&& window.location.href.indexOf('user/login') === -1 ie11 运行不正常，ie11中url  为空
       if (status === 999 || status === 401) {
-        if (!window['isAlert']) {
-          window['isAlert'] = true; //可能有多个request同时运行
-          window.alert('用户登录已超时,请按 确定 按钮重新进行身份验证！')
+        if (!isAlert) {
+          isAlert = true; // 可能有多个request同时运行
+          // eslint-disable-next-line
+          alert('用户登录已超时,请按 确定 按钮重新进行身份验证！');
           window.location.reload();
         }
-        //用户登录超时，需要重新登录
-        // 这里不是阻塞状态，因此request,会继续往下执行，则会出错 
+        // 用户登录超时，需要重新登录
+        // 这里不是阻塞状态，因此request,会继续往下执行，则会出错
         Modal.warning({
           title: '用户登录已超时',
           content: '请按 确定 按钮重新进行身份验证！',
@@ -58,7 +60,7 @@ const errorHandler = (error: { response: Response }): Response => {
           description: errorText,
         });
     } else {
-      //getuserbean.do 获取当前用户信息，如果尚未登录则不需要显示提示信息
+      // getuserbean.do 获取当前用户信息，如果尚未登录则不需要显示提示信息
     }
   } else if (!response) {
     notification.error({
@@ -75,46 +77,51 @@ const errorHandler = (error: { response: Response }): Response => {
 const request = extend({
   errorHandler, // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
-  headers: {  // 发送异步请求的标识，后台可以用来判断Ajax请求是否是异步的
+  headers: {
+    // 发送异步请求的标识，后台可以用来判断Ajax请求是否是异步的
     'X-Requested-With': 'XMLHttpRequest',
-    'antd': 'true'
+    antd: 'true',
   },
 });
-
-
 
 // https://github.com/GerryIsWarrior/ajax
 // 获取同步数据
 const ajax = require('ajax-js');
-export const syncRequest = (url: string, { type = 'get', params }:
-  { type?: string, params: object }): any => {
+
+export const syncRequest = (
+  url: string,
+  { type = 'get', params }: { type?: string; params: object },
+): any => {
   let result: object = {};
   ajax.common({
     url,
     type,
     requestHeader: {
       'X-Requested-With': 'XMLHttpRequest',
-      'antd': 'true'
+      antd: 'true',
     },
     async: false,
     data: params,
-    successEvent: (res: string) => result = JSON.parse(res),
+    successEvent: (res: string) => {
+      result = JSON.parse(res);
+    },
     errorEvent: (res: any) => {
       if (res === 999 || res === 401) {
-        if (!window['isAlert']) {
-          window['isAlert'] = true; //可能有多个request同时运行
-          window.alert('用户登录已超时,请按 确定 按钮重新进行身份验证！')
+        if (!isAlert) {
+          isAlert = true; // 可能有多个request同时运行
+          // eslint-disable-next-line
+          alert('用户登录已超时,请按 确定 按钮重新进行身份验证！');
           window.location.reload();
         }
       } else {
         notification.error({
-          message: `请求错误 ${status}: ${url}`,
+          message: `请求错误 ${res}: ${url}`,
           description: res,
         });
       }
     },
-  })
+  });
   return result;
-}
+};
 
 export default request;
