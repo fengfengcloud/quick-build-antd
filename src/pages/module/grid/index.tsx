@@ -327,7 +327,7 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
     <Table
       className="moduletable"
       columns={columns}
-      size={moduleState.currSetting.gridSize} //  ={gridType == 'selectfield' || gridType == 'onetomanygrid' || moduleInfo.istreemodel ? 'small' : 'normal'}
+      size={moduleState.currSetting.gridSize} //  ={gridType === 'selectfield' || gridType === 'onetomanygrid' || moduleInfo.istreemodel ? 'small' : 'normal'}
       loading={fetchLoading}
       bordered
       showSorterTooltip={false}

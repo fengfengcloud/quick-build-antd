@@ -2,12 +2,21 @@ import React, { useState, useEffect, CSSProperties } from 'react';
 import { Table, Tooltip } from 'antd';
 import { BarsOutlined } from '@ant-design/icons';
 import { Dispatch } from 'redux';
+import { apply } from '@/utils/utils';
 import { fetchChildModuleData } from '../service';
 import { getModuleInfo, getFormSchemeFormType, getFieldDefine } from '../modules';
 import { ModuleModal, ModuleFieldType } from '../data';
 import styles from '../grid/columnFactory.less';
-import { booleanRenderer, dateRender, datetimeRender, floatRender, integerRender, nameFieldRender, percentRender } from '../grid/columnRender';
-import { apply } from '@/utils/utils';
+import {
+  booleanRenderer,
+  dateRender,
+  datetimeRender,
+  floatRender,
+  integerRender,
+  nameFieldRender,
+  percentRender,
+} from '../grid/columnRender';
+import { RECNOUNDERLINE } from '../constants';
 /**
  *  post formdata
  *  /api/platform/dataobject/fetchchilddata.do
@@ -23,94 +32,139 @@ import { apply } from '@/utils/utils';
  * 
  */
 
-const RECNO = '__recno__';
-
-const OneTowManyTooltip = ({ moduleName, parentid, childModuleName, fieldahead, count, dispatch }:
-    {
-        moduleName: string, parentid: string, childModuleName: string, fieldahead: string,
-        count: number, dispatch: Dispatch
-    }): any => {
-    const array = []
-    for (let i = 0; i < Math.min(count, 20); i++)
-        array.push({ __recno__: i + 1 });
-    const [data, setData] = useState(array);
-    //console.log(data);
-    const [loading, setLoading] = useState(true);
-    useEffect(() => {
-        fetchChildModuleData({
-            objectid: moduleName,
-            parentid,
-            childModuleName,
-            fieldahead,
-            limit: 20,
-            page: 1,
-            start: 0,
-        }).then((response: any) => {
-            setLoading(false);
-            let __recno__ = 1;
-            if (response.msg)
-                response.msg.forEach((record: any) => {
-                    record[RECNO] = __recno__++;
-                })
-            setData(response.msg || []);
-        })
-    }, [])
-    const cModuleInfo: ModuleModal = getModuleInfo(childModuleName);
-    const scheme = getFormSchemeFormType(childModuleName, 'onetomanytooltip');
-    let columns: any[] = scheme.details.map((formField: any) => {
-        const fieldDefine: ModuleFieldType = getFieldDefine(formField.fieldid, cModuleInfo);
-        const ft = fieldDefine.fieldtype.toLowerCase();
-        const isfloat = ft === 'double' || ft === 'float' || ft === 'money';
-        const isinteger = ft === 'integer';
-        const ispercent = ft === 'percent';
-        const isdate = ft === 'date' || ft === 'datetime' || ft === 'timestamp';
-        const style: CSSProperties = { wordBreak: 'keep-all' };
-        if (isfloat || isdate || isinteger || ispercent)
-            apply(style, {
-                display: 'block',
-                textAlign: 'center'
-            });
-        return {
-            title: <span style={style}>
-                {<>{fieldDefine.fieldtitle} {fieldDefine.unittext ?
-                    <><br />({fieldDefine.unittext})</> : null}</>}
-            </span>,
-            dataIndex: fieldDefine.isManyToOne || fieldDefine.isOneToOne ?
-                fieldDefine.manyToOneInfo.nameField :
-                fieldDefine.fDictionaryid ? fieldDefine.fieldname + '_dictname' : fieldDefine.fieldname,
-            key: fieldDefine.fieldname,
-            align: isfloat ? 'right' : 'left',
-            render: (value: any, record: Object, recno_: number) => {
-                return <span style={{ wordBreak: 'keep-all' }}>
-                    {
-                        cModuleInfo.namefield === fieldDefine.fieldname ? nameFieldRender(value, record, recno_,
-                            { moduleInfo: cModuleInfo, dispatch }) :
-                            ft === 'boolean' ? booleanRenderer(value) :
-                                ft === 'date' ? dateRender(value) :
-                                    ft === 'datetime' || ft === 'timestamp' ? datetimeRender(value, record, recno_, true) :
-                                        isfloat ? floatRender(value) :
-                                            isinteger ? integerRender(value) :
-                                                ispercent ? percentRender(value) :
-                                                    value}
-                </span>
+const OneTowManyTooltip = ({
+  moduleName,
+  parentid,
+  childModuleName,
+  fieldahead,
+  count,
+  dispatch,
+}: {
+  moduleName: string;
+  parentid: string;
+  childModuleName: string;
+  fieldahead: string;
+  count: number;
+  dispatch: Dispatch;
+}): any => {
+  const array = [];
+  for (let i = 0; i < Math.min(count, 20); i += 1) array.push({ [RECNOUNDERLINE]: i + 1 });
+  const [data, setData] = useState(array);
+  // console.log(data);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetchChildModuleData({
+      objectid: moduleName,
+      parentid,
+      childModuleName,
+      fieldahead,
+      limit: 20,
+      page: 1,
+      start: 0,
+    }).then((response: any) => {
+      setLoading(false);
+      let recno = 1;
+      if (response.msg)
+        response.msg.forEach((record: any) => {
+          const rec = record;
+          rec[RECNOUNDERLINE] = recno;
+          recno += 1;
+        });
+      setData(response.msg || []);
+    });
+  }, []);
+  const cModuleInfo: ModuleModal = getModuleInfo(childModuleName);
+  const scheme = getFormSchemeFormType(childModuleName, 'onetomanytooltip');
+  let columns: any[] = scheme.details.map((formField: any) => {
+    const fieldDefine: ModuleFieldType = getFieldDefine(formField.fieldid, cModuleInfo);
+    const ft = fieldDefine.fieldtype.toLowerCase();
+    const isfloat = ft === 'double' || ft === 'float' || ft === 'money';
+    const isinteger = ft === 'integer';
+    const ispercent = ft === 'percent';
+    const isdate = ft === 'date' || ft === 'datetime' || ft === 'timestamp';
+    const style: CSSProperties = { wordBreak: 'keep-all' };
+    if (isfloat || isdate || isinteger || ispercent)
+      apply(style, {
+        display: 'block',
+        textAlign: 'center',
+      });
+    return {
+      title: (
+        <span style={style}>
+          <>
+            {fieldDefine.fieldtitle}{' '}
+            {fieldDefine.unittext ? (
+              <>
+                <br />({fieldDefine.unittext})
+              </>
+            ) : null}
+          </>
+        </span>
+      ),
+      /* eslint-disable */
+      dataIndex:
+        fieldDefine.isManyToOne || fieldDefine.isOneToOne
+          ? fieldDefine.manyToOneInfo.nameField
+          : fieldDefine.fDictionaryid
+          ? `${fieldDefine.fieldname}_dictname`
+          : fieldDefine.fieldname,
+      /* eslint-enable */
+      key: fieldDefine.fieldname,
+      align: isfloat ? 'right' : 'left',
+      render: (value: any, record: Object, recno_: number) => {
+        return (
+          <span style={{ wordBreak: 'keep-all' }}>
+            {
+              /* eslint-disable */
+              cModuleInfo.namefield === fieldDefine.fieldname
+                ? nameFieldRender(value, record, recno_, { moduleInfo: cModuleInfo, dispatch })
+                : ft === 'boolean'
+                ? booleanRenderer(value)
+                : ft === 'date'
+                ? dateRender(value)
+                : ft === 'datetime' || ft === 'timestamp'
+                ? datetimeRender(value, record, recno_, true)
+                : isfloat
+                ? floatRender(value)
+                : isinteger
+                ? integerRender(value)
+                : ispercent
+                ? percentRender(value)
+                : value
+              /* eslint-disable */
             }
-        }
-    })
-    columns = [{
-        title: <Tooltip title="记录顺序号"><BarsOutlined /></Tooltip>,
-        dataIndex: RECNO,
-        key: RECNO,
-        className: styles.numberalignright,
-    }].concat(columns);
+          </span>
+        );
+      },
+    };
+  });
+  columns = [
+    {
+      title: (
+        <Tooltip title="记录顺序号">
+          <BarsOutlined />
+        </Tooltip>
+      ),
+      dataIndex: RECNOUNDERLINE,
+      key: RECNOUNDERLINE,
+      className: styles.numberalignright,
+    },
+  ].concat(columns);
 
-    return <> <Table bordered
+  return (
+    <>
+      {' '}
+      <Table
+        bordered
         loading={loading}
         dataSource={data}
         columns={columns}
         size="small"
-        pagination={false} />
-        {count > 20 ? <div style={{ padding: '5px' }}>等共 {count} 条记录</div> : null}</>
-}
-
+        pagination={false}
+      />
+      {count > 20 ? <div style={{ padding: '5px' }}>等共 {count} 条记录</div> : null}
+    </>
+  );
+};
 
 export default OneTowManyTooltip;

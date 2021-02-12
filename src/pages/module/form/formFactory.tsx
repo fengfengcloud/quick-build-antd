@@ -181,7 +181,7 @@ export const getFormSchemePanel: React.FC<FormSchemePanelProps> = (params): any 
     } else if (xtype === 'approvepanel') {
       // 只要可审批，不管在什么状态下都可以进行
       if (canApprove(currRecord)) {
-        // formType == 'approve' &&
+        // formType === 'approve' &&
         const cardParams: any = getCardProps(title || '流程任务审批', <AuditOutlined />);
         if (item.tabTitle) delete cardParams.title;
         field = (

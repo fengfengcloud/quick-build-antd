@@ -3,7 +3,7 @@ import { Tag } from 'antd';
 import { CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 export const RECNOUNDERLINE = '__recno__';
-
+export const DATA = 'data';
 export const NAME = 'name';
 
 export const AuditWaititng = (

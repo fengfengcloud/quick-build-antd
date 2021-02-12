@@ -64,6 +64,7 @@ import { DateSectionQuickSelect } from '../UserDefineFilter/dateSectionQuickSele
 import { getBusinessColumnRender } from './columnBusinessRender';
 import { auditRenderer } from '../audit/utils';
 import { getActionColumn } from './actions';
+import { RECNOUNDERLINE } from '../constants';
 
 // import { getSortOrder } from './sortUtils';
 // import { getColumnFilterValue, getBooleanFilterOption } from './filterUtils';
@@ -97,7 +98,7 @@ const getExportGridColumns = (items: any[]) => {
       column.items = getExportGridColumns(item.children);
       if (column.items.length === 0) delete column.items;
     }
-    if ((column.dataIndex || column.items) && !item.hidden && column.dataIndex !== '__recno__')
+    if ((column.dataIndex || column.items) && !item.hidden && column.dataIndex !== RECNOUNDERLINE)
       result.push(column);
   });
   return result;
@@ -156,7 +157,7 @@ export const getLockedLeftColumns = (
       align: 'center',
       fixed: 'left',
       render: (value: any, record: Object, _recno: number) =>
-        attachemntRenderer({ value, record, _recno, moduleInfo, dispatch }),
+        attachemntRenderer({ record, _recno, moduleInfo, dispatch }),
     });
   // 是否模块具有审批功能
   if (moduleInfo.moduleLimit.hasapprove) {
