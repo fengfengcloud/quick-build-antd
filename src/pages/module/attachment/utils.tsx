@@ -132,7 +132,7 @@ export const AttachemntRenderer: React.FC<AttachmentRenderProps> = ({
   const getFile = (item: AttachmentModal) => ({
     uid: item.id,
     status: 'done',
-    name: `${item.title}&nbsp;&nbsp;`,
+    name: `${item.title}  `,
     filename: item.filename,
     fileext: item.fileext ? item.fileext : '',
     type: item.thumbnail ? getImageType(item.filename) : 'notimagefile',
