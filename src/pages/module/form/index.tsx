@@ -458,8 +458,7 @@ const ModuleForm: React.FC<ModuleFormProps> = ({
           });
       })
       .catch((errorInfo) => {
-        message.error(errorInfo);
-        // console.log(errorInfo)
+        console.warn(errorInfo);
       });
   };
 
