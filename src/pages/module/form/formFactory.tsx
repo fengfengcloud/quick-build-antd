@@ -960,16 +960,22 @@ const FormField = ({
       currRecord,
       dispatch,
     });
-    if (unittext && fieldtype.toLowerCase() !== 'string')
+    if (unittext && fieldtype.toLowerCase() !== 'string') {
+      // 最外层的FormItem,由于没有rules因此，不会出来红*，必须手工添加
+      const flabel = required ? (
+        <span className="moduleform-item-unittext-required">{fieldtitle}</span>
+      ) : (
+        fieldtitle
+      );
       fieldItem = (
-        <FormItem label={fieldtitle} {...formItemProp} key={`${formFieldDefine.detailid}1`}>
+        <FormItem label={flabel} {...formItemProp} key={`${formFieldDefine.detailid}1`}>
           <FormItem noStyle {...formItemProp} rules={rules}>
             {fieldinput}
           </FormItem>
           <span style={{ paddingLeft: '5px' }}>{unittext}</span>
         </FormItem>
       );
-    else
+    } else
       fieldItem = (
         <FormItem label={fieldtitle} {...formItemProp} rules={rules}>
           {fieldinput}
