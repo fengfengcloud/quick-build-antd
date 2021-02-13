@@ -93,10 +93,10 @@ export const DateSectionQuickSelect = ({
         {allSections.map((sections: any[]) => {
           key += 1;
           return (
-            <Space size="small" key={`space-${key.toString}`}>
+            <Space size="small" key={`space-${key.toString()}`}>
               {sections.map((section: any) => (
                 <Button
-                  key={`button-${key.toString}`}
+                  key={`button-${key.toString()}`}
                   onClick={() => onButtonClick(section)}
                   type={section.add !== 0 ? 'text' : 'link'}
                 >

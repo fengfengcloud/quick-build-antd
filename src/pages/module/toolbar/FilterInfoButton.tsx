@@ -52,7 +52,7 @@ const FilterInfoButton = ({
       </List.Item>
       {allColumnFilter.map((item: ColumnFilter, index: number) => {
         return (
-          <List.Item key={`key_${index.toString}`}>
+          <List.Item key={`key_${index.toString()}`}>
             <Descriptions bordered={false} column={5} size="small" style={{ width: 420 }}>
               <Item style={{ width: 25, paddingBottom: 0 }} key="no.">
                 {index + 1}.

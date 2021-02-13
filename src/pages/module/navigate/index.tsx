@@ -365,7 +365,7 @@ const Navigate = ({ moduleState, dispatch }: { moduleState: ModuleState; dispatc
         delete item.cls;
         delete item.text;
         delete item.leaf;
-        item.key = `${key.toString}`;
+        item.key = `${key.toString()}`;
         key += 1;
         if (item.expanded) expandedKeys.push(item.key);
         if (item.children) {

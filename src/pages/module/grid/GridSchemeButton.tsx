@@ -31,8 +31,8 @@ const GridSchemeButton = ({
       }}
     >
       {schemes.map((scheme: any, index: number) => (
-        <Tooltip title={scheme.schemename} key={`key-${index.toString}`}>
-          <Radio.Button value={scheme.gridschemeid} key={`radio-${index.toString}`}>
+        <Tooltip title={scheme.schemename} key={`key-${index.toString()}`}>
+          <Radio.Button value={scheme.gridschemeid} key={`radio-${index.toString()}`}>
             <span>{index + 1}</span>
           </Radio.Button>
         </Tooltip>

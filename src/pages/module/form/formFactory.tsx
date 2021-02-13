@@ -367,7 +367,7 @@ const getPropertyInput: React.FC<FormFieldProps> = ({ fieldDefine, fieldProps })
       }}
     >
       {getPropertys(fieldDefine.fPropertyid, fieldDefine.fieldid).map(({ text }, index) => (
-        <Select.Option key={`key-${index.toString}`} value={text || ''}>
+        <Select.Option key={`key-${index.toString()}`} value={text || ''}>
           {text}
         </Select.Option>
       ))}

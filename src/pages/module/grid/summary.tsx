@@ -79,7 +79,7 @@ export const tableSummary = (pageData: any[], moduleState: ModuleState, subTotal
           return (
             <Table.Summary.Cell
               className={styles.summarycell}
-              key={`${moduleState.moduleName}_summary${index.toString}`}
+              key={`${moduleState.moduleName}_summary${index.toString()}`}
               index={index}
               colSpan={colSpan}
             >
@@ -119,7 +119,7 @@ export const tableSummary = (pageData: any[], moduleState: ModuleState, subTotal
             return (
               <Table.Summary.Cell
                 className={styles.totalcell}
-                key={`${moduleState.moduleName}_total${index.toString}`}
+                key={`${moduleState.moduleName}_total${index.toString()}`}
                 index={index}
                 colSpan={colSpan}
               >
