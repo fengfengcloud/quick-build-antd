@@ -89,7 +89,7 @@ export const footerRender = (props: any) => {
   const { servicetelnumber: telnumber } = company;
 
   let serviceDepartment = (
-    <span className={styles.icon}>{`服务单位:${company.servicedepartment}`}</span>
+    <span className={styles.icon}>{`服务单位:${company.servicedepartment || ''}`}</span>
   );
   if (company.servicehomepage) {
     serviceDepartment = (
@@ -99,7 +99,7 @@ export const footerRender = (props: any) => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        {serviceDepartment}
+        {serviceDepartment || ''}
       </a>
     );
   }
