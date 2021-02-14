@@ -74,6 +74,7 @@ interface FormSchemePanelProps {
   fieldsValidate: any;
   dispatch: Dispatch;
   setV: Function;
+  requiredMark: boolean;
 }
 
 // 生成一个Card->Fields
@@ -90,6 +91,7 @@ export const getFormSchemePanel: React.FC<FormSchemePanelProps> = (params): any 
     setV,
     formType,
     currRecord,
+    requiredMark,
   } = params;
   const items: any[] = [];
   let firstFieldSet: boolean = true;
@@ -204,6 +206,7 @@ export const getFormSchemePanel: React.FC<FormSchemePanelProps> = (params): any 
           readOnly={readOnly}
           formType={formType}
           currRecord={currRecord}
+          requiredMark={requiredMark}
         />
       );
     } else if (xtype === 'tabpanel') {
@@ -817,6 +820,7 @@ const FormField = ({
   formType,
   currRecord,
   dispatch,
+  requiredMark,
 }: {
   formFieldDefine: any;
   moduleInfo: ModuleModal;
@@ -826,6 +830,7 @@ const FormField = ({
   readOnly: boolean;
   formType: FormOperateType;
   currRecord: any;
+  requiredMark: boolean;
 }): any => {
   let fieldDefine: ModuleFieldType = getFieldDefine(formFieldDefine.fieldid, moduleInfo);
   if (fieldDefine === null) {
@@ -962,11 +967,12 @@ const FormField = ({
     });
     if (unittext && fieldtype.toLowerCase() !== 'string') {
       // 最外层的FormItem,由于没有rules因此，不会出来红*，必须手工添加
-      const flabel = required ? (
-        <span className="moduleform-item-unittext-required">{fieldtitle}</span>
-      ) : (
-        fieldtitle
-      );
+      const flabel =
+        requiredMark && required ? (
+          <span className="moduleform-item-unittext-required">{fieldtitle}</span>
+        ) : (
+          fieldtitle
+        );
       fieldItem = (
         <FormItem label={flabel} {...formItemProp} key={`${formFieldDefine.detailid}1`}>
           <FormItem noStyle {...formItemProp} rules={rules}>

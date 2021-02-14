@@ -36,7 +36,7 @@
     isDrawer: true|false                表单是modal窗口式或者抽屉式  ,默认false
 
     formLayout:'horizontal'|'vertical'  表单layout,字段描述和字段水平、垂直排列,默认horizontal
-    hideRequiredMark:true|false,        隐藏必填项的标志*,默认false
+    requiredMark:true|false,            显示必填项的标志*,默认true，如果不需要显示，必须指定为false
     formSize : small | middle | large   字段的大小，默认为middle
 
     表单容器设置hiddenTitle:true,则不显示title

@@ -458,6 +458,7 @@ const ModuleForm: React.FC<ModuleFormProps> = ({
           });
       })
       .catch((errorInfo) => {
+        // eslint-disable-next-line
         console.warn(errorInfo);
       });
   };
@@ -765,8 +766,9 @@ const ModuleForm: React.FC<ModuleFormProps> = ({
   };
   // 为了使manytoone的selecttable在选中之后执行onChange而设置
   apply(form, { onValuesChange });
-  const { centered, hideRequiredMark } = scheme;
-  let { formLayout, formSize } = scheme;
+  const { centered } = scheme;
+  let { formLayout, formSize, requiredMark } = scheme;
+  requiredMark = requiredMark !== false;
   formLayout = formLayout === 'vertical' ? 'vertical' : 'horizontal';
   formSize = formSize === 'small' || formSize === 'large' ? formSize : 'middle';
   const labelCol =
@@ -784,6 +786,7 @@ const ModuleForm: React.FC<ModuleFormProps> = ({
     readOnly,
     setV,
     dispatch,
+    requiredMark,
     parentCols: 0, // 如果此值为0，则表示其子模块都需要分栏
   });
   const schemeForm = (
@@ -795,7 +798,7 @@ const ModuleForm: React.FC<ModuleFormProps> = ({
       form={form}
       labelCol={labelCol}
       layout={formLayout}
-      hideRequiredMark={!!hideRequiredMark}
+      requiredMark={requiredMark}
       size={formSize}
     >
       {showType === 'mainregion' ? (
