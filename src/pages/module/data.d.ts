@@ -292,6 +292,7 @@ export interface ModuleModal {
   associates: any[]; // 关联区域
   sqlparamsDefine: SqlParamsDefine[]; // sql 查询的参数字段
   recordPrintSchemes: RecordPrintSchemeModal[]; // 模块单条记录打印方案
+  rowbodytpl?: string; // row 展开记录时的设置  loading...为去后台获取数据
 }
 
 /* parentFilter: {

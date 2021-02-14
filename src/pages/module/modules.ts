@@ -69,6 +69,7 @@ export const generateModuleInfo = (module: any): ModuleModal => {
     attachmentTypes: obj.attachmentTypes,
     sqlparamsDefine: obj.fDataobjectsqlparams,
     recordPrintSchemes: obj.recordPrintSchemes,
+    rowbodytpl: obj.rowbodytpl,
     moduleLimit: {
       hasenable: obj.hasenable,
       hasbrowse: obj.hasbrowse,

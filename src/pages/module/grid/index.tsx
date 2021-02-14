@@ -25,6 +25,7 @@ import StartEndDateSectionSelect from './sqlparams';
 import { DragableBodyRow } from './bodyRowDragDrop';
 import { SimpleDescription } from '../descriptions';
 import { UpdateRecordOrderNoButton } from './updateRecordOrderno';
+import { RemoteExpandBody } from './RemoteExpandBody';
 
 interface ModuleGridProps {
   moduleState: ModuleState;
@@ -233,8 +234,44 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
         },
       });
     };
+  } else if (gridScheme.expandRecord) {
+    // 设置了可以单击展开记录的功能
+    params.expandable = {
+      expandedRowRender: (record: any) => (
+        <div style={{ borderCollapse: 'collapse' }}>
+          <SimpleDescription
+            record={record}
+            disableTitle
+            moduleInfo={moduleInfo}
+            dispatch={dispatch}
+            isRecordExpand
+          />
+        </div>
+      ),
+    };
+  } else if (moduleInfo.rowbodytpl) {
+    if (moduleInfo.rowbodytpl === 'loading...') {
+      params.expandable = {
+        expandedRowRender: (record: any) => (
+          <RemoteExpandBody moduleInfo={moduleInfo} record={record} />
+        ),
+      };
+    } else {
+      params.expandable = {
+        expandedRowRender: (record: any) => {
+          return `expandbody 设置的字符串:${record},${moduleInfo.rowbodytpl}`;
+        },
+      };
+    }
   } else if (hasAssociatesSouth(moduleInfo)) {
+    // 可以展开下部设置的关联模块
+    params.expandable = {
+      expandedRowRender: (record: any) => getAssociatesSouthDetails({ record, moduleInfo }),
+    };
+  }
+  if (params.expandable) {
     params.expandedRowKeys = moduleState.expandedRowKeys;
+    // 每次只能展开一条记录，如要修改规则，在modules/expandChanged中进行修改
     params.onExpand = (expanded: boolean, record: any) => {
       dispatch({
         type: 'modules/expandChanged',
@@ -246,9 +283,6 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
           selected: true,
         },
       });
-    };
-    params.expandable = {
-      expandedRowRender: (record: any) => getAssociatesSouthDetails({ record, moduleInfo }),
     };
   }
 
@@ -276,22 +310,6 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
     };
   }
 
-  // 设置了可以单击展开记录的功能
-  if (gridScheme.expandRecord) {
-    params.expandable = {
-      expandedRowRender: (record: any) => (
-        <div style={{ borderCollapse: 'collapse' }}>
-          <SimpleDescription
-            record={record}
-            disableTitle
-            moduleInfo={moduleInfo}
-            dispatch={dispatch}
-            isRecordExpand
-          />
-        </div>
-      ),
-    };
-  }
   const components: any = {};
   if (canMoveRow(moduleState)) {
     apply(components, {
