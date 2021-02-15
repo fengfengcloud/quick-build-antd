@@ -55,7 +55,7 @@ const CanSelectRoleIconView: React.FC<CanSelectRoleProps> = ({ dataRole, dispatc
           },
         });
         refreshLinkedModuleData(role);
-        message.success('当前数据权限已改变，请刷新当前数据或刷新网页！');
+        message.warn('当前数据权限已改变，请刷新当前数据或刷新网页！');
       }
     });
   };

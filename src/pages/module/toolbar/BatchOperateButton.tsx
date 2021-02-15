@@ -111,11 +111,11 @@ const BatchOperateButton = ({
           const { minselectrecordnum: min, maxselectrecordnum: max } = fun;
           const selectCount = moduleState.selectedRowKeys.length;
           if (min > selectCount) {
-            message.warning(`请先选择 ${min} 条记录,然后再${fun.title}！`);
+            message.warn(`请先选择 ${min} 条记录,然后再${fun.title}！`);
             return;
           }
           if (max && max < selectCount) {
-            message.warning(`要${fun.title}${max === 1 ? '只能' : '最多'}选择 ${max} 条记录！`);
+            message.warn(`要${fun.title}${max === 1 ? '只能' : '最多'}选择 ${max} 条记录！`);
             return;
           }
           const params: ActionParamsModal = {
@@ -302,11 +302,11 @@ export const getToolbarButton = ({
           const { minselectrecordnum: min, maxselectrecordnum: max } = fun;
           const selectCount = moduleState.selectedRowKeys.length;
           if (min > selectCount) {
-            message.warning(`请先选择 ${min} 条记录,然后再${fun.title}！`);
+            message.warn(`请先选择 ${min} 条记录,然后再${fun.title}！`);
             return;
           }
           if (max && max < selectCount) {
-            message.warning(`要${fun.title}${max === 1 ? '只能' : '最多'}选择 ${max} 条记录！`);
+            message.warn(`要${fun.title}${max === 1 ? '只能' : '最多'}选择 ${max} 条记录！`);
             return;
           }
           if (systemActions[fun.fcode]) systemActions[fun.fcode](params);

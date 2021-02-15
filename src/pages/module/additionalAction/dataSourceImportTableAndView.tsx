@@ -269,7 +269,7 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
       }).then((response) => {
         if (response.status) message.error(`${selected}--表信息导入失败，请检查后台日志！`);
         else {
-          message.info(`${selected}--表信息导入成功！`);
+          message.success(`${selected}--表信息导入成功！`);
           removeTableView(selected);
         }
       });

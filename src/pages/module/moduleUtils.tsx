@@ -321,7 +321,7 @@ export const ModuleHelpMarkDown: React.FC<ModuleHelpMarkDownProps> = ({ moduleIn
               text: markdown,
             }),
           }).then(() => {
-            message.info('模块的帮助信息保存成功！');
+            message.success('模块的帮助信息保存成功！');
           });
         }}
       >

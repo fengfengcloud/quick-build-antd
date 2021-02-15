@@ -29,7 +29,7 @@ const ModuleToolbar = ({
             type="primary"
             onClick={() => {
               if (moduleState.selectedRowKeys.length === 0) {
-                message.warning(`请先选择一条${moduleInfo.title}记录，再执行此操作！`);
+                message.warn(`请先选择一条${moduleInfo.title}记录，再执行此操作！`);
                 return;
               }
               const selectValue = moduleState.selectedRowKeys[0];

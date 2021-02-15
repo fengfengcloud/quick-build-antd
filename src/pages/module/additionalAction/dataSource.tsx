@@ -57,7 +57,7 @@ export const breakDataSource = (params: ActionParamsModal) => {
     },
   }).then((response) => {
     if (response.success) {
-      message.info('数据源已从后台断开');
+      message.success('数据源已从后台断开');
     } else {
       Modal.error({
         width: 500,
