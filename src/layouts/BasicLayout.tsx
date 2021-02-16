@@ -73,6 +73,10 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
 // 系统菜单，可供通过moduleName来取得title
 export const sysMenuData = {};
 
+export const hasModuleInSysMenu = (moduleName: string): boolean => {
+  return !!sysMenuData[moduleName];
+};
+
 export const getTitleFromSysMenu = (moduleName: string): string => {
   if (sysMenuData[moduleName]) return sysMenuData[moduleName].title;
   return '未定义';
