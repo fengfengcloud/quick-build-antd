@@ -117,17 +117,22 @@ const PmAgreementGlobal: React.FC = () => {
           [
             { type: '合同结算金额', value: obj.jf750aa8475c524777c79f8579aac || 0, group: '1' },
             {
-              type: '不可请款金额',
+              type: '不可支付计划',
               value: obj.jf750aa8475c524777c79f8579aac - obj.jf95904a67172a099458c6d3e8bc5 || 0,
               group: '2',
+            },
+            { type: '可支付计划', value: obj.jf95904a67172a099458c6d3e8bc5 || 0, group: '2' },
+            {
+              type: '不可请款金额',
+              value: obj.jf750aa8475c524777c79f8579aac - obj.jf95904a67172a099458c6d3e8bc5 || 0,
+              group: '3',
             },
             {
               type: '可请款金额',
               value: obj.jf95904a67172a099458c6d3e8bc5 - obj.jf87b6ad783767a80662a998f7a9b || 0,
-              group: '2',
+              group: '3',
             },
-            { type: '已支付金额', value: obj.jf87b6ad783767a80662a998f7a9b || 0, group: '2' },
-            { type: '可支付计划', value: obj.jf95904a67172a099458c6d3e8bc5 || 0, group: '3' },
+            { type: '已支付金额', value: obj.jf87b6ad783767a80662a998f7a9b || 0, group: '3' },
           ].map((rec) => ({
             ...rec,
             value: parseFloat(numeral(rec.value / unitdiv).format('0.00')),
