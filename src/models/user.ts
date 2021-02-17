@@ -103,29 +103,32 @@ const UserModel: UserModelType = {
 
     dataRoleCheckChanged(state = {}, action) {
       const { roleId, checked } = action.payload;
-      const canselectdatarole = currentUser?.canselectdatarole?.map((role) =>
+      const canselectdatarole = state.currentUser?.canselectdatarole?.map((role) =>
         role.roleId === roleId ? { ...role, checked } : role,
       );
+      const user = {
+        ...state.currentUser,
+        canselectdatarole,
+      };
       return {
         ...state,
-        currentUser: {
-          ...state.currentUser,
-          canselectdatarole,
-        },
+        currentUser: user,
       };
     },
 
     dataRoleCheckReset(state = {}) {
-      const canselectdatarole = currentUser?.canselectdatarole?.map((role) => ({
+      const canselectdatarole = state.currentUser?.canselectdatarole?.map((role) => ({
         ...role,
         checked: false,
       }));
+      const user = {
+        ...state.currentUser,
+        canselectdatarole,
+      };
+      apply(currentUser, user);
       return {
         ...state,
-        currentUser: {
-          ...state.currentUser,
-          canselectdatarole,
-        },
+        currentUser: user,
       };
     },
   },
