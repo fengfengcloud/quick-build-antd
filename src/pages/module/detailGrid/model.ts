@@ -536,6 +536,19 @@ export const moduleStateReducer = (moduleState: ModuleState, action: ActionProps
           },
         },
       };
+    // DetailGrid没有此功能
+    case 'toggleCanDragToNavigate':
+      return update(moduleState, {
+        currSetting: {
+          $toggle: ['canDragToNavigate'],
+        },
+      });
+    case 'toggleCanDragChangeRecno':
+      return update(moduleState, {
+        currSetting: {
+          $toggle: ['canDragChangeRecno'],
+        },
+      });
     default:
       message.warn(`action.type ----${type} 未进行处理。`);
       return moduleState;

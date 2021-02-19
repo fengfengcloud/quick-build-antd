@@ -3,7 +3,7 @@ import { Dropdown, Menu, Radio, Switch } from 'antd';
 import { Dispatch } from 'redux';
 import { CheckOutlined, SettingOutlined } from '@ant-design/icons';
 import { RadioChangeEvent } from 'antd/lib/radio';
-import { ModuleState, TextValue } from '../data';
+import { GridOperateType, ModuleState, TextValue } from '../data';
 import { getMonetarysValueText } from './monetary';
 import { getAllGridSchemes, getModuleInfo, hasEdit, hasMonetaryField } from '../modules';
 
@@ -13,13 +13,16 @@ const checkedIcon = () => <CheckOutlined />;
 const GridSettingButton: React.FC<any> = ({
   moduleState,
   dispatch,
+  gridType,
 }: {
   moduleState: ModuleState;
   dispatch: Dispatch;
+  gridType: GridOperateType;
 }) => {
   const { moduleName } = moduleState;
   const moduleInfo = getModuleInfo(moduleName);
-  const canDragToNavigate = hasEdit(moduleInfo) && moduleInfo.navigateSchemes.length;
+  const canDragToNavigate =
+    hasEdit(moduleInfo) && moduleInfo.navigateSchemes.length && gridType === 'normal';
   const schemes: any[] = getAllGridSchemes(moduleInfo.gridschemes);
   const [visible, setVisible] = useState<boolean>(false);
   const menu = (

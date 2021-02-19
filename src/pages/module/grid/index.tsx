@@ -194,7 +194,7 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
           ) : null}
           <GridSizeButton moduleState={moduleState} dispatch={dispatch} />
           <SortInfoButton moduleState={moduleState} dispatch={dispatch} />
-          <GridSettingButton moduleState={moduleState} dispatch={dispatch} />
+          <GridSettingButton moduleState={moduleState} dispatch={dispatch} gridType={gridType} />
           {document.body.clientWidth > 768 ? `显示${range[0]}-${range[1]},共${atotal}条` : null}
           {refreshButton}
         </Space>
