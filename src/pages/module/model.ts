@@ -72,6 +72,9 @@ export interface ModuleModelType {
     gridExportSettingChanged: Reducer<ModalState>;
     monetaryChanged: Reducer<ModalState>;
     gridSizeChanged: Reducer<ModalState>;
+
+    toggleCanDragToNavigate: Reducer<ModalState>;
+    toggleCanDragChangeRecno: Reducer<ModalState>;
   };
 }
 
@@ -738,6 +741,45 @@ const Model: ModuleModelType = {
       result[moduleName] = {
         ...moduleState,
         currSetting: { ...moduleState.currSetting, gridSize },
+      };
+      return result;
+    },
+
+    toggleCanDragToNavigate(state = {}, action) {
+      const { moduleName } = action.payload;
+      const moduleState: ModuleState = state[moduleName] as ModuleState;
+      const result = { ...state };
+      result[moduleName] = {
+        ...moduleState,
+        currSetting: {
+          ...moduleState.currSetting,
+          canDragToNavigate: !moduleState.currSetting.canDragToNavigate,
+          canDragChangeRecno: !moduleState.currSetting.canDragToNavigate
+            ? false
+            : moduleState.currSetting.canDragChangeRecno,
+          navigate: {
+            visible: !moduleState.currSetting.canDragToNavigate
+              ? true
+              : moduleState.currSetting.navigate.visible,
+          },
+        },
+      };
+      return result;
+    },
+
+    toggleCanDragChangeRecno(state = {}, action) {
+      const { moduleName } = action.payload;
+      const moduleState: ModuleState = state[moduleName] as ModuleState;
+      const result = { ...state };
+      result[moduleName] = {
+        ...moduleState,
+        currSetting: {
+          ...moduleState.currSetting,
+          canDragChangeRecno: !moduleState.currSetting.canDragChangeRecno,
+          canDragToNavigate: !moduleState.currSetting.canDragChangeRecno
+            ? false
+            : moduleState.currSetting.canDragToNavigate,
+        },
       };
       return result;
     },

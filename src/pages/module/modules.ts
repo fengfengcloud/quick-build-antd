@@ -340,7 +340,7 @@ export const hasInsert = (moduleInfo: ModuleModal): boolean => {
  * @param moduleInfo
  */
 export const hasEdit = (moduleInfo: ModuleModal): boolean => {
-  return moduleInfo.moduleLimit.hasedit && moduleInfo.userLimit.edit;
+  return moduleInfo && moduleInfo.moduleLimit.hasedit && moduleInfo.userLimit.edit;
 };
 
 /**
@@ -470,7 +470,7 @@ export const getParentOrNavigateIdAndText = (state: ModuleState, pModuleName: st
  * 判断是否当前模块的记录可以移动，有orderno字段，并且是可以修改的，如果有记录顺序控制字段，则必须有该筛选条件
  * @param moduleInfo
  */
-export const canMoveRow = (moduleState: ModuleState) => {
+export const canMoveRowToChangeRecno = (moduleState: ModuleState) => {
   const { moduleName } = moduleState;
   const moduleInfo = getModuleInfo(moduleName);
   const { orderfield, orderfieldcontroltable } = moduleInfo;
@@ -639,6 +639,8 @@ export const getDefaultModuleState = ({
       userFilterRestNumber: getFilterRestNumber(moduleInfo), // 筛选字段从第几个开始隐藏，-1表示不隐藏
       userFilterRestHidden: getFilterRestHidden(moduleInfo), // 筛选字段是否隐藏 展开，收起
       gridSize: parentFilter ? 'small' : 'middle',
+      canDragToNavigate: false,
+      canDragChangeRecno: false,
     },
     gridExportSetting: {
       usemonetary: false,

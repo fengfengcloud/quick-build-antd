@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Dropdown, Menu, Radio } from 'antd';
+import { Dropdown, Menu, Radio, Switch } from 'antd';
 import { Dispatch } from 'redux';
 import { CheckOutlined, SettingOutlined } from '@ant-design/icons';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { ModuleState, TextValue } from '../data';
 import { getMonetarysValueText } from './monetary';
-import { getAllGridSchemes, getModuleInfo, hasMonetaryField } from '../modules';
+import { getAllGridSchemes, getModuleInfo, hasEdit, hasMonetaryField } from '../modules';
 
 const hiddenIcon = () => <CheckOutlined style={{ visibility: 'hidden' }} />;
 const checkedIcon = () => <CheckOutlined />;
@@ -19,6 +19,7 @@ const GridSettingButton: React.FC<any> = ({
 }) => {
   const { moduleName } = moduleState;
   const moduleInfo = getModuleInfo(moduleName);
+  const canDragToNavigate = hasEdit(moduleInfo) && moduleInfo.navigateSchemes.length;
   const schemes: any[] = getAllGridSchemes(moduleInfo.gridschemes);
   const [visible, setVisible] = useState<boolean>(false);
   const menu = (
@@ -59,7 +60,7 @@ const GridSettingButton: React.FC<any> = ({
                 dispatch({
                   type: 'modules/monetaryChanged',
                   payload: {
-                    moduleName: moduleState.moduleName,
+                    moduleName,
                     monetaryType: e.target.value,
                   },
                 });
@@ -82,7 +83,7 @@ const GridSettingButton: React.FC<any> = ({
                   dispatch({
                     type: 'modules/monetaryChanged',
                     payload: {
-                      moduleName: moduleState.moduleName,
+                      moduleName,
                       position: e.target.value,
                     },
                   });
@@ -95,9 +96,52 @@ const GridSettingButton: React.FC<any> = ({
           </Menu.Item>
         </Menu.ItemGroup>
       ) : null}
+      {canDragToNavigate || moduleInfo.orderfield ? (
+        <Menu.ItemGroup title="记录拖动设置">
+          {canDragToNavigate ? (
+            <Menu.Item key="dragtonavigate">
+              <span style={{ marginRight: '24px' }}>可拖动至导航修改字段值</span>
+              <Switch
+                checked={moduleState.currSetting.canDragToNavigate}
+                onChange={() => {
+                  dispatch({
+                    type: 'modules/toggleCanDragToNavigate',
+                    payload: {
+                      moduleName,
+                    },
+                  });
+                }}
+                style={{ float: 'right' }}
+              />
+            </Menu.Item>
+          ) : null}
+          {moduleInfo.orderfield ? (
+            <Menu.Item key="dragtochangerecno">
+              <span style={{ marginRight: '24px' }}>可拖动记录改变顺序</span>
+              <Switch
+                checked={moduleState.currSetting.canDragChangeRecno}
+                onChange={() => {
+                  dispatch({
+                    type: 'modules/toggleCanDragChangeRecno',
+                    payload: {
+                      moduleName,
+                    },
+                  });
+                }}
+                style={{ float: 'right' }}
+              />
+            </Menu.Item>
+          ) : null}
+        </Menu.ItemGroup>
+      ) : null}
     </Menu>
   );
-  if (schemes.length > 1 || hasMonetaryField(moduleInfo))
+  if (
+    schemes.length > 1 ||
+    hasMonetaryField(moduleInfo) ||
+    canDragToNavigate ||
+    moduleInfo.orderfield
+  )
     return (
       <Dropdown
         overlay={menu}

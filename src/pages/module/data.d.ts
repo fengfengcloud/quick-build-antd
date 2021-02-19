@@ -186,6 +186,8 @@ interface ModuleSetting {
   userFilterRestNumber: number; // 筛选字段隐藏个数   restNumber : 3, 从第三个开始隐藏 ，设置在筛选分组里面
   userFilterRestHidden: boolean; // 筛选字段是否隐藏 展开，收起 restHidden : false ，默认隐藏
   gridSize: 'default' | 'middle' | 'small';
+  canDragToNavigate: boolean;
+  canDragChangeRecno: boolean;
 }
 
 export interface ExcelSchemeState {

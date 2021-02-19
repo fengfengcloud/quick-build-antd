@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import Highlighter from 'react-highlight-words';
-import { Card, Tabs, Tree, Space, Tooltip, Input, message, Typography } from 'antd';
+import { Card, Tabs, Tree, Space, Tooltip, Input, message, Typography, Modal } from 'antd';
 import {
   ReloadOutlined,
   NodeExpandOutlined,
@@ -9,21 +9,36 @@ import {
   DisconnectOutlined,
   EllipsisOutlined,
   MoreOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { match } from 'pinyin-match';
 import { Dispatch } from 'redux';
 import { apply } from '@/utils/utils';
-import { ModuleState } from '../data';
-import { fetchNavigateTreeData } from '../service';
+import { useDrop } from 'react-dnd';
+import { ModuleFieldType, ModuleModal, ModuleState } from '../data';
+import { fetchNavigateTreeData, saveOrUpdateRecord } from '../service';
 import { ModuleNavigates, NavigateStateModal } from './data';
-import { getModuleInfo } from '../modules';
+import { canEdit, getFieldDefine, getModuleInfo, hasEdit } from '../modules';
 import { getSqlparamFilter } from '../grid/filterUtils';
 import { DATA } from '../constants';
+import styles from '../index.less';
 
 const { TabPane } = Tabs;
 const { DirectoryTree } = Tree;
 const { Search } = Input;
 const { Text } = Typography;
+
+// NavigateTree 中存放的上下文的字段值
+export interface NavigateStateContext {
+  state?: ModuleState;
+  moduleInfo?: ModuleModal;
+  dispatch: Function;
+}
+
+// NavigateTree 的上下文
+const NavigateContext = createContext<NavigateStateContext>({
+  dispatch: () => {},
+});
 
 // 所有的模块的导航信息，每次只用到当前模块的数据，state初始化的时候会使用相应模块的数据
 const moduleNavigates: ModuleNavigates = {};
@@ -56,28 +71,170 @@ const getModuleActiveTab = (moduleName: string, defaultKey: string) => {
   return moduleActiveTab[moduleName];
 };
 
+// 判断从Table中拖动进来的记录是否可以移动到当前节点之下
+const canRecordDrop = (moduleInfo: ModuleModal, dragRecord: any, node: any) => {
+  const { modulename: moduleName, fields } = moduleInfo;
+  let field = null;
+  if (hasEdit(moduleInfo)) {
+    // 如果是相同的model表示，当前导航这段是本模块的自有字段，检查此字段，如果是可修改，并且是字符串的才可以拖放
+    if (node.moduleName === moduleName) {
+      for (let i = 0; i < fields.length; i += 1) {
+        if (fields[i].fieldname === node.fieldName) {
+          field = fields[i];
+          break;
+        }
+      }
+    } else {
+      for (let i = 0; i < fields.length; i += 1) {
+        // 判断 treeModuleName 是不是 拖动来的grid记录的直接父模块，如果是并且允许修改，才可以修改
+        if (fields[i].fieldtype === node.moduleName && fields[i].fieldname === node.fieldahead) {
+          const minfo = getModuleInfo(fields[i].fieldtype);
+          if (!minfo)
+            // eslint-disable-next-line
+            continue;
+          // 是作用在主键之上，即为manytoone字段
+          if (minfo.primarykey === node.fieldName) {
+            field = fields[i];
+            break;
+          }
+        }
+      }
+    }
+  }
+  // 判断是否允许选择非叶节点的值
+  if (field) {
+    if (!field.allowedit) return null;
+    if (field.isManyToOne && !field.allowParentValue) return node.children ? null : field;
+    return field;
+  }
+  return null;
+};
+
 /**
  * 生成DirectoryTree的树形treeData数据
  * 如果有搜索的值，那么对搜索的结果加高亮显示
  */
-const getTitle = (node: any, search: string = '') => (
-  <>
-    {search ? (
-      <Highlighter
-        highlightClassName="ant-btn-link"
-        searchWords={[search]}
-        textToHighlight={node.title}
-      />
-    ) : (
-      node.title || '未定义'
-    )}
-    <Text type="secondary">({node.count})</Text>
-  </>
-);
+const type = 'ModuleDragableBodyRow';
+const NodeTitle: React.FC<any> = ({ node, search = '' }: { node: any; search: string }) => {
+  const { moduleInfo: modinfo, state, dispatch } = useContext(NavigateContext);
+  const moduleInfo = modinfo as ModuleModal;
+  const { modulename: moduleName } = moduleInfo;
+  const [{ isOver, canDrop }, drop] = useDrop({
+    accept: `${type + state?.moduleName}toNavigate`,
+    canDrop: (item) => {
+      return !!canRecordDrop(moduleInfo, item.record, node);
+    },
+    /**
+     * 当用户拖动模块记录到此模块上时。
+     */
+    drop: (item: any) => {
+      const field = canRecordDrop(moduleInfo, item.record, node);
+      const primarykey = moduleInfo.primarykey || '';
+      const canE = canEdit(moduleInfo, item.record);
+      if (!canE.canEdit) {
+        message.warn(canE.message);
+        return;
+      }
+      if (field) {
+        Modal.confirm({
+          width: 500,
+          title: `确定要将${moduleInfo.title}『${item.record[moduleInfo.namefield]}』的${
+            field.fieldtitle
+          }改为“${node.title}”吗？`,
+          icon: <QuestionCircleOutlined />,
+          onOk: () => {
+            const data = { [primarykey]: item.record[primarykey] };
+            if (field.isManyToOne) {
+              const pinfo = getModuleInfo(field.fieldtype);
+              data[`${field.fieldname}.${pinfo.primarykey}`] = node.fieldvalue;
+            } else {
+              data[field.fieldname] = node.fieldvalue;
+            }
+            saveOrUpdateRecord({
+              moduleName,
+              opertype: 'edit',
+              data,
+            }).then((response: any) => {
+              const { data: updatedRecord } = response; // 从后台返回过来的数据
+              if (response.success) {
+                message.success(
+                  `${moduleInfo.title}的『${updatedRecord[moduleInfo.namefield]}』保存成功！`,
+                );
+                dispatch({
+                  type: 'modules/updateRecord',
+                  payload: {
+                    moduleName,
+                    record: updatedRecord,
+                  },
+                });
+              } else {
+                // response.data没处理，参考extjs版
+                const errorMessage = response.message
+                  ? [
+                      <div>
+                        <li>
+                          {typeof response.message === 'string'
+                            ? response.message
+                            : JSON.stringify(response.message)}
+                        </li>
+                      </div>,
+                    ]
+                  : [];
+                //  样式 { personnelage : '必须小于200岁'}
+                const { data: errors } = response;
+                if (errors) {
+                  Object.keys(errors).forEach((fn) => {
+                    const fi: ModuleFieldType = getFieldDefine(fn, moduleInfo);
+                    errorMessage.push(
+                      <div>
+                        <li>
+                          <b>{fi ? fi.fieldtitle : fn}</b>：{errors[fn]}
+                        </li>
+                      </div>,
+                    );
+                  });
+                }
+                Modal.error({
+                  width: 500,
+                  title: '记录保存时发生错误',
+                  content: <ul style={{ listStyle: 'decimal' }}>{errorMessage}</ul>,
+                });
+              }
+            });
+          },
+        });
+      }
+    },
+    collect: (monitor) => {
+      return {
+        isOver: !!monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      };
+    },
+  });
+  return (
+    <div
+      style={{ display: 'inline-block', height: '100%' }}
+      ref={hasEdit(moduleInfo as ModuleModal) ? drop : null}
+      className={isOver && canDrop ? styles.navigatedragover : ''}
+    >
+      {search ? (
+        <Highlighter
+          highlightClassName="ant-btn-link"
+          searchWords={[search]}
+          textToHighlight={node.title}
+        />
+      ) : (
+        node.title || '未定义'
+      )}
+      <Text type="secondary">({node.count})</Text>
+    </div>
+  );
+};
 
 const getNode = (node: any, search: string = '') => {
   const result: any = {
-    title: getTitle(node, search),
+    title: <NodeTitle node={node} search={search} />,
     key: node.key,
     isLeaf: node.isLeaf,
     icon: node.iconCls ? <span className={node.iconCls} /> : null,
@@ -626,57 +783,61 @@ const Navigate = ({ moduleState, dispatch }: { moduleState: ModuleState; dispatc
 
   if (schemes.length > 1)
     return (
-      <Card
-        title="导航"
-        bordered={false}
-        bodyStyle={{ overflowY: 'auto' }}
-        extra={getExtra()}
-        size="small"
-      >
-        <Tabs
-          className="navigate"
-          defaultActiveKey={getModuleActiveTab(moduleName, schemes[0].navigateschemeid)}
-          onChange={(key: string) => setModuleActiveTab(moduleName, key)}
-          style={{ marginTop: '-10px' }}
+      <NavigateContext.Provider value={{ state: moduleState, moduleInfo, dispatch }}>
+        <Card
+          title="导航"
+          bordered={false}
+          bodyStyle={{ overflowY: 'auto' }}
+          extra={getExtra()}
+          size="small"
         >
-          {schemes.map((scheme: NavigateStateModal) => {
-            const { navigateschemeid, title } = scheme;
-            return (
-              <TabPane tab={title} key={navigateschemeid}>
-                {scheme.loading === 'loaded' ? (
-                  <>
-                    {' '}
-                    {getTool(scheme)}
-                    {getTree(scheme)}
-                  </>
-                ) : (
-                  <Card loading bordered={false}>
-                    <>{buildNavigateData(scheme)}</>
-                  </Card>
-                )}
-              </TabPane>
-            );
-          })}
-        </Tabs>
-      </Card>
+          <Tabs
+            className="navigate"
+            defaultActiveKey={getModuleActiveTab(moduleName, schemes[0].navigateschemeid)}
+            onChange={(key: string) => setModuleActiveTab(moduleName, key)}
+            style={{ marginTop: '-10px' }}
+          >
+            {schemes.map((scheme: NavigateStateModal) => {
+              const { navigateschemeid, title } = scheme;
+              return (
+                <TabPane tab={title} key={navigateschemeid}>
+                  {scheme.loading === 'loaded' ? (
+                    <>
+                      {' '}
+                      {getTool(scheme)}
+                      {getTree(scheme)}
+                    </>
+                  ) : (
+                    <Card loading bordered={false}>
+                      <>{buildNavigateData(scheme)}</>
+                    </Card>
+                  )}
+                </TabPane>
+              );
+            })}
+          </Tabs>
+        </Card>
+      </NavigateContext.Provider>
     );
 
   const scheme = schemes[0];
   if (scheme.loading === 'loaded')
     return (
-      <Card
-        bordered={false}
-        bodyStyle={{ overflowY: 'auto' }}
-        title={<>{scheme.title} 导航</>}
-        extra={getExtra()}
-        size="small"
-      >
-        <>
-          {' '}
-          {getTool(scheme)}
-          {getTree(scheme)}
-        </>
-      </Card>
+      <NavigateContext.Provider value={{ state: moduleState, moduleInfo, dispatch }}>
+        <Card
+          bordered={false}
+          bodyStyle={{ overflowY: 'auto' }}
+          title={<>{scheme.title} 导航</>}
+          extra={getExtra()}
+          size="small"
+        >
+          <>
+            {' '}
+            {getTool(scheme)}
+            {getTree(scheme)}
+          </>
+        </Card>
+      </NavigateContext.Provider>
     );
 
   buildNavigateData(scheme);

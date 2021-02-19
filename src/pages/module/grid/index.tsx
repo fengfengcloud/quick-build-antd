@@ -12,7 +12,7 @@ import {
 import { apply } from '@/utils/utils';
 import { ModuleModal, ModuleState, GridOperateType } from '../data';
 import { getAllFilterCount } from './filterUtils';
-import { canMoveRow, getGridScheme, hasAssociatesSouth } from '../modules';
+import { getGridScheme, hasAssociatesSouth } from '../modules';
 import SortInfoButton from './sortInfoButton';
 import { getPinRecord } from '../moduleUtils';
 import { getColumns, getSubTotalFields } from './columnFactory';
@@ -311,7 +311,7 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
   }
 
   const components: any = {};
-  if (canMoveRow(moduleState)) {
+  if (moduleState.currSetting.canDragChangeRecno || moduleState.currSetting.canDragToNavigate) {
     apply(components, {
       body: {
         row: (props: any) => <DragableBodyRow {...props} />,

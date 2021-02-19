@@ -1,8 +1,10 @@
+import { message } from 'antd';
 import React, { useContext } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
+import { DragPreviewImage, useDrag, useDrop } from 'react-dnd';
 import { ModuleContext, ModuleStateContext } from '..';
 import { ModuleState } from '../data';
 import { DetailModelContext } from '../detailGrid/model';
+import { canMoveRowToChangeRecno } from '../modules';
 
 const type = 'ModuleDragableBodyRow';
 /**
@@ -36,11 +38,14 @@ export const DragableBodyRow = ({
     state = context.state;
     // dispatch = context.dispatch;
   }
+  const acceptType = state.currSetting.canDragChangeRecno
+    ? type + state.moduleName
+    : `${type + state.moduleName}toNavigate`;
   const ref: any = React.useRef();
 
   // 记录之间互相拖动顺序
   const [{ isMoveOver, canMoveDrop: canMove, dropClassName }, moveDrop] = useDrop({
-    accept: type + state.moduleName,
+    accept: acceptType,
     canDrop: (item, monitor) => {
       const { record: dragRecord } = monitor.getItem() || {};
       // console.log(monitor.getItem());
@@ -58,23 +63,36 @@ export const DragableBodyRow = ({
       };
     },
     drop: (dragItem: any) => {
-      if (dragItem.index !== index) moveRow(dragItem.index, index, dragItem.record);
+      if (dragItem.index !== index)
+        if (!canMoveRowToChangeRecno(state)) {
+          message.warn('必须先在导航中选择顺序字段的限定字段值。');
+        } else moveRow(dragItem.index, index, dragItem.record);
     },
   });
-  const [, moveDrag] = useDrag({
-    item: { type: type + state.moduleName, index, record },
+  const [, moveDrag, preview] = useDrag({
+    item: { type: acceptType, index, record },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
-  moveDrop(moveDrag(ref));
-
+  // 记录间移动和拖动到导航，只能有一个生效
+  if (state.currSetting.canDragChangeRecno) {
+    moveDrop(moveDrag(ref));
+  } else moveDrag(ref);
   return (
-    <tr
-      ref={ref}
-      style={{ ...style }}
-      className={`${className}${isMoveOver && canMove ? dropClassName : ''}`}
-      {...restProps}
-    />
+    <>
+      {
+        // 拖动到导航显示一个图片，记录间拖动吠 ，显示原记录
+        state.currSetting.canDragChangeRecno ? null : (
+          <DragPreviewImage connect={preview} src="/images/dragrecords.png" />
+        )
+      }
+      <tr
+        ref={ref}
+        style={{ ...style }}
+        className={`${className}${isMoveOver && canMove ? dropClassName : ''}`}
+        {...restProps}
+      />
+    </>
   );
 };
