@@ -194,7 +194,8 @@ export const deleteModuleRecord = async (params: any) => {
 // },
 export const deleteModuleRecords = async (params: any) => {
   return request('/api/platform/dataobject/removerecords.do', {
-    params,
+    method: 'POST',
+    body: serialize(params),
   });
 };
 
