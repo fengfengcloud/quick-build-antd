@@ -44,3 +44,16 @@ info
 warn
 error
 
+
+
+数据分析中：groupfieldid的字段组织
+fieldahead1.fieldahead2|fieldid-functionid 或 (分级  1 2 3 all)
+父模块路径                字段id(主键)-  
+all 的现在不能用下面的方式，
+上面的方式用于自定义方案中，如果要在js中调用就麻烦，因此需要修改
+{
+        fieldahead : 
+        fieldname :
+        codelevel :
+        function :  id or title
+}
