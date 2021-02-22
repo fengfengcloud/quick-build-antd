@@ -57,3 +57,14 @@ all 的现在不能用下面的方式，
         codelevel :
         function :  id or title
 }
+
+property_ : 用字符串也是上面的方式。
+
+各种条件的字段 property_ 也可以使用上面的方式来进行设置
+{
+        moduleName: * 
+        fieldahead : 
+        fieldname :
+        codelevel :
+        function :  id or title
+}

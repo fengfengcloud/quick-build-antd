@@ -80,13 +80,19 @@ const PmAgreementGlobal: React.FC = () => {
     const filters: any[] = [];
     if (!containFinished)
       filters.push({
-        property_: 'pmAgreementState|ff80808174ec813b0174fb8fcd2a016d',
+        property_: {
+          moduleName: 'PmAgreement',
+          fieldahead: 'pmAgreementState',
+        },
         operator: '<',
         value: '90',
       });
     if (orgid)
       filters.push({
-        property_: 'pmProject.pmGlobal.FOrganization|8a53b78262ea6e6d0162ea6e9ce30224',
+        property_: {
+          moduleName: 'PmAgreement',
+          fieldahead: 'pmProject.pmGlobal.FOrganization',
+        },
         operator: 'startwith',
         value: orgid,
       });
@@ -446,23 +452,27 @@ const PmAgreementSignYearMonthColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdataminingdata.do', {
-      params: {
-        schemeid: 'ff8080817586cb9101758d1387f1005c',
-        treemodel: true,
-      },
+    request('/api/platform/datamining/fetchdata.do', {
+      method: 'POST',
+      data: serialize({
+        moduleName: 'PmAgreement',
+        fields: JSON.stringify(['count.agreementId', 'sum.singAmount']),
+        groupfieldid: JSON.stringify({
+          fieldname: 'singDate',
+          function: 'yyyy年mm月',
+        }),
+      }),
     }).then((response) => {
-      if (response[0] && response[0].children)
-        setData(
-          (response[0].children as any[])
-            .map((rec) => ({
-              type: rec.text ? rec.text.substr(2) : rec.text,
-              value: parseInt(numeral(rec.jf96e38d8f41fa6602a6ac0bf4777 / 10000).format('0'), 10),
-              count: rec.jfcb62ecbda87a63b4bb09ffbfbfc,
-            }))
-            .sort((a, b) => (a.type > b.type ? 1 : -1))
-            .filter((_, index, array) => array.length - index <= 12),
-        ); // 一年内，取最后12个
+      setData(
+        (response as any[])
+          .map((rec) => ({
+            type: rec.text ? rec.text.substr(2) : rec.text,
+            value: parseInt(numeral(rec.jf96e38d8f41fa6602a6ac0bf4777 / 10000).format('0'), 10),
+            count: rec.jfcb62ecbda87a63b4bb09ffbfbfc,
+          }))
+          .sort((a, b) => (a.type > b.type ? 1 : -1))
+          .filter((_, index, array) => array.length - index <= 12),
+      ); // 一年内，取最后12个
       setLoading(false);
     });
   };
