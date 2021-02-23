@@ -213,23 +213,32 @@ const OrgYearPmAgreementApproveColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdataminingdata.do', {
-      params: {
-        schemetitle: '合同文件审批表部门年度(层叠)汇总表',
-        treemodel: true,
-      },
+    request('/api/platform/datamining/fetchdata.do', {
+      method: 'POST',
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmApproveProject2',
+          fields: ['count.approveId'],
+          groupfieldid: {
+            fieldahead: 'pmProject.pmGlobal.FOrganization',
+          },
+          groupfieldid2: {
+            fieldname: 'actEndTime',
+            function: 'yyyy年',
+          },
+        }),
+      ),
     }).then((response) => {
       const datum: any[] = [];
-      if (response[0] && response[0].children)
-        (response[0].children as any[]).forEach((org: any) => {
-          org.children.forEach((rec: any) => {
-            datum.push({
-              type: rec.text === '空' ? '尚未审批' : rec.text,
-              value: rec.jf01d8858185234f0c8140e3d973d,
-              org: org.text,
-            });
+      (response as any[]).forEach((org: any) => {
+        org.children.forEach((rec: any) => {
+          datum.push({
+            type: rec.text === '空' ? '尚未审批' : rec.text,
+            value: rec.jf01d8858185234f0c8140e3d973d,
+            org: org.text,
           });
         });
+      });
       setData(
         datum.sort((a, b) => {
           if (b.type > a.type) return -1;
