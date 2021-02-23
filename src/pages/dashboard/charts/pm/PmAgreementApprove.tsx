@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Pie, Bar, Column, Rose } from '@ant-design/charts';
 import { PieConfig } from '@ant-design/charts/es/pie';
 import request from '@/utils/request';
 import { ColumnConfig } from '@ant-design/charts/es/column';
 import { RoseConfig } from '@ant-design/charts/es/rose';
-import { Card, Col, Row } from 'antd';
+import { Card, Col, Radio, Row } from 'antd';
 import { CardProps } from 'antd/lib/card';
 import { BarConfig } from '@ant-design/charts/es/bar';
 import { serialize } from 'object-to-formdata';
@@ -29,9 +29,7 @@ export default () => {
         <YearPmAgreementApprovePie />
       </Col>
       <Col span={24}>
-        <Card title="合同文件审批表部门年度审批" {...cardParams}>
-          <OrgYearPmAgreementApproveColumn />
-        </Card>
+        <OrgYearPmAgreementApproveColumn {...cardParams} />
       </Col>
       <Col span={24}>
         <Card title="合同文件审批表月度审批" {...cardParams}>
@@ -209,20 +207,22 @@ const YearPmAgreementApprovePie: React.FC = () => {
   );
 };
 
-const OrgYearPmAgreementApproveColumn: React.FC = () => {
+const OrgYearPmAgreementApproveColumn: React.FC = (params) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
+  const [orgyear, setOrgyear] = useState<boolean>(true);
   const asyncFetch = () => {
+    setLoading(true);
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
           moduleName: 'PmApproveProject2',
           fields: ['count.approveId'],
-          groupfieldid: {
+          [orgyear ? 'groupfieldid' : 'groupfieldid2']: {
             fieldahead: 'pmProject.pmGlobal.FOrganization',
           },
-          groupfieldid2: {
+          [orgyear ? 'groupfieldid2' : 'groupfieldid']: {
             fieldname: 'actEndTime',
             function: 'yyyy年',
           },
@@ -234,8 +234,8 @@ const OrgYearPmAgreementApproveColumn: React.FC = () => {
         org.children.forEach((rec: any) => {
           datum.push({
             type: rec.text === '空' ? '尚未审批' : rec.text,
+            org: org.text === '空' ? '尚未审批' : org.text,
             value: rec.jf01d8858185234f0c8140e3d973d,
-            org: org.text,
           });
         });
       });
@@ -248,40 +248,64 @@ const OrgYearPmAgreementApproveColumn: React.FC = () => {
       setLoading(false);
     });
   };
-  const config: BarConfig = {
-    loading,
-    data,
-    isStack: true,
-    yField: 'type',
-    xField: 'value',
-    seriesField: 'org',
-    barWidthRatio: 0.618,
-    xAxis: { label: { autoRotate: false } },
-    legend: {
-      layout: 'horizontal',
-      position: 'bottom',
-    },
-    tooltip: {
-      formatter: (datum) => {
-        return { name: datum.org, value: `${numeral(datum.value).format('0,0')}个` };
+  const config: BarConfig = useMemo(
+    () => ({
+      loading,
+      data,
+      isStack: true,
+      yField: 'type',
+      xField: 'value',
+      seriesField: 'org',
+      barWidthRatio: 0.618,
+      xAxis: { label: { autoRotate: false } },
+      legend: {
+        layout: 'horizontal',
+        position: 'bottom',
       },
-    },
-    meta: {
-      type: { alias: '年月' },
-      value: {
-        alias: '合同文件审批',
-        formatter: (value: number) => {
-          return `${numeral(value).format('0,0')}个`;
+      tooltip: {
+        formatter: (datum) => {
+          return { name: datum.org, value: `${numeral(datum.value).format('0,0')}个` };
         },
       },
-    },
-  };
+      meta: {
+        type: { alias: '年月' },
+        value: {
+          alias: '合同文件审批',
+          formatter: (value: number) => {
+            return `${numeral(value).format('0,0')}个`;
+          },
+        },
+      },
+    }),
+    [orgyear, loading, data],
+  );
   useEffect(() => {
-    setTimeout(() => {
-      asyncFetch();
-    }, 600);
-  }, []);
-  return <Bar {...config} />;
+    asyncFetch();
+  }, [orgyear]);
+  return (
+    <Card
+      title={
+        <>
+          <span>合同文件审批表</span>
+          <Radio.Group
+            value={orgyear ? 'orgyear' : 'yearorg'}
+            size="small"
+            style={{ margin: '0px 8px' }}
+            onChange={(e) => {
+              setOrgyear(e.target.value === 'orgyear');
+            }}
+          >
+            <Radio.Button value="orgyear">部门年度</Radio.Button>
+            <Radio.Button value="yearorg">年度部门</Radio.Button>
+          </Radio.Group>
+          <span>审批</span>
+        </>
+      }
+      {...params}
+    >
+      <Bar {...config} />
+    </Card>
+  );
 };
 
 const columnStyle = {

@@ -266,6 +266,7 @@ const PmAgreementPayoutYearMonthColumn: React.FC = (params) => {
   const [data, setData] = useState<any[]>([]);
   const [sectionType, setSectionType] = useState<string>(sectionTypes[0].value || '');
   const asyncFetch = () => {
+    setLoading(true);
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
       data: serialize(
