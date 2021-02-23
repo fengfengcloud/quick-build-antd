@@ -2,26 +2,29 @@ import React, { useEffect } from 'react';
 import { Card } from 'antd';
 import request from '@/utils/request';
 import { serialize } from 'object-to-formdata';
-
-const stringify = (param: any) => {
-  const result = { ...param };
-  Object.keys(param).forEach((key) => {
-    if (typeof param[key] === 'object') result[key] = JSON.stringify(param[key]);
-  });
-  return result;
-};
+import { stringifyObjectField } from '@/utils/utils';
 
 export const UserLogin: React.FC<any> = () => {
   useEffect(() => {
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
       data: serialize(
-        stringify({
-          moduleName: 'FUserloginlog',
+        stringifyObjectField({
+          moduleName: 'PmApproveProject2',
           conditions: [],
 
-          groupfieldid: 'FUser.FPersonnel.FOrganization|8a53b78262ea6e6d0162ea6e9ce30224-all',
-          groupfieldid1: {
+          // groupfieldid: 'pmProject.pmGlobal.FOrganization|8a53b78262ea6e6d0162ea6e9ce30224',
+          // groupfieldid2: 'ff80808175697ed501756a000a0100c3-8a53b78262ea6e6d0162ea6e89810000',
+
+          groupfieldid: {
+            fieldahead: 'pmProject.pmGlobal.FOrganization',
+          },
+          groupfieldid2: {
+            fieldname: 'actEndTime',
+            function: 'yyyy年mm月',
+          }, // 'ff80808175697ed501756a000a0100c3-8a53b78262ea6e6d0162ea6e89810000',
+
+          groupfieldid3: {
             // fieldahead: 'FUser.FPersonnel.FOrganization',
             // fieldahead: 'FUser',
             fieldahead: 'FUser.FPersonnel.FOrganization',
@@ -33,7 +36,7 @@ export const UserLogin: React.FC<any> = () => {
             // fieldname: 'userid',                 // fieldname
             // function: 'yyyy年mm月',               // id or title
           },
-          fields: ['count.logid', 'sum.udfloginminute', 'avg.udfloginminute'],
+          fields: ['count.*'],
           parentconditions: [],
           navigatefilters: [],
           userfilters: [],

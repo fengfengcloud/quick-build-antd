@@ -7,10 +7,10 @@ import { RoseConfig } from '@ant-design/charts/es/rose';
 import { Card, Col, Row } from 'antd';
 import { CardProps } from 'antd/lib/card';
 import { BarConfig } from '@ant-design/charts/es/bar';
+import { serialize } from 'object-to-formdata';
+import { stringifyObjectField } from '@/utils/utils';
 import DataTable from './components/DataTable';
 import ToggleTableChartButton from './components/ToggleTableChartButton';
-
-//  http://localhost:8080/platform/datamining/fetchdataminingdata.do?schemeid=ff8080817577544601757dc2f86b0030
 
 const numeral = require('numeral');
 
@@ -47,15 +47,21 @@ const OrganizationPmAgreementApprovePie: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdataminingdata.do', {
-      params: {
-        schemetitle: '合同文件审批表部门年度(并列)汇总表',
-        treemodel: false,
-      },
+    request('/api/platform/datamining/fetchdata.do', {
+      method: 'POST',
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmApproveProject2',
+          fields: ['count.approveId'],
+          groupfieldid: {
+            fieldahead: 'pmProject.pmGlobal.FOrganization',
+            codelevel: '2',
+          },
+        }),
+      ),
     }).then((response: any[]) => {
       setData(
         response
-          .filter((rec) => rec.moduleName === 'FOrganization')
           .map((rec) => ({
             type: rec.text,
             value: rec.jf01d8858185234f0c8140e3d973d,
@@ -137,18 +143,21 @@ const YearPmAgreementApprovePie: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdataminingdata.do', {
-      params: {
-        schemetitle: '合同文件审批表部门年度(并列)汇总表',
-        treemodel: false,
-      },
+    request('/api/platform/datamining/fetchdata.do', {
+      method: 'POST',
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmApproveProject2',
+          fields: ['count.approveId'],
+          groupfieldid: {
+            fieldname: 'actEndTime',
+            function: 'yyyy年',
+          },
+        }),
+      ),
     }).then((response: any[]) => {
       setData(
         response
-          .filter(
-            ({ text }: { text: string }) =>
-              (text.length === 5 && text.endsWith('年')) || text === '空',
-          )
           .map((rec) => ({
             type: rec.text === '空' ? '尚未审批' : rec.text,
             value: rec.jf01d8858185234f0c8140e3d973d,
@@ -281,21 +290,27 @@ export const PmAgreementApproveYearMonthColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdataminingdata.do', {
-      params: {
-        schemetitle: '合同文件审批表月度审批汇总表',
-        treemodel: true,
-      },
+    request('/api/platform/datamining/fetchdata.do', {
+      method: 'POST',
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmApproveProject2',
+          fields: ['count.approveId'],
+          groupfieldid: {
+            fieldname: 'actEndTime',
+            function: 'yyyy年mm月',
+          },
+        }),
+      ),
     }).then((response) => {
-      if (response[0] && response[0].children)
-        setData(
-          (response[0].children as any[])
-            .map((rec) => ({
-              type: rec.text === '空' ? '尚未审批' : rec.text,
-              value: rec.jf01d8858185234f0c8140e3d973d,
-            }))
-            .sort((a, b) => (a.type > b.type ? 1 : -1)),
-        );
+      setData(
+        (response as any[])
+          .map((rec) => ({
+            type: rec.text === '空' ? '尚未审批' : rec.text,
+            value: rec.jf01d8858185234f0c8140e3d973d,
+          }))
+          .sort((a, b) => (a.type > b.type ? 1 : -1)),
+      );
       setLoading(false);
     });
   };

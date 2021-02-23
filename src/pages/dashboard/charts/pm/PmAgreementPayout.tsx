@@ -3,12 +3,13 @@ import { Pie, Column } from '@ant-design/charts';
 import { PieConfig } from '@ant-design/charts/es/pie';
 import request from '@/utils/request';
 import { ColumnConfig } from '@ant-design/charts/es/column';
-import { Card, Col, Row } from 'antd';
+import { Card, Col, Radio, Row } from 'antd';
 import { CardProps } from 'antd/lib/card';
-import ToggleTableChartButton from './components/ToggleTableChartButton';
+import { serialize } from 'object-to-formdata';
+import { stringifyObjectField } from '@/utils/utils';
+import { TextValue } from '@/pages/module/data';
 import DataTable from './components/DataTable';
-
-//  http://localhost:8080/platform/datamining/fetchdataminingdata.do?schemeid=ff8080817577544601757dc2f86b0030
+import ToggleTableChartButton from './components/ToggleTableChartButton';
 
 const numeral = require('numeral');
 
@@ -38,9 +39,7 @@ export default () => {
       </Col>
 
       <Col span={24}>
-        <Card title="项目合同月度已付金额柱状图" {...cardParams}>
-          <PmAgreementPayoutYearMonthColumn />
-        </Card>
+        <PmAgreementPayoutYearMonthColumn {...cardParams} />
       </Col>
     </Row>
   );
@@ -51,21 +50,27 @@ const OrganizationPmAgreementPayoutPie: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdataminingdata.do', {
-      params: {
-        schemeid: 'ff8080817586cb9101758e7aabfc007f',
-        treemodel: true,
-      },
+    request('/api/platform/datamining/fetchdata.do', {
+      method: 'POST',
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmPaymentDetail',
+          fields: ['count.factMoney', 'sum.factMoney'],
+          groupfieldid: {
+            fieldahead: 'pmPayment.pmAgreement.pmProject.pmGlobal.FOrganization',
+            codelevel: '2',
+          },
+        }),
+      ),
     }).then((response) => {
-      if (response[0] && response[0].children)
-        setData(
-          (response[0].children as any[])
-            .map((rec) => ({
-              type: rec.text,
-              value: parseInt(numeral(rec.jf3d68fe59d40e7f86fc73fc79218 / 10000).format('0'), 10),
-            }))
-            .sort((a, b) => b.value - a.value),
-        );
+      setData(
+        (response as any[])
+          .map((rec) => ({
+            type: rec.text,
+            value: parseInt(numeral(rec.jf3d68fe59d40e7f86fc73fc79218 / 10000).format('0'), 10),
+          }))
+          .sort((a, b) => b.value - a.value),
+      );
       setLoading(false);
     });
   };
@@ -100,6 +105,9 @@ const OrganizationPmAgreementPayoutPie: React.FC = () => {
           return `${numeral(sum).format('0,0')}万元`;
         },
         offsetY: 15,
+        style: {
+          fontSize: '18px',
+        },
       },
     },
     interactions: [{ type: 'element-active' }],
@@ -143,21 +151,26 @@ const PlatformPmAgreementPayoutPie: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdataminingdata.do', {
-      params: {
-        schemeid: 'ff8080817577544601757dc2f86b0030',
-        treemodel: true,
-      },
+    request('/api/platform/datamining/fetchdata.do', {
+      method: 'POST',
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmPaymentDetail',
+          fields: ['count.factMoney', 'sum.factMoney'],
+          groupfieldid: {
+            fieldahead: 'pmPayment.pmAgreement.pmPayorg',
+          },
+        }),
+      ),
     }).then((response) => {
-      if (response[0] && response[0].children)
-        setData(
-          (response[0].children as any[])
-            .map((rec) => ({
-              type: rec.text,
-              value: parseInt(numeral(rec.jf3d68fe59d40e7f86fc73fc79218 / 10000).format('0'), 10),
-            }))
-            .sort((a, b) => b.value - a.value),
-        );
+      setData(
+        (response as any[])
+          .map((rec) => ({
+            type: rec.text,
+            value: parseInt(numeral(rec.jf3d68fe59d40e7f86fc73fc79218 / 10000).format('0'), 10),
+          }))
+          .sort((a, b) => b.value - a.value),
+      );
       setLoading(false);
     });
   };
@@ -192,6 +205,9 @@ const PlatformPmAgreementPayoutPie: React.FC = () => {
           return `${numeral(sum).format('0,0')}万元`;
         },
         offsetY: 15,
+        style: {
+          fontSize: '18px',
+        },
       },
     },
     interactions: [{ type: 'element-active' }],
@@ -230,25 +246,47 @@ const PlatformPmAgreementPayoutPie: React.FC = () => {
   );
 };
 
-const PmAgreementPayoutYearMonthColumn: React.FC = () => {
+const sectionTypes: TextValue[] = [
+  {
+    text: '月度',
+    value: 'yyyy年mm月',
+  },
+  {
+    text: '年度',
+    value: 'yyyy年',
+  },
+  {
+    text: '季度',
+    value: 'yyyy年n季度',
+  },
+];
+
+const PmAgreementPayoutYearMonthColumn: React.FC = (params) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
+  const [sectionType, setSectionType] = useState<string>(sectionTypes[0].value || '');
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdataminingdata.do', {
-      params: {
-        schemeid: 'ff8080817586cb9101758c33a3760032',
-        treemodel: true,
-      },
+    request('/api/platform/datamining/fetchdata.do', {
+      method: 'POST',
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmPaymentDetail',
+          fields: ['count.factMoney', 'sum.factMoney'],
+          groupfieldid: {
+            fieldname: 'factDate',
+            function: sectionType,
+          },
+        }),
+      ),
     }).then((response) => {
-      if (response[0] && response[0].children)
-        setData(
-          (response[0].children as any[])
-            .map((rec) => ({
-              type: rec.text,
-              value: parseInt(numeral(rec.jf3d68fe59d40e7f86fc73fc79218 / 10000).format('0'), 10),
-            }))
-            .sort((a, b) => (a.type > b.type ? 1 : -1)),
-        );
+      setData(
+        (response as any[])
+          .map((rec) => ({
+            type: rec.text,
+            value: parseInt(numeral(rec.jf3d68fe59d40e7f86fc73fc79218 / 10000).format('0'), 10),
+          }))
+          .sort((a, b) => (a.type > b.type ? 1 : -1)),
+      );
       setLoading(false);
     });
   };
@@ -286,9 +324,32 @@ const PmAgreementPayoutYearMonthColumn: React.FC = () => {
     },
   };
   useEffect(() => {
-    setTimeout(() => {
-      asyncFetch();
-    }, 600);
-  }, []);
-  return <Column {...config} />;
+    asyncFetch();
+  }, [sectionType]);
+
+  return (
+    <Card
+      title={
+        <>
+          <span>项目合同</span>
+          <Radio.Group
+            value={sectionType}
+            size="small"
+            style={{ margin: '0px 8px' }}
+            onChange={(e) => {
+              setSectionType(e.target.value);
+            }}
+          >
+            {sectionTypes.map((type) => (
+              <Radio.Button value={type.value}>{type.text}</Radio.Button>
+            ))}
+          </Radio.Group>
+          <span>已付金额柱状图</span>
+        </>
+      }
+      {...params}
+    >
+      <Column {...config} />
+    </Card>
+  );
 };

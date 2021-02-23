@@ -68,3 +68,5 @@ property_ : 用字符串也是上面的方式。
         codelevel :
         function :  id or title
 }
+
+在fetchdata的时候，如果有groupfieldid2，则表示是二层的树结构

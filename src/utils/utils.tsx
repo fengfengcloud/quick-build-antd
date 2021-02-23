@@ -167,6 +167,18 @@ export const applyIf = (dest: object, updated: object) => {
   return dest;
 };
 
+/**
+ * 检查一个对象的属性中是否有对象或者数组，有的话转为字符串
+ * @param param
+ */
+export const stringifyObjectField = (param: any) => {
+  const result = { ...param };
+  Object.keys(param).forEach((key) => {
+    if (typeof param[key] === 'object') result[key] = JSON.stringify(param[key]);
+  });
+  return result;
+};
+
 export const getFileExt = (filename: string): string => {
   if (!filename) return '';
   const temp = filename.split('').reverse().join('');
