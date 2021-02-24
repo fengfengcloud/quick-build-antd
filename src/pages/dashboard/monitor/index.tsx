@@ -14,20 +14,20 @@ const monitor: React.FC = () => {
     >
       <Tabs>
         <Tabs.TabPane
-          tab="用户审批分析"
-          tabKey="userapprove"
-          key="userapprove"
-          className={styles.dashboardcard}
-        >
-          <UserApprove />
-        </Tabs.TabPane>
-        <Tabs.TabPane
           tab="用户操作分析"
           tabKey="useroperate"
           key="useroperate"
           className={styles.dashboardcard}
         >
           <UserOperator />
+        </Tabs.TabPane>{' '}
+        <Tabs.TabPane
+          tab="用户审批分析"
+          tabKey="userapprove"
+          key="userapprove"
+          className={styles.dashboardcard}
+        >
+          <UserApprove />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab="用户登录分析"
