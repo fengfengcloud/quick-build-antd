@@ -13,6 +13,8 @@ https://ej2.syncfusion.com/home/   收费的
 
 『』
 
+插件：bracket pair colorizer// 可以把括号泻染成相同的颜色
+
 2020-08-05：修改/node_modules/antd/es/descriptions/Row.js,
 
 在 if (typeof component === 'string') {...}的38行下面加上以下代码

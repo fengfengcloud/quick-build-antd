@@ -9,6 +9,7 @@ import { CardProps } from 'antd/lib/card';
 import { BarConfig } from '@ant-design/charts/es/bar';
 import { serialize } from 'object-to-formdata';
 import { stringifyObjectField } from '@/utils/utils';
+import { getColumnDataIndex } from '@/pages/datamining/utils';
 import DataTable from './components/DataTable';
 import ToggleTableChartButton from './components/ToggleTableChartButton';
 
@@ -40,6 +41,8 @@ export default () => {
   );
 };
 
+const COUNTX = getColumnDataIndex('count.*');
+
 const OrganizationPmAgreementApprovePie: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -50,7 +53,7 @@ const OrganizationPmAgreementApprovePie: React.FC = () => {
       data: serialize(
         stringifyObjectField({
           moduleName: 'PmApproveProject2',
-          fields: ['count.approveId'],
+          fields: ['count.*'],
           groupfieldid: {
             fieldahead: 'pmProject.pmGlobal.FOrganization',
             codelevel: '2',
@@ -62,7 +65,7 @@ const OrganizationPmAgreementApprovePie: React.FC = () => {
         response
           .map((rec) => ({
             type: rec.text,
-            value: rec.jf01d8858185234f0c8140e3d973d,
+            value: rec[COUNTX],
           }))
           .sort((a, b) => b.value - a.value),
       );
@@ -146,7 +149,7 @@ const YearPmAgreementApprovePie: React.FC = () => {
       data: serialize(
         stringifyObjectField({
           moduleName: 'PmApproveProject2',
-          fields: ['count.approveId'],
+          fields: ['count.*'],
           groupfieldid: {
             fieldname: 'actEndTime',
             function: 'yyyy年',
@@ -158,7 +161,7 @@ const YearPmAgreementApprovePie: React.FC = () => {
         response
           .map((rec) => ({
             type: rec.text === '空' ? '尚未审批' : rec.text,
-            value: rec.jf01d8858185234f0c8140e3d973d,
+            value: rec[COUNTX],
           }))
           .sort((a, b) => (a.type > b.type ? -1 : 1)),
       );
@@ -218,7 +221,7 @@ const OrgYearPmAgreementApproveColumn: React.FC = (params) => {
       data: serialize(
         stringifyObjectField({
           moduleName: 'PmApproveProject2',
-          fields: ['count.approveId'],
+          fields: ['count.*'],
           [orgyear ? 'groupfieldid' : 'groupfieldid2']: {
             fieldahead: 'pmProject.pmGlobal.FOrganization',
           },
@@ -235,7 +238,7 @@ const OrgYearPmAgreementApproveColumn: React.FC = (params) => {
           datum.push({
             type: rec.text === '空' ? '尚未审批' : rec.text,
             org: org.text === '空' ? '尚未审批' : org.text,
-            value: rec.jf01d8858185234f0c8140e3d973d,
+            value: rec[COUNTX],
           });
         });
       });
@@ -328,7 +331,7 @@ export const PmAgreementApproveYearMonthColumn: React.FC = () => {
       data: serialize(
         stringifyObjectField({
           moduleName: 'PmApproveProject2',
-          fields: ['count.approveId'],
+          fields: ['count.*'],
           groupfieldid: {
             fieldname: 'actEndTime',
             function: 'yyyy年mm月',
@@ -340,7 +343,7 @@ export const PmAgreementApproveYearMonthColumn: React.FC = () => {
         (response as any[])
           .map((rec) => ({
             type: rec.text === '空' ? '尚未审批' : rec.text,
-            value: rec.jf01d8858185234f0c8140e3d973d,
+            value: rec[COUNTX],
           }))
           .sort((a, b) => (a.type > b.type ? 1 : -1)),
       );

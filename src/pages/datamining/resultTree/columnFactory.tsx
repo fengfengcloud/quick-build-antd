@@ -1,5 +1,5 @@
 import React from 'react';
-import { apply, MD5 } from '@/utils/utils';
+import { apply } from '@/utils/utils';
 import {
   dateRender,
   datetimeRender,
@@ -8,7 +8,7 @@ import {
   percentRenderWithTooltip,
 } from '@/pages/module/grid/columnRender';
 import { getSortOrder } from '@/pages/module/grid/sortUtils';
-import { fieldTitleTransform } from '../utils';
+import { fieldTitleTransform, getColumnDataIndex } from '../utils';
 import styles from '../index.less';
 import { DataminingModal, FieldModal } from '../data';
 import { categoryFieldRender } from './categoryFieldRender';
@@ -54,8 +54,8 @@ const setColumnXtypeAndDataIndex = (acolumn: any, state: DataminingModal) => {
   if (typeof t === 'string') {
     t = t.toLowerCase();
   }
-  const md5str = column.aggregatefieldname + (column.condition ? column.condition : '');
-  column.dataIndex = `jf${MD5(md5str).substr(0, 27)}`;
+  // 生成列的字段名称
+  column.dataIndex = getColumnDataIndex(column.aggregatefieldname, column.condition);
   column.sorter = true;
   column.sortDirections = ['ascend', 'descend', 'ascend'];
   column.sortOrder = getSortOrder(state.schemeState.sorts, column.dataIndex);

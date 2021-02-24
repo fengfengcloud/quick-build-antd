@@ -1,4 +1,6 @@
+import { getColumnDataIndex, getColumnsDataIndex } from '@/pages/datamining/utils';
 import request from '@/utils/request';
+import { stringifyObjectField } from '@/utils/utils';
 import { Column } from '@ant-design/charts';
 import { ColumnConfig } from '@ant-design/charts/es/column';
 import { Card, Col, Row } from 'antd';
@@ -47,14 +49,17 @@ const PmLiabilityYearColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
   const fields = JSON.stringify(['sum.nopayAmount']);
+  const NOPAYAMOUNT = getColumnDataIndex('sum.nopayAmount');
   const asyncFetch = () => {
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
-      data: serialize({
-        moduleName: 'PmAgreementPlan',
-        fields,
-        groupfieldid: 'ff8080817517d40c017517d59464017f-8a53b78262ea6e6d0162ea6e89810000',
-      }),
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmAgreementPlan',
+          fields,
+          groupfieldid: { fieldname: 'date', function: 'yyyy年' },
+        }),
+      ),
     }).then((response: any[]) => {
       // 每一年度把以前未付的加起来
       let thisyearbefore = 0;
@@ -62,7 +67,7 @@ const PmLiabilityYearColumn: React.FC = () => {
         .map((rec) => ({
           type: rec.text,
           // 未支付
-          value: parseInt(numeral(rec.jf1cddb74923df9f536626517dddf / 10000).format('0'), 10),
+          value: parseInt(numeral(rec[NOPAYAMOUNT] / 10000).format('0'), 10),
           group: '当年度',
         }))
         .sort((a, b) => (a.type > b.type ? 1 : -1))
@@ -132,28 +137,32 @@ const PmLiabilityYearColumn: React.FC = () => {
   );
 };
 
+const fields = ['sum.planAmount', 'sum.alreadyAmount', 'sum.nopayAmount'];
+const [PLANAMOUNT, ALREADYAMOUNT, NOPAYAMOUNT] = getColumnsDataIndex(fields);
+
 /**
  * 年度计划,可支付，不可支付
  */
 const PmAgreementPlanYearStackColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
-  const fields = JSON.stringify(['sum.planAmount', 'sum.alreadyAmount', 'sum.nopayAmount']);
   const asyncFetch = () => {
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
-      data: serialize({
-        moduleName: 'PmAgreementPlan',
-        fields,
-        groupfieldid: 'ff8080817517d40c017517d59464017f-8a53b78262ea6e6d0162ea6e89810000',
-      }),
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmAgreementPlan',
+          fields,
+          groupfieldid: { fieldname: 'date', function: 'yyyy年' },
+        }),
+      ),
     }).then((response: any[]) => {
       const dataSource = response
         .map((rec) => ({
           type: rec.text,
-          value: parseInt(numeral(rec.jfae8913f5b24bdbb25b431582dab / 10000).format('0'), 10),
-          payout: parseInt(numeral(rec.jf1208b6fed8ea0615d208003d004 / 10000).format('0'), 10),
-          remain: parseInt(numeral(rec.jf1cddb74923df9f536626517dddf / 10000).format('0'), 10),
+          value: parseInt(numeral(rec[PLANAMOUNT] / 10000).format('0'), 10),
+          payout: parseInt(numeral(rec[ALREADYAMOUNT] / 10000).format('0'), 10),
+          remain: parseInt(numeral(rec[NOPAYAMOUNT] / 10000).format('0'), 10),
         }))
         .sort((a, b) => (a.type > b.type ? 1 : -1))
         .filter((rec) => rec.type > `${parseInt(moment().format('YYYY'), 10) - 7}`);
@@ -219,21 +228,22 @@ const PmAgreementPlanYearStackColumn: React.FC = () => {
 const PmAgreementPlanYearColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
-  const fields = JSON.stringify(['sum.planAmount', 'sum.alreadyAmount', 'sum.nopayAmount']);
   const asyncFetch = () => {
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
-      data: serialize({
-        moduleName: 'PmAgreementPlan',
-        fields,
-        groupfieldid: 'ff8080817517d40c017517d59464017f-8a53b78262ea6e6d0162ea6e89810000',
-      }),
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmAgreementPlan',
+          fields: ['sum.planAmount'],
+          groupfieldid: { fieldname: 'date', function: 'yyyy年' },
+        }),
+      ),
     }).then((response: any[]) => {
       setData(
         response
           .map((rec) => ({
             type: rec.text,
-            value: parseInt(numeral(rec.jfae8913f5b24bdbb25b431582dab / 10000).format('0'), 10),
+            value: parseInt(numeral(rec[PLANAMOUNT] / 10000).format('0'), 10),
           }))
           .sort((a, b) => (a.type > b.type ? 1 : -1)),
       );
@@ -295,7 +305,7 @@ const PmAgreementPlanYearColumn: React.FC = () => {
     }, 600);
   }, []);
   return (
-    <Card title="项目合同年度度付款计划柱状图" {...cardParams}>
+    <Card title="项目合同年度付款计划柱状图" {...cardParams}>
       <Column {...config} />
     </Card>
   );
@@ -304,21 +314,22 @@ const PmAgreementPlanYearColumn: React.FC = () => {
 const PmAgreementPlanYearMonthColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
-  const fields = JSON.stringify(['sum.planAmount', 'sum.alreadyAmount', 'sum.nopayAmount']);
   const asyncFetch = () => {
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
-      data: serialize({
-        moduleName: 'PmAgreementPlan',
-        fields,
-        groupfieldid: 'ff8080817517d40c017517d59464017f-8a53b78262ea6e6d0162ea6e89ab0001',
-      }),
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmAgreementPlan',
+          fields: ['sum.planAmount'],
+          groupfieldid: { fieldname: 'date', function: 'yyyy年mm月' },
+        }),
+      ),
     }).then((response: any[]) => {
       setData(
         response
           .map((rec) => ({
             type: rec.text,
-            value: parseInt(numeral(rec.jfae8913f5b24bdbb25b431582dab / 10000).format('0'), 10),
+            value: parseInt(numeral(rec[PLANAMOUNT] / 10000).format('0'), 10),
           }))
           .sort((a, b) => (a.type > b.type ? 1 : -1)),
       );

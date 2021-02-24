@@ -8,6 +8,7 @@ import { CardProps } from 'antd/lib/card';
 import { serialize } from 'object-to-formdata';
 import { stringifyObjectField } from '@/utils/utils';
 import { TextValue } from '@/pages/module/data';
+import { getColumnDataIndex } from '@/pages/datamining/utils';
 import DataTable from './components/DataTable';
 import ToggleTableChartButton from './components/ToggleTableChartButton';
 
@@ -45,6 +46,9 @@ export default () => {
   );
 };
 
+// const COUNTX = getColumnDataIndex('count.*');
+const SUMFACT = getColumnDataIndex('sum.factMoney');
+
 const OrganizationPmAgreementPayoutPie: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -55,7 +59,7 @@ const OrganizationPmAgreementPayoutPie: React.FC = () => {
       data: serialize(
         stringifyObjectField({
           moduleName: 'PmPaymentDetail',
-          fields: ['count.factMoney', 'sum.factMoney'],
+          fields: ['count.*', 'sum.factMoney'],
           groupfieldid: {
             fieldahead: 'pmPayment.pmAgreement.pmProject.pmGlobal.FOrganization',
             codelevel: '2',
@@ -67,7 +71,7 @@ const OrganizationPmAgreementPayoutPie: React.FC = () => {
         (response as any[])
           .map((rec) => ({
             type: rec.text,
-            value: parseInt(numeral(rec.jf3d68fe59d40e7f86fc73fc79218 / 10000).format('0'), 10),
+            value: parseInt(numeral(rec[SUMFACT] / 10000).format('0'), 10),
           }))
           .sort((a, b) => b.value - a.value),
       );
@@ -156,7 +160,7 @@ const PlatformPmAgreementPayoutPie: React.FC = () => {
       data: serialize(
         stringifyObjectField({
           moduleName: 'PmPaymentDetail',
-          fields: ['count.factMoney', 'sum.factMoney'],
+          fields: ['count.*', 'sum.factMoney'],
           groupfieldid: {
             fieldahead: 'pmPayment.pmAgreement.pmPayorg',
           },
@@ -167,7 +171,7 @@ const PlatformPmAgreementPayoutPie: React.FC = () => {
         (response as any[])
           .map((rec) => ({
             type: rec.text,
-            value: parseInt(numeral(rec.jf3d68fe59d40e7f86fc73fc79218 / 10000).format('0'), 10),
+            value: parseInt(numeral(rec[SUMFACT] / 10000).format('0'), 10),
           }))
           .sort((a, b) => b.value - a.value),
       );
@@ -272,7 +276,7 @@ const PmAgreementPayoutYearMonthColumn: React.FC = (params) => {
       data: serialize(
         stringifyObjectField({
           moduleName: 'PmPaymentDetail',
-          fields: ['count.factMoney', 'sum.factMoney'],
+          fields: ['count.*', 'sum.factMoney'],
           groupfieldid: {
             fieldname: 'factDate',
             function: sectionType,
@@ -284,7 +288,7 @@ const PmAgreementPayoutYearMonthColumn: React.FC = (params) => {
         (response as any[])
           .map((rec) => ({
             type: rec.text,
-            value: parseInt(numeral(rec.jf3d68fe59d40e7f86fc73fc79218 / 10000).format('0'), 10),
+            value: parseInt(numeral(rec[SUMFACT] / 10000).format('0'), 10),
           }))
           .sort((a, b) => (a.type > b.type ? 1 : -1)),
       );

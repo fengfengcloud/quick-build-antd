@@ -7,6 +7,8 @@ import { Card, Col, Form, Row, Select, Switch } from 'antd';
 import { CardProps } from 'antd/lib/card';
 import { serialize } from 'object-to-formdata';
 import { PieConfig } from '@ant-design/charts/es/pie';
+import { getColumnsDataIndex } from '@/pages/datamining/utils';
+import { stringifyObjectField } from '@/utils/utils';
 import FOrganizationTreeSelect from './components/OrganizationTreeSelect';
 import DataTable from './components/DataTable';
 import ToggleTableChartButton from './components/ToggleTableChartButton';
@@ -65,15 +67,14 @@ const PmAgreementGlobal: React.FC = () => {
   const [amount, setAmount] = useState<number>(0);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const asyncFetch = (orgid: string | null, containFinished: boolean) => {
-    const fields = JSON.stringify([
+    const fields = [
       'count.agreementId',
       'sum.amount',
       'sum.planCanpaymentAmount',
       'sum.paymentDetailAmount',
-      'sum.paymentAllowAmount',
-      'sum.paymentAllowAmountAll',
       'wavg.paymentDetailPercent',
-    ]);
+    ];
+    const [COUNT, AMOUNT, CANPAYMENT, DETAILAMOUNT, PAYOUTPERCENT] = getColumnsDataIndex(fields);
     // 已完成和已存在档的合同90,99
     const filters: any[] = [];
     if (!containFinished)
@@ -94,49 +95,50 @@ const PmAgreementGlobal: React.FC = () => {
         operator: 'startwith',
         value: orgid,
       });
-    const navigatefilters = filters.length ? JSON.stringify(filters) : null;
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
-      data: serialize({
-        moduleName: 'PmAgreement',
-        fields,
-        navigatefilters,
-      }),
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmAgreement',
+          fields,
+          navigatefilters: filters.length ? filters : null,
+        }),
+      ),
     }).then((response) => {
       if (response[0]) {
         const obj = response[0];
         let unitdiv = 10000;
         // 大于10亿，改用亿为单位
-        if (obj.jf750aa8475c524777c79f8579aac > 10000 * 10000 * 10) {
+        if (obj[AMOUNT] > 10000 * 10000 * 10) {
           setUnitText('亿');
           unitdiv = 10000 * 10000;
         } else {
           setUnitText('万');
           unitdiv = 10000;
         }
-        setCount(obj.jfcb62ecbda87a63b4bb09ffbfbfc || 0);
-        setPayoutPercent(obj.jfb56cdd7d42efdee19db4f70622a || 0);
-        setAmount((obj.jf750aa8475c524777c79f8579aac || 0) / unitdiv);
+        setCount(obj[COUNT] || 0);
+        setPayoutPercent(obj[PAYOUTPERCENT] || 0);
+        setAmount((obj[AMOUNT] || 0) / unitdiv);
         setData(
           [
-            { type: '合同结算金额', value: obj.jf750aa8475c524777c79f8579aac || 0, group: '1' },
+            { type: '合同结算金额', value: obj[AMOUNT] || 0, group: '1' },
             {
               type: '不可支付计划',
-              value: obj.jf750aa8475c524777c79f8579aac - obj.jf95904a67172a099458c6d3e8bc5 || 0,
+              value: obj[AMOUNT] - obj[CANPAYMENT] || 0,
               group: '2',
             },
-            { type: '可支付计划', value: obj.jf95904a67172a099458c6d3e8bc5 || 0, group: '2' },
+            { type: '可支付计划', value: obj[CANPAYMENT] || 0, group: '2' },
             {
               type: '不可请款金额',
-              value: obj.jf750aa8475c524777c79f8579aac - obj.jf95904a67172a099458c6d3e8bc5 || 0,
+              value: obj[AMOUNT] - obj[CANPAYMENT] || 0,
               group: '3',
             },
             {
               type: '可请款金额',
-              value: obj.jf95904a67172a099458c6d3e8bc5 - obj.jf87b6ad783767a80662a998f7a9b || 0,
+              value: obj[CANPAYMENT] - obj[DETAILAMOUNT] || 0,
               group: '3',
             },
-            { type: '已支付金额', value: obj.jf87b6ad783767a80662a998f7a9b || 0, group: '3' },
+            { type: '已支付金额', value: obj[DETAILAMOUNT] || 0, group: '3' },
           ].map((rec) => ({
             ...rec,
             value: parseFloat(numeral(rec.value / unitdiv).format('0.00')),
@@ -237,26 +239,27 @@ const PmAgreementCountPie: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const [selectTarget, setselectTarget] = useState<any>({});
-
+  const fields = ['count.agreementId', 'sum.singAmount', 'sum.amount'];
+  const [COUNT, SINGAMOUNT, AMOUNT] = getColumnsDataIndex(fields);
   const indextypes = [
     {
       label: '合同个数',
       value: 'count',
-      fieldname: 'jfcb62ecbda87a63b4bb09ffbfbfc',
+      fieldname: COUNT,
       unitText: '个',
       unit: 1,
     },
     {
       label: '合同结算金额',
       value: 'amount',
-      fieldname: 'jf750aa8475c524777c79f8579aac',
+      fieldname: AMOUNT,
       unitText: '万元',
       unit: 10000,
     },
     {
       label: '合同签订金额',
       value: 'signAmount',
-      fieldname: 'jf96e38d8f41fa6602a6ac0bf4777',
+      fieldname: SINGAMOUNT,
       unitText: '万元',
       unit: 10000,
     },
@@ -266,53 +269,73 @@ const PmAgreementCountPie: React.FC = () => {
     {
       label: '合同签订年度',
       value: 'signyear',
-      groupfieldid: 'ff8080817517d40c017517d53df1009b-8a53b78262ea6e6d0162ea6e89810000',
+      groupfieldid: {
+        fieldname: 'singDate',
+        function: 'yyyy年',
+      },
       sortby: 'label',
     },
     {
       label: '合同签订金额',
       value: 'singAmount',
-      groupfieldid: 'ff8080817517d40c017517d53d83005e-8a53b78262ea6e6d0162ea6e8afc0064',
+      groupfieldid: {
+        fieldname: 'singAmount',
+        function: '按数量级分组',
+      },
       sortby: 'label',
     },
     {
       label: '管理部门',
       value: 'FOrganization',
-      groupfieldid: 'pmProject.pmGlobal.FOrganization|8a53b78262ea6e6d0162ea6e9ce30224',
+      groupfieldid: {
+        fieldahead: 'pmProject.pmGlobal.FOrganization',
+        codelevel: '2',
+      },
       sortby: 'value',
     },
     {
       label: '支付平台',
       value: 'pmPayorg',
-      groupfieldid: 'pmPayorg|ff80808174ec813b0174fb8f4ab800dc',
+      groupfieldid: {
+        fieldahead: 'pmPayorg',
+      },
       sortby: 'value',
     },
     {
       label: '成本类型',
       value: 'pmAgreementCostType',
-      groupfieldid: 'pmAgreementCostType|ff80808174ec813b0174fb8fb0d00133',
+      groupfieldid: {
+        fieldahead: 'pmAgreementCostType',
+      },
       sortby: 'value',
     },
     {
       label: '预算类型',
-      value: 'pmagreementbudgettype',
-      groupfieldid: 'pmagreementbudgettype|ff80808174ec813b0174fb8f944200f9',
+      value: 'pmAgreementBudgetType',
+      groupfieldid: {
+        fieldahead: 'pmAgreementBudgetType',
+      },
       sortby: 'value',
     },
     {
       label: '工程类型',
       value: 'pmAgreementClassType',
-      groupfieldid: 'pmAgreementClassType|ff80808174ec813b0174fb8fa3f20116',
+      groupfieldid: {
+        fieldahead: 'pmAgreementClassType',
+      },
       sortby: 'value',
     },
     {
       label: '合同状态',
       value: 'pmAgreementState',
-      groupfieldid: 'pmAgreementState|ff80808174ec813b0174fb8fcd2a016d',
+      groupfieldid: {
+        fieldahead: 'pmAgreementState',
+      },
       sortby: 'value',
     },
   ];
   const asyncFetch = () => {
+    setLoading(true);
     const fieldsValue = form.getFieldsValue();
     const grouptype: any = grouptypes.find(
       (rec) => rec.value === (fieldsValue.grouptype || grouptypes[0].value),
@@ -327,11 +350,13 @@ const PmAgreementCountPie: React.FC = () => {
     setUnitText(indextype.unitText);
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
-      data: serialize({
-        moduleName: 'PmAgreement',
-        fields: JSON.stringify(['count.agreementId', 'sum.singAmount', 'sum.amount']),
-        groupfieldid: grouptype?.groupfieldid,
-      }),
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmAgreement',
+          fields,
+          groupfieldid: grouptype?.groupfieldid,
+        }),
+      ),
     }).then((response) => {
       const datas = (response as any[])
         .map((rec) => ({
@@ -390,6 +415,9 @@ const PmAgreementCountPie: React.FC = () => {
           return numeral(sum).format('0,0') + unitText;
         },
         offsetY: 15,
+        style: {
+          fontSize: '20px',
+        },
       },
     },
     interactions: [{ type: 'element-active' }],
@@ -449,24 +477,28 @@ const PmAgreementCountPie: React.FC = () => {
 const PmAgreementSignYearMonthColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
+  const fields = ['count.agreementId', 'sum.singAmount'];
+  const [COUNT, SUMAMOUNT] = getColumnsDataIndex(fields);
   const asyncFetch = () => {
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
-      data: serialize({
-        moduleName: 'PmAgreement',
-        fields: JSON.stringify(['count.agreementId', 'sum.singAmount']),
-        groupfieldid: JSON.stringify({
-          fieldname: 'singDate',
-          function: 'yyyy年mm月',
+      data: serialize(
+        stringifyObjectField({
+          moduleName: 'PmAgreement',
+          fields,
+          groupfieldid: {
+            fieldname: 'singDate',
+            function: 'yyyy年mm月',
+          },
         }),
-      }),
+      ),
     }).then((response) => {
       setData(
         (response as any[])
           .map((rec) => ({
             type: rec.text ? rec.text.substr(2) : rec.text,
-            value: parseInt(numeral(rec.jf96e38d8f41fa6602a6ac0bf4777 / 10000).format('0'), 10),
-            count: rec.jfcb62ecbda87a63b4bb09ffbfbfc,
+            value: parseInt(numeral(rec[SUMAMOUNT] / 10000).format('0'), 10),
+            count: rec[COUNT],
           }))
           .sort((a, b) => (a.type > b.type ? 1 : -1))
           .filter((_, index, array) => array.length - index <= 12),

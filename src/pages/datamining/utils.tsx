@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { MD5 } from '@/utils/utils';
 import { DataminingModal, SchemeSettingModal } from './data';
 import { getMonetary } from '../module/grid/monetary';
 import {
@@ -135,6 +136,35 @@ export const getInitDataminingState = (moduleName: string): DataminingModal => {
       disablecollapsed: false,
     },
   };
+  return result;
+};
+
+/**
+ * 根据聚合字段以后附加在字段上的条件来计算字段的名称值
+ * @param fieldname
+ * @param condition
+ */
+export const getColumnDataIndex = (
+  fieldname: string,
+  condition: string | undefined = undefined,
+): string => {
+  const md5str = fieldname + (condition || '');
+  return `jf${MD5(md5str).substr(0, 27)}`;
+};
+
+/**
+ * 返回一系列的字段的名称值
+ * @param fieldnames
+ * @param condition
+ */
+export const getColumnsDataIndex = (
+  fieldnames: string[],
+  condition: string | undefined = undefined,
+): string[] => {
+  const result: string[] = [];
+  fieldnames.forEach((fieldname) => {
+    result.push(getColumnDataIndex(fieldname, condition));
+  });
   return result;
 };
 
