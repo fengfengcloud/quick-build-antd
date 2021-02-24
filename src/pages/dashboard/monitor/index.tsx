@@ -3,6 +3,7 @@ import { Card, Tabs } from 'antd';
 import { UserOperator } from './userOperator';
 import { UserLogin } from './userLogin';
 import { UserApprove } from './userApprove';
+import styles from './index.less';
 
 const monitor: React.FC = () => {
   return (
@@ -12,13 +13,28 @@ const monitor: React.FC = () => {
       style={{ margin: '-8px' }}
     >
       <Tabs>
-        <Tabs.TabPane tab="用户审批分析" tabKey="userapprove" key="userapprove">
+        <Tabs.TabPane
+          tab="用户审批分析"
+          tabKey="userapprove"
+          key="userapprove"
+          className={styles.dashboardcard}
+        >
           <UserApprove />
         </Tabs.TabPane>
-        <Tabs.TabPane tab="用户操作分析" tabKey="useroperate" key="useroperate">
+        <Tabs.TabPane
+          tab="用户操作分析"
+          tabKey="useroperate"
+          key="useroperate"
+          className={styles.dashboardcard}
+        >
           <UserOperator />
         </Tabs.TabPane>
-        <Tabs.TabPane tab="用户登录分析" tabKey="userlogin" key="userlogin">
+        <Tabs.TabPane
+          tab="用户登录分析"
+          tabKey="userlogin"
+          key="userlogin"
+          className={styles.dashboardcard}
+        >
           <UserLogin />
         </Tabs.TabPane>
       </Tabs>
