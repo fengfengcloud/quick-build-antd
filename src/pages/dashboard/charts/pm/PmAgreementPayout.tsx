@@ -6,11 +6,14 @@ import { ColumnConfig } from '@ant-design/charts/es/column';
 import { Card, Col, Radio, Row } from 'antd';
 import { CardProps } from 'antd/lib/card';
 import { serialize } from 'object-to-formdata';
+import moment from 'moment';
 import { stringifyObjectField } from '@/utils/utils';
 import { TextValue } from '@/pages/module/data';
 import { getColumnDataIndex } from '@/pages/datamining/utils';
+import { DateFormat } from '@/pages/module/moduleUtils';
 import DataTable from './components/DataTable';
 import ToggleTableChartButton from './components/ToggleTableChartButton';
+import { DateSectionSelect } from '../../utils/DateSectionSelect';
 
 const numeral = require('numeral');
 
@@ -53,7 +56,21 @@ const OrganizationPmAgreementPayoutPie: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showGrid, setShowGrid] = useState<boolean>(false);
+  const [dateSection, setDateSection] = useState<[any, any]>([null, null]);
   const asyncFetch = () => {
+    setLoading(true);
+    const navigatefilters: any[] = [];
+    const [d1, d2] = dateSection;
+    if (d1 || d2) {
+      navigatefilters.push({
+        property: 'factDate',
+        operator: 'daysection',
+        searchfor: 'date',
+        value: `${d1 ? moment(d1).format(DateFormat) : ''}--${
+          d2 ? moment(d2).format(DateFormat) : ''
+        }`,
+      });
+    }
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
       data: serialize(
@@ -64,6 +81,7 @@ const OrganizationPmAgreementPayoutPie: React.FC = () => {
             fieldahead: 'pmPayment.pmAgreement.pmProject.pmGlobal.FOrganization',
             codelevel: '2',
           },
+          navigatefilters,
         }),
       ),
     }).then((response) => {
@@ -127,10 +145,8 @@ const OrganizationPmAgreementPayoutPie: React.FC = () => {
     },
   };
   useEffect(() => {
-    setTimeout(() => {
-      asyncFetch();
-    }, 200);
-  }, []);
+    asyncFetch();
+  }, [dateSection]);
   return (
     <Card
       title={
@@ -140,6 +156,7 @@ const OrganizationPmAgreementPayoutPie: React.FC = () => {
         </React.Fragment>
       }
       {...cardParams}
+      extra={<DateSectionSelect dateSection={dateSection} setDateSection={setDateSection} />}
     >
       {showGrid ? (
         <DataTable data={data} unitText="万元" typeTitle="管理部门" valueTitle="累计支付金额" />
@@ -154,7 +171,21 @@ const PlatformPmAgreementPayoutPie: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showGrid, setShowGrid] = useState<boolean>(false);
+  const [dateSection, setDateSection] = useState<[any, any]>([null, null]);
   const asyncFetch = () => {
+    setLoading(true);
+    const navigatefilters: any[] = [];
+    const [d1, d2] = dateSection;
+    if (d1 || d2) {
+      navigatefilters.push({
+        property: 'factDate',
+        operator: 'daysection',
+        searchfor: 'date',
+        value: `${d1 ? moment(d1).format(DateFormat) : ''}--${
+          d2 ? moment(d2).format(DateFormat) : ''
+        }`,
+      });
+    }
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
       data: serialize(
@@ -164,6 +195,7 @@ const PlatformPmAgreementPayoutPie: React.FC = () => {
           groupfieldid: {
             fieldahead: 'pmPayment.pmAgreement.pmPayorg',
           },
+          navigatefilters,
         }),
       ),
     }).then((response) => {
@@ -227,10 +259,8 @@ const PlatformPmAgreementPayoutPie: React.FC = () => {
     },
   };
   useEffect(() => {
-    setTimeout(() => {
-      asyncFetch();
-    }, 400);
-  }, []);
+    asyncFetch();
+  }, [dateSection]);
   return (
     <Card
       title={
@@ -240,6 +270,7 @@ const PlatformPmAgreementPayoutPie: React.FC = () => {
         </React.Fragment>
       }
       {...cardParams}
+      extra={<DateSectionSelect dateSection={dateSection} setDateSection={setDateSection} />}
     >
       {showGrid ? (
         <DataTable data={data} unitText="万元" typeTitle="支付平台" valueTitle="累计支付金额" />
@@ -340,7 +371,7 @@ const PmAgreementPayoutYearMonthColumn: React.FC = (params) => {
           <Radio.Group
             value={sectionType}
             size="small"
-            style={{ margin: '0px 8px' }}
+            style={{ margin: '0px 8px', fontWeight: 400 }}
             onChange={(e) => {
               setSectionType(e.target.value);
             }}

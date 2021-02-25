@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Popover, Space } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -54,11 +54,14 @@ export const DateSectionQuickSelect = ({
   form,
   fieldName,
   callback,
+  autoHidden,
 }: {
   form?: any;
   fieldName?: string;
   callback?: Function;
+  autoHidden?: boolean;
 }) => {
+  const [visible, setVisible] = useState<boolean>(false);
   const onButtonClick = (section: any) => {
     const name = [fieldName, 'value'];
     if (!section.before) {
@@ -84,8 +87,8 @@ export const DateSectionQuickSelect = ({
         ]);
       } else if (callback) callback(value);
     }
+    if (autoHidden) setVisible(false);
   };
-
   const getButtons = () => {
     let key = 1;
     return (
@@ -109,9 +112,13 @@ export const DateSectionQuickSelect = ({
       </Space>
     );
   };
-
+  const props: any = {};
+  if (autoHidden) {
+    props.visible = visible;
+    props.onVisibleChange = (v: boolean) => setVisible(v);
+  }
   return (
-    <Popover title="日期区间快速设置" content={getButtons()}>
+    <Popover title="日期区间快速设置" content={getButtons()} {...props}>
       <Button style={{ paddingLeft: '6px', paddingRight: '6px' }}>
         <LinkOutlined />
       </Button>

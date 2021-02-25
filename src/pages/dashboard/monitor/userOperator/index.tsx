@@ -3,12 +3,15 @@ import { Card, CardProps, Col, Radio, Row } from 'antd';
 import { currentUser } from 'umi';
 import { serialize } from 'object-to-formdata';
 import request from '@/utils/request';
+import moment from 'moment';
 import { stringifyObjectField } from '@/utils/utils';
 import { PieConfig } from '@ant-design/charts/es/pie';
 import { getColumnDataIndex } from '@/pages/datamining/utils';
 import { Column, Pie } from '@ant-design/charts';
 import { TextValue } from '@/pages/module/data';
 import { ColumnConfig } from '@ant-design/charts/es/column';
+import { DateFormat } from '@/pages/module/moduleUtils';
+import { DateSectionSelect } from '../../utils/DateSectionSelect';
 
 const numeral = require('numeral');
 
@@ -17,18 +20,14 @@ const cardParams: CardProps = {
   bodyStyle: { height: '360px', paddingTop: 12, paddingBottom: 12 },
 };
 
-export const UserOperator: React.FC<any> = () => {
+export const UserOperator: React.FC = () => {
   return (
     <Row gutter={[12, 12]} style={{ margin: '12px 6px' }}>
       <Col md={24} lg={12}>
-        <Card title="用户操作类型分析" {...cardParams}>
-          <UserOperatorPie groupfieldid={{ fieldname: 'dotype' }} />
-        </Card>
+        <UserOperatorPie title="用户操作类型分析" groupfieldid={{ fieldname: 'dotype' }} />
       </Col>
       <Col md={24} lg={12}>
-        <Card title="用户操作模块分析" {...cardParams}>
-          <UserOperatorPie groupfieldid={{ fieldahead: 'FDataobject' }} />
-        </Card>
+        <UserOperatorPie title="用户操作模块分析" groupfieldid={{ fieldahead: 'FDataobject' }} />
       </Col>
       <Col span={24}>
         <UserOperatorYearMonthColumn {...cardParams} />
@@ -39,9 +38,16 @@ export const UserOperator: React.FC<any> = () => {
 
 const COUNT = getColumnDataIndex('count.*');
 
-export const UserOperatorPie: React.FC<any> = ({ groupfieldid }: { groupfieldid: any }) => {
+const UserOperatorPie: React.FC<any> = ({
+  title,
+  groupfieldid,
+}: {
+  title: string;
+  groupfieldid: any;
+}) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [dateSection, setDateSection] = useState<[any, any]>([null, null]);
   const fetchData = () => {
     const fields = ['count.*'];
     const filter = {
@@ -52,13 +58,25 @@ export const UserOperatorPie: React.FC<any> = ({ groupfieldid }: { groupfieldid:
       operator: '=',
       value: currentUser.userid,
     };
+    const navigatefilters: any[] = [filter];
+    const [d1, d2] = dateSection;
+    if (d1 || d2) {
+      navigatefilters.push({
+        property: 'odate',
+        operator: 'daysection',
+        searchfor: 'date',
+        value: `${d1 ? moment(d1).format(DateFormat) : ''}--${
+          d2 ? moment(d2).format(DateFormat) : ''
+        }`,
+      });
+    }
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
           moduleName: 'FUseroperatelog',
           fields,
-          navigatefilters: [filter],
+          navigatefilters,
           groupfieldid,
         }),
       ),
@@ -121,8 +139,16 @@ export const UserOperatorPie: React.FC<any> = ({ groupfieldid }: { groupfieldid:
   };
   useEffect(() => {
     fetchData();
-  }, []);
-  return <Pie {...config} />;
+  }, [dateSection]);
+  return (
+    <Card
+      {...cardParams}
+      title={title}
+      extra={<DateSectionSelect dateSection={dateSection} setDateSection={setDateSection} />}
+    >
+      <Pie {...config} />
+    </Card>
+  );
 };
 
 const columnStyle = {
@@ -160,12 +186,21 @@ const UserOperatorYearMonthColumn: React.FC = (params) => {
   const [sectionType, setSectionType] = useState<string>(sectionTypes[0].value || '');
   const asyncFetch = () => {
     setLoading(true);
+    const filter = {
+      property_: {
+        moduleName: 'FUseroperatelog',
+        fieldahead: 'FUser',
+      },
+      operator: '=',
+      value: currentUser.userid,
+    };
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
           moduleName: 'FUseroperatelog',
           fields: ['count.*'],
+          navigatefilters: [filter],
           groupfieldid: {
             fieldname: 'odate',
             function: sectionType,
@@ -228,13 +263,15 @@ const UserOperatorYearMonthColumn: React.FC = (params) => {
           <Radio.Group
             value={sectionType}
             size="small"
-            style={{ margin: '0px 8px' }}
+            style={{ margin: '0px 8px', fontWeight: 400 }}
             onChange={(e) => {
               setSectionType(e.target.value);
             }}
           >
             {sectionTypes.map((type) => (
-              <Radio.Button value={type.value}>{type.text}</Radio.Button>
+              <Radio.Button key={type.value} value={type.value}>
+                {type.text}
+              </Radio.Button>
             ))}
           </Radio.Group>
           <span>柱状图</span>

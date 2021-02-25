@@ -8,10 +8,13 @@ import { Card, Col, Radio, Row } from 'antd';
 import { CardProps } from 'antd/lib/card';
 import { BarConfig } from '@ant-design/charts/es/bar';
 import { serialize } from 'object-to-formdata';
+import moment from 'moment';
 import { stringifyObjectField } from '@/utils/utils';
 import { getColumnDataIndex } from '@/pages/datamining/utils';
+import { DateFormat } from '@/pages/module/moduleUtils';
 import DataTable from './components/DataTable';
 import ToggleTableChartButton from './components/ToggleTableChartButton';
+import { DateSectionSelect } from '../../utils/DateSectionSelect';
 
 const numeral = require('numeral');
 
@@ -47,7 +50,21 @@ const OrganizationPmAgreementApprovePie: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showGrid, setShowGrid] = useState<boolean>(false);
+  const [dateSection, setDateSection] = useState<[any, any]>([null, null]);
   const asyncFetch = () => {
+    setLoading(true);
+    const navigatefilters: any[] = [];
+    const [d1, d2] = dateSection;
+    if (d1 || d2) {
+      navigatefilters.push({
+        property: 'actEndTime',
+        operator: 'daysection',
+        searchfor: 'date',
+        value: `${d1 ? moment(d1).format(DateFormat) : ''}--${
+          d2 ? moment(d2).format(DateFormat) : ''
+        }`,
+      });
+    }
     request('/api/platform/datamining/fetchdata.do', {
       method: 'POST',
       data: serialize(
@@ -58,6 +75,7 @@ const OrganizationPmAgreementApprovePie: React.FC = () => {
             fieldahead: 'pmProject.pmGlobal.FOrganization',
             codelevel: '2',
           },
+          navigatefilters,
         }),
       ),
     }).then((response: any[]) => {
@@ -116,10 +134,8 @@ const OrganizationPmAgreementApprovePie: React.FC = () => {
     },
   };
   useEffect(() => {
-    setTimeout(() => {
-      asyncFetch();
-    }, 200);
-  }, []);
+    asyncFetch();
+  }, [dateSection]);
   return (
     <Card
       title={
@@ -129,6 +145,7 @@ const OrganizationPmAgreementApprovePie: React.FC = () => {
         </React.Fragment>
       }
       {...cardParams}
+      extra={<DateSectionSelect dateSection={dateSection} setDateSection={setDateSection} />}
     >
       {showGrid ? (
         <DataTable data={data} unitText="个" typeTitle="管理部门" valueTitle="文件数" />
