@@ -323,15 +323,16 @@ export const getNumberColumnFilterValue = (
   return null;
 };
 
+// 注意这里的true ,false ,还是 '1','0'
 export const getBooleanFilterOption = (isrequired: boolean): TextValue[] => {
   return isrequired
     ? [
-        { text: '是', value: '1', label: '是' },
-        { text: '否', value: '0', label: '否' },
+        { text: '是', value: 'true', label: '是' },
+        { text: '否', value: 'false', label: '否' },
       ]
     : [
-        { text: '是', value: '1', label: '是' },
-        { text: '否', value: '0', label: '否' },
+        { text: '是', value: 'true', label: '是' },
+        { text: '否', value: 'false', label: '否' },
         { text: '未定义', value: 'null', label: '未定义' },
       ];
 };

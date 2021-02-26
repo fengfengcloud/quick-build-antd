@@ -206,8 +206,6 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
     pageSizeOptions: ['10', '20', '50', '100', '200', '500'],
   };
   const gridScheme: any = getGridScheme(moduleState.currentGridschemeid, moduleInfo);
-  // const columns = getColumns({ gridScheme, moduleInfo, moduleState, dispatch, gridType , readOnly });
-
   const columns = useMemo(
     () => getColumns({ gridScheme, moduleInfo, moduleState, dispatch, gridType, readOnly }),
     [
@@ -216,6 +214,8 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
       moduleState.monetaryPosition,
       moduleState.filters.columnfilter,
       moduleState.sorts,
+      // 记录显示方式改变以后，需要重新刷新，不然state还是原来的
+      moduleState.formState.showType,
     ],
   );
 
