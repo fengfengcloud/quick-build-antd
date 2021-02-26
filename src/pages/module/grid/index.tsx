@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { Dispatch } from 'redux';
-import { Table, Tooltip, Space } from 'antd';
+import { Table, Tooltip, Space, Empty } from 'antd';
 import { PaginationConfig } from 'antd/lib/pagination';
 import { ReloadOutlined } from '@ant-design/icons';
 import {
@@ -152,19 +152,19 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
     total,
   }: { limit: number; curpage: number; total: number } = moduleState.gridParams;
 
+  const refreshData = () => {
+    dispatch({
+      type: 'modules/fetchData',
+      payload: {
+        moduleName,
+        forceUpdate: true,
+      },
+    });
+  };
+
   const refreshButton = (
     <Tooltip title="刷新当前页数据">
-      <ReloadOutlined
-        onClick={() => {
-          dispatch({
-            type: 'modules/fetchData',
-            payload: {
-              moduleName,
-              forceUpdate: true,
-            },
-          });
-        }}
-      />
+      <ReloadOutlined onClick={refreshData} />
     </Tooltip>
   );
 
@@ -377,6 +377,24 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
         },
       })}
       pagination={paginationProps}
+      locale={{
+        emptyText: (
+          <Empty
+            description={
+              <span>
+                暂无数据
+                <Tooltip title="刷新">
+                  <ReloadOutlined
+                    onClick={refreshData}
+                    style={{ marginLeft: '8px', cursor: 'pointer' }}
+                  />
+                </Tooltip>
+              </span>
+            }
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        ),
+      }}
       onChange={handleTableChange}
       components={components}
       scroll={{ x: true }}
