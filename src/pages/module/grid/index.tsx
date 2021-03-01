@@ -216,6 +216,8 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
       moduleState.sorts,
       // 记录显示方式改变以后，需要重新刷新，不然state还是原来的
       moduleState.formState.showType,
+      // pinkey 改变以后也要更新一下
+      moduleState.pinkey,
     ],
   );
 
