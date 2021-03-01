@@ -5,7 +5,7 @@ import { UserLogin } from './userLogin';
 import { UserApprove } from './userApprove';
 import styles from './index.less';
 
-const monitor: React.FC = () => {
+const Monitor: React.FC = () => {
   return (
     <Card
       bordered={false}
@@ -42,4 +42,4 @@ const monitor: React.FC = () => {
   );
 };
 
-export default monitor;
+export default Monitor;
