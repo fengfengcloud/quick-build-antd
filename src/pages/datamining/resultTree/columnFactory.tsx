@@ -10,7 +10,7 @@ import {
 import { getSortOrder } from '@/pages/module/grid/sortUtils';
 import { fieldTitleTransform, getColumnDataIndex } from '../utils';
 import styles from '../index.less';
-import { DataminingModal, FieldModal } from '../data';
+import { ColumnGroupModal, DataminingModal, FieldModal } from '../data';
 import { categoryFieldRender } from './categoryFieldRender';
 import CategoryActionButton from './categoryActionButton';
 import { PARENT_ROWID, ROWID, TEXTUNDERLINE } from '../constants';
@@ -21,9 +21,22 @@ export const getLeafColumns = (columns: any[]): any[] => {
   const result: any[] = [];
   columns.forEach((column) => {
     if (column.children) result.push(...getLeafColumns(column.children));
+    else if (column.columns) result.push(...getLeafColumns(column.columns));
     else result.push(column);
   });
   return result;
+};
+
+const updateColumnsToChildren = (columns: any[]): any[] => {
+  columns.forEach((column) => {
+    const col = column;
+    if (col.columns) {
+      col.children = col.columns;
+      delete col.columns;
+      updateColumnsToChildren(col.children);
+    }
+  });
+  return columns;
 };
 
 const getColumnText = (column: any, state: DataminingModal) => {
@@ -170,8 +183,9 @@ const adjustCloneGroupColumns = (cloneGroupColumns: any[], state: DataminingModa
  * 根据选 中的聚合字段 和 分组条件 来生成一个 二维的 分组条件+聚合字段，个数是二个的乘法
  */
 export const rebuildColumns = (
-  aggregateFields: any,
-  groupColumns: any,
+  aggregateFields: FieldModal[],
+  isMultFieldGroup: boolean,
+  groupColumns: ColumnGroupModal[],
   state: DataminingModal,
   dispatch: Function,
 ): any[] => {
@@ -200,16 +214,32 @@ export const rebuildColumns = (
         getSortOrder(state.schemeState.sorts, 'value'),
       rowid: 'category',
     },
-  ]; // 加入展开列
+  ];
+  // 如果有多层表头的，只展示此多层表头，不可以展开和进行操作
+  if (isMultFieldGroup) {
+    const cloneFields = updateColumnsToChildren(JSON.parse(JSON.stringify(aggregateFields)));
+    const leafAggregateFields: any[] = getLeafColumns(cloneFields);
+    leafAggregateFields.forEach((fi) => {
+      const f = fi;
+      setColumnXtypeAndDataIndex(f, state); // 设置column的显示xtype以及 dataIndex名称
+      f.isTotalColumn = true; // 这列是总计
+      if (state.currSetting.fieldGroupFixedLeft) f.fixed = 'left';
+    });
+    allColumns = allColumns.concat(cloneFields);
+    adjustCloneGroupColumns(allColumns, state);
+    // adjustColumnGroupToggleButton(allColumns, dispatch);
+    return allColumns;
+  }
+
+  const cloneAggregateFields = getLeafColumns(JSON.parse(JSON.stringify(aggregateFields)));
   // 要把最底层的dataindex设计好，有可能字段也是分组的多层的
   let rowidCount = 101;
   // 选中的字段的rowid,从101开始，也就是总计的字段的rowid，101,102,103
-  aggregateFields.forEach((afield: any) => {
+  cloneAggregateFields.forEach((afield: any) => {
     const field = afield;
     field[ROWID] = `field-${rowidCount}`;
     rowidCount += 1;
   });
-  const cloneAggregateFields = JSON.parse(JSON.stringify(aggregateFields));
   // 取得所有的底层的总计的字段，设计所有的列表字段的时候，可能会有分组
   // 这个太复杂，设计的时候不要设计二层以上的字段分组
   const leafAggregateFields: any[] = getLeafColumns(cloneAggregateFields);
@@ -245,7 +275,7 @@ export const rebuildColumns = (
     cloneGroupDetails.forEach((de) => {
       const d = de;
       // 对每一个分组的底层都要加入所有的aggregateFields 的一个拷贝
-      const cloneAggFields: any[] = JSON.parse(JSON.stringify(aggregateFields)).filter(
+      const cloneAggFields: any[] = JSON.parse(JSON.stringify(cloneAggregateFields)).filter(
         (field: FieldModal) => !field.hiddenInColumnGroup,
       );
       // 取得所有的底层的总计的字段，设计所有的列表字段的时候，可能会有分组

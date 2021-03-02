@@ -97,7 +97,7 @@ const ResultTree: React.FC<ResultTreeParams> = ({ state, dispatch }) => {
   //     });
   // };
 
-  const components = {
+  const components: any = {
     body: {
       row: (props: any) => <DragableBodyRow {...props} />,
     },
@@ -105,6 +105,10 @@ const ResultTree: React.FC<ResultTreeParams> = ({ state, dispatch }) => {
       cell: (props: any) => <DragDropHeaderCell {...props} />,
     },
   };
+  // 如果聚合字段有分组，则不允许对头部进行操作，这种方案只能在extjs的界面中进行配置
+  if (state.schemeState.isMultFieldGroup) {
+    delete components.header;
+  }
 
   const moveRow = useCallback(
     (dragIndex, hoverIndex, dragRecord) => {
@@ -126,7 +130,14 @@ const ResultTree: React.FC<ResultTreeParams> = ({ state, dispatch }) => {
   );
 
   const columns = useMemo(
-    () => rebuildColumns(schemeState.fieldGroup, schemeState.columnGroup, state, dispatch),
+    () =>
+      rebuildColumns(
+        schemeState.fieldGroup,
+        schemeState.isMultFieldGroup,
+        schemeState.columnGroup,
+        state,
+        dispatch,
+      ),
     [
       schemeState.fieldGroup,
       schemeState.columnGroup,

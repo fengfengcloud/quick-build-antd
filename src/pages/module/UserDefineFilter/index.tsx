@@ -89,6 +89,9 @@ export const initUserFilterFieldInitValues = (moduleName: string, scheme: any) =
       });
     else if (filterField.manyToOneInfo)
       apply(filter, { manyToOneObject: filterField.manyToOneInfo.objectname });
+    else if (filterField.comboThisField)
+      // 有此属性的，操作符是 in
+      apply(filter, {});
     else apply(filter, { operator: 'like', type: 'string' });
 
     // 定义在筛选字段中的初始值

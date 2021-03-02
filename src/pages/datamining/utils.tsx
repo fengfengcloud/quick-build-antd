@@ -89,6 +89,7 @@ export const getInitDataminingState = (moduleName: string): DataminingModal => {
           text: '记录数',
         },
       ],
+      isMultFieldGroup: false,
       rowGroup: [],
       setting: getDefaultDataminingSetting(),
       sorts: [
@@ -386,6 +387,7 @@ const getExportGridColumns = (state: DataminingModal, leafColumns: any[]) => {
   const { schemeState } = state;
   const gridColumns = rebuildColumns(
     schemeState.fieldGroup,
+    schemeState.isMultFieldGroup,
     schemeState.columnGroup,
     state,
     () => {},

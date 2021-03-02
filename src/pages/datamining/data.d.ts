@@ -60,7 +60,7 @@ export interface FieldModal {
   condition?: string | null;
   subconditionid?: string | null;
   hiddenInColumnGroup?: boolean; // 是否在分组里面隐藏，只显示总计
-  //  children?: fieldModal[];        //嵌套的情况很少用到extjs里可用，这里先不加了
+  columns?: fieldModal[]; // 嵌套的情况很少用到extjs里可用，这里先不加了
 }
 
 // 每一个行展开的属性
@@ -121,6 +121,7 @@ export interface SchemeSettingModal {
 export interface CurrentSchemeModal {
   columnGroup: ColumnGroupModal[]; // 所有的列展开的分组定义
   fieldGroup: FieldModal[]; // 所有选中的聚合字段
+  isMultFieldGroup: boolean; // 聚合字段是否是多层，多层的不能进行展开和其他的操作了
   rowGroup: RowGroupModal[];
   setting: SchemeSettingModal;
   dataSource: any[];
@@ -176,11 +177,11 @@ export interface ExportSettingModal {
 }
 
 export interface DataminingModal {
+  moduleName: string;
   fromCache: boolean; // 当前state是否是从cache中调用，如果是，则只渲染，不进行任何操作
   refreshAllCount: number; // 是否需要刷新所有的数据，0不刷新，不为0刷新，+1，则刷新
   refreshFilterDataSourceCount: number; // 是否需要刷新条件列表中的记录数，0不刷新，+1，刷新
   fetchLoading: boolean; // 数据分析数是否正在加载
-  moduleName: string;
   selectedRowKeys: any[]; // 当前选中的记录
   expandedRowKeys: any[]; // 树形结构展开的节点
   schemes: DataMiningSchemeModal[];

@@ -203,6 +203,7 @@ export const currentSchemeChanged = async (state: DataminingModal, dispatch: Fun
     schemeState = {
       columnGroup: response.columnGroup,
       fieldGroup: response.fieldGroup,
+      isMultFieldGroup: !!((response.fieldGroup as any[]) || []).find((f) => f.columns),
       rowGroup: response.rowGroup,
       setting: JSON.parse(response.setting),
       dataSource: [
@@ -225,6 +226,7 @@ export const currentSchemeChanged = async (state: DataminingModal, dispatch: Fun
     schemeState = {
       columnGroup: [],
       fieldGroup,
+      isMultFieldGroup: false,
       rowGroup: [],
       setting: getDefaultDataminingSetting(),
       dataSource: [],

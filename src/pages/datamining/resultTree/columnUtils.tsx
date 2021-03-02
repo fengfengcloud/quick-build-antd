@@ -27,6 +27,7 @@ import {
 // 取得当前头就cell的类型
 // 总计的字段分组，分组，单个字段的最后一个分组，多个字段最后的分数
 export const getCellType = (column: any): HeaderCellType => {
+  if (!column[ROWID]) return 'group';
   if ((column[ROWID] as string).startsWith('field')) return 'sumfield';
   if ((column[ROWID] as string).indexOf('field') > 0) return 'subfield';
   return column.dataIndex ? 'fieldingroup' : 'group';
