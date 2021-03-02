@@ -37,6 +37,7 @@ const SelectScheme: React.FC = () => {
       保存到当前数据分析方案
     </Menu.Item>,
     <Menu.Item
+      danger
       key="deletescheme"
       icon={<DeleteOutlined />}
       disabled={state.schemes.length === 0}
