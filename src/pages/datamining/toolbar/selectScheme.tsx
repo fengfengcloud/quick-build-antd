@@ -45,6 +45,7 @@ const SelectScheme: React.FC = () => {
         Modal.confirm({
           title: '确定删除',
           icon: <QuestionCircleOutlined />,
+          width: 500,
           content: `确定要删除数据分析方案『${state.currentScheme.text}』吗？`,
           okText: '确认',
           okType: 'danger',
