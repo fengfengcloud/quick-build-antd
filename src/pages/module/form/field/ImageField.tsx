@@ -2,6 +2,7 @@ import React from 'react';
 import { notification, Button, Tooltip } from 'antd';
 import { UploadOutlined, ClearOutlined } from '@ant-design/icons';
 import styles from './ImageField.less';
+import { NOIMAGE_PNG } from '../../constants';
 
 interface ImageFieldProps {
   value?: string; // 图片的BASE64编码值
@@ -60,10 +61,10 @@ const ImageField: React.FC<ImageFieldProps> = ({
     <div className={styles.avatar}>
       {label ? <div>{label}</div> : null}
       <img
-        width={imageWidth}
-        height={imageHeight}
+        width={!readOnly || value ? imageWidth : 36}
+        height={!readOnly || value ? imageHeight : 36}
         style={imageStyle}
-        src={value ? `data:image/jpeg;base64,${value}` : '/api/resources/images/system/noimage.png'}
+        src={value ? `data:image/jpeg;base64,${value}` : NOIMAGE_PNG}
         alt="图像"
       />
       {!readOnly && (

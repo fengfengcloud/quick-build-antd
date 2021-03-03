@@ -27,7 +27,7 @@ import { DrawerRecordPdfScheme } from '../toolbar/export/DrawerRecordPdfScheme';
 import ProgressField from '../form/field/ProgressField';
 import { isAudited } from '../audit/utils';
 import { execPrintRecordScheme } from '../toolbar/export/PrintRecordScheme';
-import { AuditFinished, AuditWaititng } from '../constants';
+import { AuditFinished, AuditWaititng, NOIMAGE_PNG } from '../constants';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -164,13 +164,13 @@ const getImageItem = (value: string, field: any, formFieldDefine: any) => {
           pagination: true, // 多页指示
         }}
         animate={{ flip: 'fade' }}
-        src={value ? `data:image/jpeg;base64,${value}` : '/api/resources/images/system/noimage.png'}
+        src={value ? `data:image/jpeg;base64,${value}` : NOIMAGE_PNG}
         alt={field.fieldtitle}
       />
     </div>
   ) : (
     <div style={{ textAlign: 'center' }}>
-      <img alt="" {...imageStyle} src="/api/resources/images/system/noimage.png" />
+      <img alt="" {...imageStyle} width={32} height={32} src={NOIMAGE_PNG} />
     </div>
   );
 };

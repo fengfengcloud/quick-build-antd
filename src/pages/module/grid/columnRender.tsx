@@ -17,6 +17,7 @@ import { ModuleModal, ModuleState, ParentFilterModal } from '../data';
 import { getFormSchemeFormType, getModuleInfo } from '../modules';
 import OneTowManyTooltip from '../widget/oneTwoManyTooltip';
 import styles from './columnFactory.less';
+import { NOIMAGE_PNG } from '../constants';
 
 const numeral = require('numeral');
 
@@ -37,11 +38,7 @@ export const imageRender = (value: any, _record: object, _recno: number, field: 
     style: field.imageStyle || {},
   };
   return value ? (
-    <Image
-      {...imageStyle}
-      fallback="/api/resources/images/system/noimage.png"
-      src={`data:image/jpeg;base64,${value}`}
-    />
+    <Image {...imageStyle} fallback={NOIMAGE_PNG} src={`data:image/jpeg;base64,${value}`} />
   ) : null;
 };
 
