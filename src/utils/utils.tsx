@@ -25,6 +25,25 @@ export const isAntDesignProOrDev = (): boolean => {
   return isAntDesignPro();
 };
 
+const nargs = /\{([0-9a-zA-Z_]+)\}/g;
+/**
+ * 字符串模板替换,字段之中不能有.号，即属性不能是对象
+ * @param str
+ * @param object
+ */
+export const templateReplace = (str: string, object: object) => {
+  return str.replace(nargs, function replaceArg(match, i, index) {
+    if (str[index - 1] === '{' && str[index + match.length] === '}') {
+      return i;
+    }
+    const result = object.hasOwnProperty(i) ? object[i] : null;
+    if (result === null || result === undefined) {
+      return '';
+    }
+    return result;
+  });
+};
+
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
 /**

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { Dispatch } from 'redux';
 import { Table, Tooltip, Space, Empty } from 'antd';
 import { PaginationConfig } from 'antd/lib/pagination';
+import marked from 'marked';
 import { ReloadOutlined } from '@ant-design/icons';
 import {
   Key,
@@ -9,7 +10,7 @@ import {
   TableCurrentDataSource,
   TablePaginationConfig,
 } from 'antd/lib/table/interface';
-import { apply } from '@/utils/utils';
+import { apply, templateReplace } from '@/utils/utils';
 import { ModuleModal, ModuleState, GridOperateType } from '../data';
 import { getAllFilterCount } from './filterUtils';
 import { getGridScheme, hasAssociatesSouth } from '../modules';
@@ -261,7 +262,16 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
     } else {
       params.expandable = {
         expandedRowRender: (record: any) => {
-          return `expandbody 设置的字符串:${record},${moduleInfo.rowbodytpl}`;
+          /* eslint-disable */
+          // 使用markdown显示内容
+          return (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: marked(templateReplace(moduleInfo.rowbodytpl || '', record)),
+              }}
+            ></span>
+          );
+          /* eslint-enable */
         },
       };
     }

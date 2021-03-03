@@ -1,6 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import request from '@/utils/request';
 import { Card } from 'antd';
-import React, { useEffect, useState } from 'react';
+import marked from 'marked';
 import { ModuleModal } from '../data';
 import styles from './RemoteExpandBody.less';
 
@@ -23,9 +24,10 @@ export const RemoteExpandBody: React.FC<ExpandBodyParams> = ({ moduleInfo, recor
     });
   }, []);
   /* eslint-disable */
+  // 使用markdown语法来显示
   return (
     <Card bodyStyle={{ padding: 0, margin: 0 }}>
-      <span className={styles._} dangerouslySetInnerHTML={{ __html: data }} />
+      <span className={styles._} dangerouslySetInnerHTML={{ __html: marked(data) }} />
     </Card>
   );
   /* eslint-enable */
