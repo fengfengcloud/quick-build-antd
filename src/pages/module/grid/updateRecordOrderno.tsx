@@ -14,8 +14,10 @@ import {
 } from 'antd';
 import request from '@/utils/request';
 import { apply } from '@/utils/utils';
+import { getTreeRecordByKey } from '@/pages/datamining/utils';
 import { ModuleState } from '../data';
 import { getModuleInfo } from '../modules';
+import { PARENT_RECORD } from '../constants';
 
 interface Params {
   moduleState: ModuleState;
@@ -96,6 +98,50 @@ export const UpdateRecordOrderNoButton: React.FC<Params> = ({ moduleState, dispa
     });
   };
 
+  // 更新树的某一级的顺序号
+  const resetTreeLevelOrderno = () => {
+    const ids: string[] = [];
+    if (moduleState.selectedRowKeys.length !== 1) {
+      message.warn('请选择一个需要更新的级别记录中的任意一条记录！');
+      return;
+    }
+    // 找到选中记录的父节点，将选中记录的所有同级记录按当前顺序重新排列
+    const selectRecord = getTreeRecordByKey(
+      dataSource,
+      moduleState.selectedRowKeys[0],
+      moduleInfo.primarykey,
+    );
+    const items: any[] = selectRecord[PARENT_RECORD]
+      ? selectRecord[PARENT_RECORD].children
+      : dataSource;
+    items.forEach((record) => ids.push(record[moduleInfo.primarykey]));
+    request('/api/platform/dataobject/updateorderno.do', {
+      params: {
+        objectid: moduleName,
+        ids: ids.join(','),
+        addparent: form.getFieldValue('addparent'),
+        startnumber: form.getFieldValue('startnumber'),
+        stepnumber: form.getFieldValue('stepnumber'),
+        parentnumber: selectRecord[PARENT_RECORD]
+          ? selectRecord[PARENT_RECORD][moduleInfo.orderfield as string]
+          : 0,
+      },
+    }).then((result) => {
+      if (result.success) {
+        dispatch({
+          type: 'modules/fetchData',
+          payload: {
+            moduleName,
+            forceUpdate: true,
+          },
+        });
+        message.info('选中记录的所有同级记录已按当前顺序重新排列！');
+      } else {
+        message.error(result.msg);
+      }
+    });
+  };
+
   return (
     <React.Fragment>
       <Tooltip title="更新顺序号">
@@ -114,24 +160,36 @@ export const UpdateRecordOrderNoButton: React.FC<Params> = ({ moduleState, dispa
         destroyOnClose
         bodyStyle={{ paddingTop: '4px' }}
         onOk={() => {
-          if (activekey === 'reset') resetOrderno();
-          else updateOrderno();
+          if (activekey === 'reset') {
+            if (moduleInfo.istreemodel) resetTreeLevelOrderno();
+            else resetOrderno();
+          } else updateOrderno();
         }}
       >
         <Tabs activeKey={activekey} onTabClick={(key: any) => setActiveKey(key)}>
           <Tabs.TabPane tab="重新生成顺序号" key="reset">
-            <Typography>
-              <Typography.Paragraph style={{ textAlign: 'center' }}>
-                <Typography.Text strong>
-                  对当前页的记录，按照下面的设置重新生成顺序号。
-                </Typography.Text>
-              </Typography.Paragraph>
-              <Typography.Paragraph>
-                注意：只会对当前页的记录进行操作更新，其他页的记录将不会进行更新；
-                <br />
-                如果没能显示所有要更新顺序号的记录，请改变页大小；
-              </Typography.Paragraph>
-            </Typography>
+            {moduleInfo.istreemodel ? (
+              <Typography>
+                <Typography.Paragraph style={{ textAlign: 'center' }}>
+                  <Typography.Text strong>
+                    将选中记录的所有同级记录按当前顺序重新排列
+                  </Typography.Text>
+                </Typography.Paragraph>
+              </Typography>
+            ) : (
+              <Typography>
+                <Typography.Paragraph style={{ textAlign: 'center' }}>
+                  <Typography.Text strong>
+                    对当前页的记录，按照下面的设置重新生成顺序号。
+                  </Typography.Text>
+                </Typography.Paragraph>
+                <Typography.Paragraph>
+                  注意：只会对当前页的记录进行操作更新，其他页的记录将不会进行更新；
+                  <br />
+                  如果没能显示所有要更新顺序号的记录，请改变页大小；
+                </Typography.Paragraph>
+              </Typography>
+            )}
             <Typography.Paragraph style={{ textAlign: 'center' }}>
               <Typography.Text type="danger">
                 (如果你不确定执行的结果，那么请不要执行此操作!!!)
@@ -170,7 +228,7 @@ export const UpdateRecordOrderNoButton: React.FC<Params> = ({ moduleState, dispa
               </Form>
             </Card>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="按原顺序号更新" key="updage">
+          <Tabs.TabPane tab="按原顺序号更新" key="updage" disabled={moduleInfo.istreemodel}>
             <Typography>
               <Typography.Paragraph style={{ textAlign: 'center' }}>
                 <Typography.Text strong>

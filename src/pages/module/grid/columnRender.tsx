@@ -17,12 +17,12 @@ import { ModuleModal, ModuleState, ParentFilterModal } from '../data';
 import { getFormSchemeFormType, getModuleInfo } from '../modules';
 import OneTowManyTooltip from '../widget/oneTwoManyTooltip';
 import styles from './columnFactory.less';
-import { NOIMAGE_PNG } from '../constants';
+import { NOIMAGE_PNG, PARENT_RECORD } from '../constants';
 
 const numeral = require('numeral');
 
 const { Text } = Typography;
-const PARNET = '__parent__';
+
 export const iconClsRender = (value: string) => {
   return value ? (
     <span style={{ marginRight: '4px', whiteSpace: 'nowrap' }}>
@@ -416,7 +416,7 @@ export const treeNodePinFieldRender = (
   const { moduleName } = moduleState;
   const { primarykey } = getModuleInfo(moduleName);
   const ispinkey = moduleState.pinkey === record[primarykey];
-  const parentRecord = record[PARNET];
+  const parentRecord = record[PARENT_RECORD];
   const parentkey = parentRecord ? parentRecord[primarykey] : '';
   const hasChildren = Array.isArray(record.children) && record.children.length;
   // 如果当前记录是pinkey,并且当前记录下没有children,那就转到上一级
@@ -442,7 +442,9 @@ export const treeNodePinFieldRender = (
                 /* eslint-disable */
                 pinkey: ispinkey
                   ? // 如果父节点是根节点，并且只有一个
-                    parentRecord && !parentRecord[PARNET] && moduleState.dataSource.length === 1
+                    parentRecord &&
+                    !parentRecord[PARENT_RECORD] &&
+                    moduleState.dataSource.length === 1
                     ? ''
                     : parentkey
                   : record[primarykey],

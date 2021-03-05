@@ -2,9 +2,10 @@ import { message } from 'antd';
 import React, { useContext } from 'react';
 import { DragPreviewImage, useDrag, useDrop } from 'react-dnd';
 import { ModuleContext, ModuleStateContext } from '..';
+import { PARENT_RECORD } from '../constants';
 import { ModuleState } from '../data';
 import { DetailModelContext } from '../detailGrid/model';
-import { canMoveRowToChangeRecno } from '../modules';
+import { canMoveRowToChangeRecno, getModuleInfo } from '../modules';
 
 const type = 'ModuleDragableBodyRow';
 /**
@@ -17,6 +18,7 @@ export const DragableBodyRow = ({
   index,
   record,
   moveRow,
+  moveToNewParent,
   className,
   style,
   ...restProps
@@ -24,6 +26,7 @@ export const DragableBodyRow = ({
   index: number;
   record: any;
   moveRow: Function;
+  moveToNewParent: Function;
   className: string;
   style: any;
 }) => {
@@ -42,7 +45,8 @@ export const DragableBodyRow = ({
     ? type + state.moduleName
     : `${type + state.moduleName}toNavigate`;
   const ref: any = React.useRef();
-
+  const moduleInfo = getModuleInfo(state.moduleName);
+  const { istreemodel } = moduleInfo;
   // 记录之间互相拖动顺序
   const [{ isMoveOver, canMoveDrop: canMove, dropClassName }, moveDrop] = useDrop({
     accept: acceptType,
@@ -53,20 +57,82 @@ export const DragableBodyRow = ({
     },
     collect: (monitor) => {
       const { index: dragIndex, record: dragRecord } = monitor.getItem() || {};
-      if (dragIndex === index) {
-        return {};
+      if (!istreemodel) {
+        // 如果是正常模块，不是树形结构
+        if (dragIndex === index) {
+          return {};
+        }
+        return {
+          isMoveOver: monitor.isOver(),
+          canMoveDrop: dragRecord && record,
+          dropClassName: dragIndex < index ? ' drop-over-downward' : ' drop-over-upward',
+        };
       }
-      return {
-        isMoveOver: monitor.isOver(),
-        canMoveDrop: dragRecord && record,
-        dropClassName: dragIndex < index ? ' drop-over-downward' : ' drop-over-upward',
-      };
+      if (record && dragRecord) {
+        // 是树形结构，判断是不是在同一个节点之下
+        if (record[PARENT_RECORD] === dragRecord[PARENT_RECORD]) {
+          // 在同一个节点之下
+          if (dragIndex === index) {
+            return {};
+          }
+          // 顺序移动
+          return {
+            isMoveOver: monitor.isOver(),
+            canMoveDrop: dragRecord && record,
+            dropClassName: dragIndex < index ? ' drop-over-downward' : ' drop-over-upward',
+          };
+        }
+        // 在不同节点之下，移动位置了
+        // 当前节点不能拖动到子节点下
+        let isDragInTarget = false;
+        let rec = record;
+        while (rec) {
+          if (rec[PARENT_RECORD] === dragRecord) {
+            isDragInTarget = true;
+            break;
+          }
+          rec = rec[PARENT_RECORD];
+        }
+        if (isDragInTarget) return {};
+        return {
+          isMoveOver: monitor.isOver(),
+          canMoveDrop: dragRecord && record,
+          dropClassName: ' drop-over-downward',
+        };
+      }
+      return {};
     },
     drop: (dragItem: any) => {
-      if (dragItem.index !== index)
-        if (!canMoveRowToChangeRecno(state)) {
-          message.warn('必须先在导航中选择顺序字段的限定字段值。');
-        } else moveRow(dragItem.index, index, dragItem.record);
+      const dragIndex = dragItem.index;
+      const dragRecord = dragItem.record;
+      if (!istreemodel) {
+        if (dragIndex !== index) {
+          if (!canMoveRowToChangeRecno(state)) {
+            message.warn('必须先在导航中选择顺序字段的限定字段值。');
+          } else {
+            moveRow(dragIndex, index, dragRecord);
+          }
+        }
+      } else if (record[PARENT_RECORD] === dragRecord[PARENT_RECORD]) {
+        // 是树形结构，判断是不是在同一个节点之下
+        if (dragIndex !== index) moveRow(dragIndex, index, dragRecord);
+      } else {
+        // 在不同节点之下，移动位置了
+        // 当前节点不能拖动到子节点下
+        let isDragInTarget = false;
+        let rec = record;
+        while (rec) {
+          if (rec[PARENT_RECORD] === dragRecord) {
+            isDragInTarget = true;
+            break;
+          }
+          rec = rec[PARENT_RECORD];
+        }
+        if (!isDragInTarget) {
+          // message.warn('changeparent');
+          moveToNewParent(dragIndex, index, dragRecord, record);
+        }
+      }
     },
   });
   const [, moveDrag, preview] = useDrag({

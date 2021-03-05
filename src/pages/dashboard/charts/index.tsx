@@ -5,7 +5,11 @@ import { PmCharts } from './pm';
 import Monitor from '../monitor';
 
 export default (): React.ReactNode => (
-  <Card bordered={false} bodyStyle={{ paddingTop: 0 }} style={{ margin: '-8px' }}>
+  <Card
+    bordered={false}
+    bodyStyle={{ padding: '0px 0px 16px 0px', margin: '0px 16px 16px' }}
+    style={{ margin: '-8px' }}
+  >
     {/* 工程管理系统的图表 */}
     {hasModuleInSysMenu('PmAgreement') ? <PmCharts /> : <Monitor />}
   </Card>

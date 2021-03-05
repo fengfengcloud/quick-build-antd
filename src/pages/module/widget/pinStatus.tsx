@@ -5,8 +5,7 @@ import { ModuleState, ModuleModal } from '../data';
 import { getModuleInfo } from '../modules';
 import { getAllFilterCount } from '../grid/filterUtils';
 import { getPinRecord } from '../moduleUtils';
-
-const PARNET = '__parent__';
+import { PARENT_RECORD } from '../constants';
 
 interface PinStatusProps {
   dispatch: Dispatch;
@@ -78,7 +77,7 @@ const PinStatus: React.FC<PinStatusProps> = (props) => {
           overlay={getHasChildrenNodeMenu(record, moduleInfo, dispatch)}
           onClick={() => {
             setPinkey(
-              record && !record[PARNET] && moduleState.dataSource.length === 1
+              record && !record[PARENT_RECORD] && moduleState.dataSource.length === 1
                 ? ''
                 : record[primarykey],
             );
@@ -88,7 +87,7 @@ const PinStatus: React.FC<PinStatusProps> = (props) => {
         </Breadcrumb.Item>,
       );
     })(parent);
-    parent = parent[PARNET];
+    parent = parent[PARENT_RECORD];
   }
   // 最顶层的记录个数，只果只有一条，不显示 所有。
   if (dataSource.length > 1) {

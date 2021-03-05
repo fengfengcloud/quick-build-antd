@@ -334,3 +334,11 @@ export const getAjaxNewDefault = async (params: any) => {
     body: serialize(params),
   });
 };
+
+// 树形结构中，将一个节点放在另一个节点之下
+export const updateParentKey = async (params: any) => {
+  return request(`/api/platform/dataobject/updateparentkey.do`, {
+    method: 'POST',
+    body: serialize(params),
+  });
+};

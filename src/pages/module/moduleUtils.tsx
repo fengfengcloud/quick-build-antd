@@ -11,12 +11,11 @@ import { CHILDREN } from '../datamining/constants';
 import styles from './index.less';
 import { getModuleInfo } from './modules';
 import { ModuleState, ParentFilterModal, ModuleModal } from './data';
+import { PARENT_RECORD } from './constants';
 
 export const DateFormat = 'YYYY-MM-DD';
 export const DateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
 export const DateTimeFormatWithOutSecond = 'YYYY-MM-DD HH:mm';
-
-const PARNET = '__parent__';
 
 // 取得某一个级数的长度，从1开始
 const getLevelLen = (level: number, codelevel: string[]): number => {
@@ -48,7 +47,7 @@ export const updateTreeRecord = (records: any[], newRecord: any, primarykey: str
       const rec = record;
       if (rec[primarykey] === newRecord[primarykey]) {
         Object.keys(rec).forEach((key) => {
-          if (key !== CHILDREN && key !== PARNET)
+          if (key !== CHILDREN && key !== PARENT_RECORD)
             // 只留下children属性
             delete rec[key];
         });
@@ -93,7 +92,7 @@ export const addRecordToTree = (
         if (rec[primarykey] === parentkey) {
           if (!rec.children) rec.children = [];
           rec.children.push(newRecord);
-          apply(newRecord, { [PARNET]: rec });
+          apply(newRecord, { [PARENT_RECORD]: rec });
           alreadyAdd = true;
         }
       if (!alreadyAdd && rec.children && Array.isArray(rec.children)) addTo(rec.children);
@@ -128,14 +127,14 @@ export const getModuleNameFromOneToMany = (str: string) => {
 };
 
 /**
- * 给所有的记录加上父记录的属性 __parent__
+ * 给所有的记录加上父记录的属性 _parent_record_
  * @param nodes
  */
 export const generateTreeParent = (nodes: any[]) => {
   const addParent = (item: any) => {
     if (Array.isArray(item.children)) {
       item.children.forEach((c: any) => {
-        apply(c, { [PARNET]: item });
+        apply(c, { [PARENT_RECORD]: item });
         addParent(c);
       });
     }
@@ -185,7 +184,7 @@ export const getAllTreeRecord = (records: any[]) => {
 export const getMaxPrimaryKeyFromKey = (data: any[], key: string, primarykey: string): string => {
   const record = getPinRecord(data, key, primarykey);
   if (!record || Array.isArray(record)) return '';
-  const parent = record[PARNET];
+  const parent = record[PARENT_RECORD];
   // 是根节点的
   if (!parent) {
     return data.reduce((a, b) => (b[primarykey] > a[primarykey] ? b : a))[primarykey];

@@ -27,6 +27,8 @@ import { DragableBodyRow } from './bodyRowDragDrop';
 import { SimpleDescription } from '../descriptions';
 import { UpdateRecordOrderNoButton } from './updateRecordOrderno';
 import { RemoteExpandBody } from './RemoteExpandBody';
+import { PARENT_RECORD } from '../constants';
+import { updateParentKey } from '../service';
 
 interface ModuleGridProps {
   moduleState: ModuleState;
@@ -336,8 +338,12 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
 
   // 鼠标拖动行移动位置
   const moveRow = useCallback(
-    (dragIndex, hoverIndex) => {
-      const data: any[] = [...moduleState.dataSource];
+    (dragIndex, hoverIndex, dragRecord) => {
+      let data: any[] = moduleState.dataSource;
+      if (dragRecord[PARENT_RECORD]) {
+        // 如果是树形结构的移动
+        data = dragRecord[PARENT_RECORD].children;
+      }
       const dragRow = data[dragIndex];
       data.splice(dragIndex, 1);
       data.splice(hoverIndex, 0, dragRow);
@@ -345,9 +351,47 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
         type: 'modules/updateDataSource',
         payload: {
           moduleName,
-          dataSource: data,
+          dataSource: [...moduleState.dataSource],
           recordOrderChanged: true,
         },
+      });
+    },
+    [moduleState.dataSource],
+  );
+
+  // 鼠标拖动树形结构的位置,将一个节点拖动至另一个节点之下
+  const moveToNewParent = useCallback(
+    (dragIndex, hoverIndex, dragRecord, hoverRecord) => {
+      let data: any[] = moduleState.dataSource;
+      if (dragRecord[PARENT_RECORD]) {
+        // 如果是树形结构的移动
+        data = dragRecord[PARENT_RECORD].children;
+      }
+      const dragRow = data[dragIndex];
+      data.splice(dragIndex, 1);
+      let hoverData: any[] = moduleState.dataSource;
+      apply(dragRecord, {
+        [PARENT_RECORD]: hoverRecord[PARENT_RECORD],
+      });
+      if (hoverRecord[PARENT_RECORD]) {
+        // 如果是树形结构的移动
+        hoverData = hoverRecord[PARENT_RECORD].children;
+      }
+      hoverData.splice(hoverIndex + 1, 0, dragRow);
+      dispatch({
+        type: 'modules/updateDataSource',
+        payload: {
+          moduleName,
+          dataSource: [...moduleState.dataSource],
+          recordOrderChanged: true,
+        },
+      });
+      updateParentKey({
+        objectname: moduleName,
+        id: dragRecord[moduleInfo.primarykey],
+        parentkey: hoverRecord[PARENT_RECORD]
+          ? hoverRecord[PARENT_RECORD][moduleInfo.primarykey]
+          : null,
       });
     },
     [moduleState.dataSource],
@@ -376,6 +420,7 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
         record,
         index,
         moveRow,
+        moveToNewParent,
         onClick: () => {
           selectRow(record);
         },
