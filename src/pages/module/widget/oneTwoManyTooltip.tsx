@@ -125,7 +125,7 @@ const OneTowManyTooltip = ({
                 : ft === 'datetime' || ft === 'timestamp'
                 ? datetimeRender(value, record, recno_, true)
                 : isfloat
-                ? floatRender(value)
+                ? floatRender(value, fieldDefine.digitslen)
                 : isinteger
                 ? integerRender(value)
                 : ispercent

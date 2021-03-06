@@ -18,7 +18,8 @@ export const tableSummary = (pageData: any[], moduleState: ModuleState, subTotal
   const getFieldTotal = (field: any) => {
     const fieldDefine = field.fieldDefine as ModuleFieldType;
     const sum: number = getTotal(field.dataIndex);
-    if (fieldDefine.ismonetary) return monetaryRender(sum, {}, 0, moduleState);
+    if (fieldDefine.ismonetary)
+      return monetaryRender(sum, {}, 0, moduleState, fieldDefine.digitslen);
     if (fieldDefine.divisor && fieldDefine.denominator) {
       const divisor = getTotal(fieldDefine.divisor);
       const denominator = getTotal(fieldDefine.denominator);
@@ -34,7 +35,8 @@ export const tableSummary = (pageData: any[], moduleState: ModuleState, subTotal
     const fieldDefine = field.fieldDefine as ModuleFieldType;
     const { remoteRoot } = moduleState;
     const value = remoteRoot[field.dataIndex];
-    if (fieldDefine.ismonetary) return monetaryRender(value, {}, 0, moduleState);
+    if (fieldDefine.ismonetary)
+      return monetaryRender(value, {}, 0, moduleState, fieldDefine.digitslen);
     if (fieldDefine.divisor && fieldDefine.denominator) {
       const divisor = remoteRoot[fieldDefine.divisor];
       const denominator = remoteRoot[fieldDefine.denominator];

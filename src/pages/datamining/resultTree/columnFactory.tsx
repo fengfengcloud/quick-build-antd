@@ -133,7 +133,7 @@ const setColumnXtypeAndDataIndex = (acolumn: any, state: DataminingModal) => {
     }
     if (column.ismonetary) {
       column.render = (value: number, record: object, _recno: number) =>
-        monetaryRender(value, record, _recno, state);
+        monetaryRender(value, record, _recno, state, undefined);
     }
   }
 };

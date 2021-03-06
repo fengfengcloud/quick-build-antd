@@ -589,11 +589,11 @@ const setFieldxtype = (
         );
         apply(field, {
           align: 'right',
-          render: floatRender,
+          render: (value: number) => floatRender(value, field.fieldDefine.digitslen),
         });
         if (field.fieldDefine.ismonetary) {
           field.render = (value: number, record: object, _recno: number) =>
-            monetaryRender(value, record, _recno, moduleState);
+            monetaryRender(value, record, _recno, moduleState, field.fieldDefine.digitslen);
         }
         break;
       case 'percent':
@@ -710,13 +710,6 @@ const getColumn = ({
   }
   if (field.dataIndex === 'iconcls') {
     field.render = (value: any) => iconClsRender(value);
-  }
-  // 小数位数
-  if (fieldDefine.digitslen) {
-    field.decimalPrecision = fieldDefine.digitslen;
-    let ds = '';
-    for (let i = 0; i < fieldDefine.digitslen; i += 1) ds += '0';
-    field.numberFormat = `0,000.${ds}`;
   }
   if (gridField.flex) {
     field.flex = gridField.flex;

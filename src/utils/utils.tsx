@@ -44,6 +44,25 @@ export const templateReplace = (str: string, object: object) => {
   });
 };
 
+const digitsFormat: string[] = [
+  '0,0',
+  '0,0.0',
+  '0,0.00',
+  '0,0.000',
+  '0,0.0000',
+  '0,0.00000',
+  '0,0.000000',
+];
+// 根据小数长度返回浮点数显示的格式
+export const getNumberDigitsFormat = (digits: number | undefined): string => {
+  if (typeof digits !== 'number')
+    // 默认小数点2位
+    return digitsFormat[2];
+  if (digits <= 0) return digitsFormat[0];
+  if (digits >= 6) return digitsFormat[6];
+  return digitsFormat[digits];
+};
+
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
 /**

@@ -735,7 +735,7 @@ const getFieldInput: React.FC<FormFieldProps> = (props) => {
       formField = (
         <InputNumber
           className="double"
-          precision={2}
+          precision={fieldDefine.digitslen || 2}
           formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
           parser={(value: any) => value.replace(/\$\s?|(,*)/g, '')}
           style={{ width: '135px' }}
@@ -744,7 +744,14 @@ const getFieldInput: React.FC<FormFieldProps> = (props) => {
       );
       break;
     case 'float':
-      formField = <InputNumber className="double" style={{ width: '135px' }} {...fieldProps} />;
+      formField = (
+        <InputNumber
+          className="double"
+          precision={fieldDefine.digitslen || 2}
+          style={{ width: '135px' }}
+          {...fieldProps}
+        />
+      );
       break;
     case 'percent': {
       // 默认是2位小数，百分比就是整数，设置4位小数，百分比小数位置是2位

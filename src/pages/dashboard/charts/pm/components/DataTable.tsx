@@ -34,7 +34,7 @@ const DataTable: React.FC<DataTableProps> = ({ data, unitText, typeTitle, valueT
       title: valueTitle || '指标值',
       render: (value: any) => (
         <span>
-          {unitText === '个' ? integerRender(value) : floatRender(value)}
+          {unitText === '个' ? integerRender(value) : floatRender(value, undefined)}
           {unitText ? (
             <span style={{ color: 'green', paddingLeft: '4px' }}>{unitText}</span>
           ) : (

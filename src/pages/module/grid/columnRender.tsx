@@ -12,6 +12,7 @@ import {
 import Zmage from 'react-zmage';
 import { Dispatch } from 'redux';
 import { getModuleUrlFormSysMenu } from '@/layouts/BasicLayout';
+import { getNumberDigitsFormat } from '@/utils/utils';
 import { getBooleanText, PopoverDescription, PopoverDescriptionWithId } from '../descriptions';
 import { ModuleModal, ModuleState, ParentFilterModal } from '../data';
 import { getFormSchemeFormType, getModuleInfo } from '../modules';
@@ -293,16 +294,17 @@ export const integerRender = (value: number) => {
   );
 };
 
-export const floatRender = (value: number) => {
+export const floatRender = (value: number, digitslen: number | undefined) => {
   if (!value) return null; // value = 0;
   /* eslint-disable */
+  const numberFormat = getNumberDigitsFormat(digitslen);
   return (
     <span
       className={
         value > 0 ? styles.numberpositive : value === 0 ? styles.nubmerzero : styles.numbernegative
       }
     >
-      {numeral(value).format('0,0.00')}
+      {numeral(value).format(numberFormat)}
     </span>
   );
   /* eslint-enable */
@@ -313,17 +315,18 @@ export const monetaryRender = (
   record_: Object,
   recno_: number,
   moduleState: ModuleState | any,
+  digitslen: number | undefined,
 ) => {
   const { monetary } = moduleState;
   if (value) {
     if (monetary.monetaryUnit === 1) {
-      return floatRender(value);
+      return floatRender(value, digitslen);
     }
     let v = value;
     v /= monetary.monetaryUnit;
     return (
       <span className={styles.monetaryfield}>
-        {floatRender(v)}{' '}
+        {floatRender(v, digitslen)}{' '}
         {moduleState.monetaryPosition === 'columntitle'
           ? ''
           : moduleState.monetary.monetaryColoredText}
