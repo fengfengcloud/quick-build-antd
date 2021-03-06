@@ -16,6 +16,7 @@ import {
   TreeSelect,
   Rate,
   AutoComplete,
+  Switch,
 } from 'antd';
 import { Dispatch } from 'redux';
 import {
@@ -28,7 +29,7 @@ import {
   SearchOutlined,
 } from '@ant-design/icons';
 import { FormInstance, Rule } from 'antd/lib/form';
-import { apply, getLastLevelLabel } from '@/utils/utils';
+import { apply, getLastLevelLabel, numberFormatWithComma } from '@/utils/utils';
 import { ModuleModal, ModuleFieldType, FormOperateType, FormShowType, TextValue } from '../data';
 import { getDictionary, getPropertys } from '../dictionary/dictionarys';
 
@@ -736,7 +737,7 @@ const getFieldInput: React.FC<FormFieldProps> = (props) => {
         <InputNumber
           className="double"
           precision={fieldDefine.digitslen || 2}
-          formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+          formatter={(value) => numberFormatWithComma(`${value}`)}
           parser={(value: any) => value.replace(/\$\s?|(,*)/g, '')}
           style={{ width: '135px' }}
           {...fieldProps}
@@ -783,7 +784,24 @@ const getFieldInput: React.FC<FormFieldProps> = (props) => {
       break;
     }
     case 'boolean':
-      formField = <Checkbox {...fieldProps} />;
+      if (formFieldDefine.switch)
+        // 开关样式的选择
+        formField = (
+          <Switch
+            {...fieldProps}
+            checkedChildren={<span style={{ margin: '2px' }}>是</span>}
+            unCheckedChildren={<span style={{ margin: '2px' }}>否</span>}
+          />
+        );
+      else if (formFieldDefine.radio)
+        // radio样式的选择
+        formField = (
+          <Radio.Group {...fieldProps}>
+            <Radio value>是</Radio>
+            <Radio value={false}>否</Radio>
+          </Radio.Group>
+        );
+      else formField = <Checkbox {...fieldProps} />;
       break;
     case 'image':
       formField = (
@@ -895,7 +913,7 @@ const FormField = ({
       label: <span dangerouslySetInnerHTML={{ __html: label }} />,
     });
   if (fieldtype.toLowerCase() === 'boolean') {
-    formItemProp.valuePropName = 'checked';
+    formItemProp.valuePropName = formFieldDefine.radio ? 'value' : 'checked';
     // 所有的boolean字段都设置为不是required的，如果有问题，需要后台对boolean加入缺省值
     required = false;
   }

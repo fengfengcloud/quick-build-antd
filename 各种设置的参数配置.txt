@@ -33,13 +33,15 @@
 
     窗口宽，高                            正数是像素数，负数是百分比
     centered: true|false                modal模式下是否居中,默认false
-    isDrawer: true|false                表单是modal窗口式或者抽屉式  ,默认false
 
     formLayout:'horizontal'|'vertical'  表单layout,字段描述和字段水平、垂直排列,默认horizontal
     requiredMark:true|false,            显示必填项的标志*,默认true，如果不需要显示，必须指定为false
     formSize : small | middle | large   字段的大小，默认为middle
 
     表单容器设置hiddenTitle:true,则不显示title
+
+    boolean 字段： switch : true,        开关样式
+                  radio : true,         radio 选择是否
 
     form字段设置：
     help:'写在字段下方的说明，错误提示也是'  写在字段下方对字段的描述，可以设置在字段的附加设置中

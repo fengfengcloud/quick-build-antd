@@ -63,6 +63,19 @@ export const getNumberDigitsFormat = (digits: number | undefined): string => {
   return digitsFormat[digits];
 };
 
+// 对小数点前的数值加入千分位
+export const numberFormatWithComma = (number: any): string => {
+  if (number === null || number === undefined) return '';
+  const str = number.toString();
+  const res = str.replace(/\d+/, (n: any) => {
+    // 先提取整数部分
+    return n.replace(/(\d)(?=(\d{3})+$)/g, ($1: string) => {
+      return `${$1},`;
+    });
+  });
+  return res;
+};
+
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
 /**

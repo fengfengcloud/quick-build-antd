@@ -184,6 +184,33 @@ const addCountToText = (array: any[], moduleState: ModuleState, filterField: any
   return array;
 };
 
+// 加入boolean类型的个数，boolean值，可能是'1','0','true','false','null'
+const addBooleanCountToText = (array: any[], moduleState: ModuleState, filterField: any) => {
+  if (!(filterField.addCount === false)) {
+    array.forEach((record: TextValue) => {
+      const rec = record;
+      getFieldNavigateCountArray(moduleState, filterField).forEach((nrec: any) => {
+        let v = nrec.value;
+        if (v === 'true') v = '1';
+        if (v === 'false') v = '0';
+        if (rec.value === v) {
+          rec.count = nrec.count;
+          rec.text = (
+            <span>
+              {rec.text}
+              <span className={styles.filterCount}>{`(${nrec.count})`}</span>
+            </span>
+          );
+        }
+      });
+    });
+    if (!(filterField.removeZoneValue === false)) {
+      return array.filter((rec: TextValue) => rec.count);
+    }
+  }
+  return array;
+};
+
 /**
  * 自定义筛选的附件属性：
  * allowEmpty : true        // 允许为空值(默认为false)：boolean类型，manytoone, dictionary 都会加入 未定义值
@@ -406,7 +433,7 @@ const getBooleanFilter: React.FC<UserFilterProps> = ({
   labelWarrapCol,
 }): any => {
   let dictData: TextValue[] = [...getBooleanFilterOption(!filterField.allowEmpty)];
-  dictData = addCountToText(dictData, moduleState, filterField);
+  dictData = addBooleanCountToText(dictData, moduleState, filterField);
   return getSelectCommonFilter(filterField, dictData, labelWarrapCol);
 };
 

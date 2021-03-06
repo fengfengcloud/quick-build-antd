@@ -66,10 +66,6 @@ import { auditRenderer } from '../audit/utils';
 import { getActionColumn } from './actions';
 import { RECNOUNDERLINE } from '../constants';
 
-// import { getSortOrder } from './sortUtils';
-// import { getColumnFilterValue, getBooleanFilterOption } from './filterUtils';
-// import { DictionaryDefine } from '@/models/dictionary';
-
 const moduleExportGridColumnDefine: Record<Key, object> = {};
 
 export const getCurrentExportGridColumnDefine = (moduleName: string) => {
