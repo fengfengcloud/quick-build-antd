@@ -20,6 +20,10 @@
         imageStyle:{borderRadius:'50%'}, 来设置照片的css属性
 
 
+导航：boolean类型：可以用下面的自定义函数
+    case when this = 1 then '是' when this = 0 then '否' else '未定义' end
+
+
 表单form
     只有fieldset下才是放字段的，其他的都是包容别的容器的容器。
 

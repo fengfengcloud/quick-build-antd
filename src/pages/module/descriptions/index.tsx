@@ -14,7 +14,7 @@ import {
 // https://github.com/Caldis/react-zmage
 import Zmage from 'react-zmage';
 import { Dispatch } from 'redux';
-import { apply, getLastLevelLabel } from '@/utils/utils';
+import { apply, getLastLevelLabel, getNumberDigitsFormat } from '@/utils/utils';
 import { ModuleModal, ModuleFieldType } from '../data';
 import { fetchObjectRecord, downloadRecordExcel, fetchObjectRecordSync } from '../service';
 import { getModuleInfo, addParentAdditionField, getFieldDefine } from '../modules';
@@ -43,6 +43,7 @@ const no = (
     <CloseOutlined />
   </Text>
 );
+const booleannull = <Text type="warning">〇</Text>;
 
 const numberStyle: React.CSSProperties = {
   color: 'blue',
@@ -75,15 +76,17 @@ const getRateValue = (value: number) => {
 const getIntegerValue = (value: number, field: ModuleFieldType) => {
   return (
     <span style={numberStyle}>
-      {value || ''} {field.unittext}
+      {value || ''} {field.unittext ? <span style={{ color: 'green' }}>{field.unittext}</span> : ''}
     </span>
   );
 };
 
 const getDoubleValue = (value: number, field: ModuleFieldType) => {
+  const numberFormat = getNumberDigitsFormat(field.digitslen);
   return (
     <span style={numberStyle}>
-      {value ? numeral(value).format('0,0.00') : ''} {field.unittext}
+      {value ? numeral(value).format(numberFormat) : ''}{' '}
+      {field.unittext ? <span style={{ color: 'green' }}>{field.unittext}</span> : ''}
     </span>
   );
 };
@@ -176,7 +179,7 @@ const getImageItem = (value: string, field: any, formFieldDefine: any) => {
 };
 
 export const getBooleanText = (value: boolean) => {
-  if (value === null || value === undefined) return null;
+  if (value === null || value === undefined) return booleannull;
   return value ? yes : no;
 };
 
