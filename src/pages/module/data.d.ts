@@ -52,7 +52,8 @@ export interface ModuleFieldType {
   isdisable: boolean; // 是否禁用
   ismonetary: boolean;
   isDateField: boolean;
-  multiTags?: boolean; // 字段有列表属性或值属性时可以进行多选
+  // 字段有列表属性或值属性时可以进行多选,tags可以加入列表中没有的
+  multiMode?: 'multiple' | 'tags' | undefined;
   allownew: boolean; // 允许新建
   allowedit: boolean; // 允许修改
   allowgroup: boolean;

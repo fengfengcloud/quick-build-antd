@@ -338,9 +338,9 @@ const getPropertyValueInput: React.FC<FormFieldProps> = ({ fieldDefine, fieldPro
       {text}
     </Select.Option>
   ));
-  return fieldDefine.multiTags ? (
+  return fieldDefine.multiMode ? (
     <Select
-      mode="tags"
+      mode={fieldDefine.multiMode}
       tokenSeparators={[',']}
       allowClear
       showSearch
@@ -378,9 +378,9 @@ const getPropertyInput: React.FC<FormFieldProps> = ({ fieldDefine, fieldProps })
       </Select.Option>
     ),
   );
-  return fieldDefine.multiTags ? (
+  return fieldDefine.multiMode ? (
     <Select
-      mode="tags"
+      mode={fieldDefine.multiMode}
       tokenSeparators={[',']}
       allowClear
       showSearch

@@ -47,7 +47,8 @@
     boolean 字段： switch : true,        开关样式
                   radio : true,         radio 选择是否
 
-    有字段列表属性和字段列表值的字段在其他设置中加入 multiTags : true ,可以进行多选
+    有字段列表属性和字段列表值的字段在其他设置中加入 multiMode : multiple | tags 可以进行多选 , 
+    tags可以录入新的，multiple 只能使用设置好的
 
     form字段设置：
     help:'写在字段下方的说明，错误提示也是'  写在字段下方对字段的描述，可以设置在字段的附加设置中
