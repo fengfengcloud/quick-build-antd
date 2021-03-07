@@ -52,6 +52,7 @@ export interface ModuleFieldType {
   isdisable: boolean; // 是否禁用
   ismonetary: boolean;
   isDateField: boolean;
+  multiTags?: boolean; // 字段有列表属性或值属性时可以进行多选
   allownew: boolean; // 允许新建
   allowedit: boolean; // 允许修改
   allowgroup: boolean;

@@ -16,15 +16,41 @@ export const convertToFormRecord = (sourRecord: any, moduleInfo: ModuleModal) =>
   if (!sourRecord || Object.keys(sourRecord).length === 0) return {};
   const record = { ...sourRecord };
   moduleInfo.fields.forEach((field: ModuleFieldType) => {
-    const { fieldname } = field;
+    const { fieldname, multiTags } = field;
     if (field.isDateField) {
       if (record[fieldname] && !isMoment(record[fieldname])) {
         record[fieldname] = moment(record[fieldname], DateTimeFormat);
       }
     }
+    if (multiTags && record[fieldname]) {
+      record[fieldname] = record[fieldname].split(',');
+    }
   });
   // console.log('sourceRecord', sourRecord);
   // console.log('target Record', record);
+  return record;
+};
+
+/**
+ * 将form中的record中的multiTags的字段的值，则数组改为字符串
+ * @param sourRecord
+ * @param moduleInfo
+ */
+export const convertMultiTagsToStr = (sourRecord: any, moduleInfo: ModuleModal) => {
+  const record = { ...sourRecord };
+  moduleInfo.fields.forEach((field: ModuleFieldType) => {
+    const { fieldname, multiTags } = field;
+    if (multiTags) {
+      const value = record[fieldname];
+      if (Array.isArray(value)) {
+        if (value.length === 0) {
+          record[fieldname] = undefined;
+        } else {
+          record[fieldname] = value.join(',');
+        }
+      }
+    }
+  });
   return record;
 };
 

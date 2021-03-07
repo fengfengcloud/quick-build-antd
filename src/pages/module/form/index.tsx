@@ -33,7 +33,12 @@ import { getFormSchemePanel } from './formFactory';
 import { saveOrUpdateRecord, downloadRecordExcel } from '../service';
 import { AttachemntRenderer } from '../attachment/utils';
 import ClosePopconfirm from './component/closePopconfirm';
-import { getDifferentField, convertToFormRecord, getNewDefaultValues } from './formUtils';
+import {
+  getDifferentField,
+  convertToFormRecord,
+  getNewDefaultValues,
+  convertMultiTagsToStr,
+} from './formUtils';
 import {
   getFieldDefine,
   hasInsert,
@@ -349,9 +354,10 @@ const ModuleForm: React.FC<ModuleFormProps> = ({
   };
 
   const getCommitValues = (formValues: object) => {
+    const destRecord = convertMultiTagsToStr(formValues, moduleInfo);
     if (formType === 'edit') {
       const values = getDifferentField({
-        dest: formValues,
+        dest: destRecord,
         sour: currRecord,
         moduleInfo,
       });
@@ -359,9 +365,9 @@ const ModuleForm: React.FC<ModuleFormProps> = ({
       values[primarykey] = currRecord[primarykey];
       return values;
     }
-    if (formType === 'insert') return formValues;
+    if (formType === 'insert') return destRecord;
     message.error(`未指定的表单类型：${formType}`);
-    return formValues;
+    return destRecord;
   };
 
   const saveRecord = () => {

@@ -333,7 +333,22 @@ const getPropertyValueInput: React.FC<FormFieldProps> = ({ fieldDefine, fieldPro
   if (fieldProps.readOnly) {
     return <Input {...fieldProps} />;
   }
-  return (
+  const options = fieldDefine.propertyvalue?.split(',').map((text, index) => (
+    <Select.Option key={`key-${index}`} value={text || ''}>
+      {text}
+    </Select.Option>
+  ));
+  return fieldDefine.multiTags ? (
+    <Select
+      mode="tags"
+      tokenSeparators={[',']}
+      allowClear
+      showSearch
+      getPopupContainer={(triggerNode) => triggerNode.parentNode}
+    >
+      {options}
+    </Select>
+  ) : (
     <AutoComplete
       {...fieldProps}
       allowClear
@@ -343,11 +358,7 @@ const getPropertyValueInput: React.FC<FormFieldProps> = ({ fieldDefine, fieldPro
         return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
       }}
     >
-      {fieldDefine.propertyvalue?.split(',').map((text, index) => (
-        <Select.Option key={`key-${index}`} value={text || ''}>
-          {text}
-        </Select.Option>
-      ))}
+      {options}
     </AutoComplete>
   );
 };
@@ -360,7 +371,24 @@ const getPropertyInput: React.FC<FormFieldProps> = ({ fieldDefine, fieldProps })
   if (fieldProps.readOnly) {
     return <Input {...fieldProps} />;
   }
-  return (
+  const options = getPropertys(fieldDefine.fPropertyid, fieldDefine.fieldid).map(
+    ({ text }, index) => (
+      <Select.Option key={`key-${index.toString()}`} value={text || ''}>
+        {text}
+      </Select.Option>
+    ),
+  );
+  return fieldDefine.multiTags ? (
+    <Select
+      mode="tags"
+      tokenSeparators={[',']}
+      allowClear
+      showSearch
+      getPopupContainer={(triggerNode) => triggerNode.parentNode}
+    >
+      {options}
+    </Select>
+  ) : (
     <AutoComplete
       {...fieldProps}
       allowClear
@@ -370,11 +398,7 @@ const getPropertyInput: React.FC<FormFieldProps> = ({ fieldDefine, fieldProps })
         return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
       }}
     >
-      {getPropertys(fieldDefine.fPropertyid, fieldDefine.fieldid).map(({ text }, index) => (
-        <Select.Option key={`key-${index.toString()}`} value={text || ''}>
-          {text}
-        </Select.Option>
-      ))}
+      {options}
     </AutoComplete>
   );
 };
