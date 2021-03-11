@@ -128,17 +128,11 @@ const CanSelectRoleIconView: React.FC<CanSelectRoleProps> = ({ dataRole, dispatc
       </Badge>
     </span>
   );
-  return (
-    <Dropdown
-      placement="bottomRight"
-      overlay={notificationBox}
-      trigger={['click']}
-      // visible={visible}
-      // onVisibleChange={setVisible}
-    >
+  return dataRole ? (
+    <Dropdown placement="bottomRight" overlay={notificationBox} trigger={['click']}>
       {trigger}
     </Dropdown>
-  );
+  ) : null;
 };
 
 export default connect(({ user }: { user: UserModelState }) => ({

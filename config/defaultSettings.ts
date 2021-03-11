@@ -8,7 +8,9 @@ const proSettings: DefaultSettings = {
   navTheme: 'dark',
   // 拂晓蓝
   primaryColor: '#1890ff',
-  layout: 'side',
+  // 'side' | 'top' | 'mix';
+  // 以后更新到ant-design-pro 5.x 版本
+  layout: 'top',
   contentWidth: 'Fluid',
   fixedHeader: true,
   fixSiderbar: true,

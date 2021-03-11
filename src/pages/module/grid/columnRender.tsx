@@ -284,7 +284,7 @@ export const manyToManyFieldRender = (
 };
 
 export const rateRender = (value: number) => {
-  return <Rate className={styles.ratefield} disabled value={value} />;
+  return <Rate allowHalf className={styles.ratefield} disabled value={value} />;
 };
 
 export const integerRender = (value: number) => {

@@ -756,27 +756,36 @@ const getFieldInput: React.FC<FormFieldProps> = (props) => {
         );
       }
       break;
+    case 'money':
     case 'double':
-      formField = (
-        <InputNumber
-          className="double"
-          precision={fieldDefine.digitslen || 2}
-          formatter={(value) => numberFormatWithComma(`${value}`)}
-          parser={(value: any) => value.replace(/\$\s?|(,*)/g, '')}
-          style={{ width: '135px' }}
-          {...fieldProps}
-        />
-      );
+      if (fieldDefine.isRate) {
+        formField = <Rate allowHalf allowClear {...fieldProps} disabled={fieldProps.readOnly} />;
+      } else {
+        formField = (
+          <InputNumber
+            className="double"
+            precision={fieldDefine.digitslen || 2}
+            formatter={(value) => numberFormatWithComma(`${value}`)}
+            parser={(value: any) => value.replace(/\$\s?|(,*)/g, '')}
+            style={{ width: '135px' }}
+            {...fieldProps}
+          />
+        );
+      }
       break;
     case 'float':
-      formField = (
-        <InputNumber
-          className="double"
-          precision={fieldDefine.digitslen || 2}
-          style={{ width: '135px' }}
-          {...fieldProps}
-        />
-      );
+      if (fieldDefine.isRate) {
+        formField = <Rate allowHalf allowClear {...fieldProps} disabled={fieldProps.readOnly} />;
+      } else {
+        formField = (
+          <InputNumber
+            className="double"
+            precision={fieldDefine.digitslen || 2}
+            style={{ width: '135px' }}
+            {...fieldProps}
+          />
+        );
+      }
       break;
     case 'percent': {
       // 默认是2位小数，百分比就是整数，设置4位小数，百分比小数位置是2位

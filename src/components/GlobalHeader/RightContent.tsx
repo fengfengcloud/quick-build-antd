@@ -1,4 +1,4 @@
-import { Tooltip, Tag } from 'antd';
+import { Tooltip, Tag, MenuTheme, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 import { connect, ConnectProps } from 'umi';
@@ -9,10 +9,9 @@ import styles from './index.less';
 import NoticeIconView from './NoticeIconView';
 import CanSelectRoleIconView from './CanSelectRoleIconView';
 
-export type SiderTheme = 'light' | 'dark';
 export interface GlobalHeaderRightProps extends Partial<ConnectProps> {
-  theme?: SiderTheme | 'realDark';
-  layout: 'sidemenu' | 'topmenu';
+  theme?: MenuTheme | 'realDark' | undefined;
+  layout?: 'side' | 'top' | 'mix';
 }
 
 const ENVTagColor = {
@@ -21,11 +20,11 @@ const ENVTagColor = {
   pre: '#87d068',
 };
 
-const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = (props) => {
+const GlobalHeaderRight: React.FC<GlobalHeaderRightProps> = (props) => {
   const { theme, layout } = props;
   let className = styles.right;
 
-  if (theme === 'dark' && layout === 'topmenu') {
+  if ((theme === 'dark' && layout === 'top') || layout === 'mix') {
     className = `${styles.right}  ${styles.dark}`;
   }
 
@@ -34,25 +33,18 @@ const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = (props) => {
       <HeaderSearch
         className={`${styles.action} ${styles.search}`}
         placeholder="站内搜索"
-        defaultValue="umi ui"
-        options={[
-          { label: <a href="https://umijs.org/zh/guide/umi-ui.html">umi ui</a>, value: 'umi ui' },
-          {
-            label: <a href="next.ant.design">Ant Design</a>,
-            value: 'Ant Design',
-          },
-          {
-            label: <a href="https://protable.ant.design/">Pro Table</a>,
-            value: 'Pro Table',
-          },
-          {
-            label: <a href="https://prolayout.ant.design/">Pro Layout</a>,
-            value: 'Pro Layout',
-          },
-        ]}
-      // onSearch={value => {
-      //   //console.log('input', value);
-      // }}
+        defaultValue=""
+        options={
+          [
+            // {
+            //   label: <a href="next.ant.design">Ant Design</a>,
+            //   value: 'Ant Design',
+            // },
+          ]
+        }
+        onSearch={(value) => {
+          message.info(`查询的内容：${value}`);
+        }}
       />
       <Tooltip title="使用文档">
         <a

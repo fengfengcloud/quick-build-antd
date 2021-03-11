@@ -561,35 +561,23 @@ const setFieldxtype = (
             render: integerRender,
           });
         }
-        columnFilterInfo.type = 'number';
-        field.filteredValue = getNumberColumnFilterValue(
-          moduleState.filters.columnfilter,
-          field.key,
-        );
-        apply(
-          field,
-          getNumberColumnSearchProps(field.dataIndex, field.fieldDefine, moduleState, dispatch),
-        );
         break;
       case 'money':
       case 'double':
       case 'float':
-        columnFilterInfo.type = 'number';
-        field.filteredValue = getNumberColumnFilterValue(
-          moduleState.filters.columnfilter,
-          field.key,
-        );
-        apply(
-          field,
-          getNumberColumnSearchProps(field.dataIndex, field.fieldDefine, moduleState, dispatch),
-        );
-        apply(field, {
-          align: 'right',
-          render: (value: number) => floatRender(value, field.fieldDefine.digitslen),
-        });
-        if (field.fieldDefine.ismonetary) {
-          field.render = (value: number, record: object, _recno: number) =>
-            monetaryRender(value, record, _recno, moduleState, field.fieldDefine.digitslen);
+        if (field.fieldDefine.isRate) {
+          apply(field, {
+            render: rateRender,
+          });
+        } else {
+          apply(field, {
+            align: 'right',
+            render: (value: number) => floatRender(value, field.fieldDefine.digitslen),
+          });
+          if (field.fieldDefine.ismonetary) {
+            field.render = (value: number, record: object, _recno: number) =>
+              monetaryRender(value, record, _recno, moduleState, field.fieldDefine.digitslen);
+          }
         }
         break;
       case 'percent':
@@ -618,6 +606,22 @@ const setFieldxtype = (
       }
       default:
     }
+
+  switch (fieldtype) {
+    case 'percent':
+    case 'money':
+    case 'double':
+    case 'float':
+    case 'integer':
+      columnFilterInfo.type = 'number';
+      field.filteredValue = getNumberColumnFilterValue(moduleState.filters.columnfilter, field.key);
+      apply(
+        field,
+        getNumberColumnSearchProps(field.dataIndex, field.fieldDefine, moduleState, dispatch),
+      );
+      break;
+    default:
+  }
 };
 
 const buildTextAndUnit = (field: any, moduleState: ModuleState) => {
