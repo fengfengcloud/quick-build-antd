@@ -5,13 +5,7 @@ type Unpacked<T> = T extends (infer U)[] ? U : T;
 
 class NotificationView extends Component {
   getData = () => {
-    const Action = (
-      <Switch
-        checkedChildren="开"
-        unCheckedChildren="关"
-        defaultChecked
-      />
-    );
+    const Action = <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />;
     return [
       {
         title: '账户密码',
@@ -34,12 +28,12 @@ class NotificationView extends Component {
   render() {
     const data = this.getData();
     return (
-      <Card title="新消息通知" bordered={false}>
+      <Card title="消息通知" bordered={false}>
         <Fragment>
           <List<Unpacked<typeof data>>
             itemLayout="horizontal"
             dataSource={data}
-            renderItem={item => (
+            renderItem={(item) => (
               <List.Item actions={item.actions}>
                 <List.Item.Meta title={item.title} description={item.description} />
               </List.Item>

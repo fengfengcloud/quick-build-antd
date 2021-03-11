@@ -292,7 +292,7 @@ class Center extends Component<CenterProps, CenterState> {
           </Col>
           <Col lg={18} md={24}>
             <Card>
-              <Tabs centered>
+              <Tabs>
                 {operationTabList.map((tab) => (
                   <TabPane key={tab.key} tab={tab.tab}>
                     {this.renderChildrenByTabKey(tab.key as CenterState['tabKey'], userid)}

@@ -5,14 +5,16 @@ import { GridContent } from '@ant-design/pro-layout';
 import { Card, Tabs } from 'antd';
 import { TabsPosition } from 'antd/lib/tabs';
 import { connect, ModalState } from 'umi';
+import { DefaultSettings as SettingModelState } from '../../../../config/defaultSettings';
 import { CurrentUser } from '../center/data';
 import BaseView from './components/baseView';
 import SecurityView from './components/security';
 import NotificationView from './components/notification';
 import BindingView from './components/binding';
+import FavoriteView from './components/Favorite';
 
 const { TabPane } = Tabs;
-const SettingsStateKeys: string[] = ['base', 'security', 'binding', 'notification'];
+const SettingsStateKeys: string[] = ['base', 'security', 'binding', 'notification', 'favorite'];
 const TYPE = 'type';
 
 interface SettingProps extends RouteChildrenProps {
@@ -20,15 +22,17 @@ interface SettingProps extends RouteChildrenProps {
   currentUser: Partial<CurrentUser>;
   currentUserLoading: boolean;
   userid: string;
+  settings: SettingModelState;
 }
 const menuMap = {
   base: '基本设置',
   security: '安全设置',
   binding: '账号绑定',
-  notification: '新消息通知',
+  notification: '消息通知',
+  favorite: '偏好设置',
 };
 
-const Settings: React.FC<SettingProps> = ({ currentUser, dispatch, location }) => {
+const Settings: React.FC<SettingProps> = ({ currentUser, dispatch, location, settings }) => {
   const { personnel, user } = currentUser;
   const { state } = location;
   const [tabPosition, setTabPosition] = useState<TabsPosition>('left');
@@ -60,6 +64,8 @@ const Settings: React.FC<SettingProps> = ({ currentUser, dispatch, location }) =
         return <BindingView />;
       case 'notification':
         return <NotificationView />;
+      case 'favorite':
+        return <FavoriteView dispatch={dispatch} settings={settings} />;
       default:
         break;
     }
@@ -94,13 +100,16 @@ export default connect(
     loading,
     accountCenter,
     user,
+    settings,
   }: {
     loading: { effects: { [key: string]: boolean } };
     accountCenter: ModalState;
     user: any;
+    settings: SettingModelState;
   }) => ({
     userid: user.currentUser.userid,
     currentUser: accountCenter.currentUser,
     currentUserLoading: loading.effects['accountCenter/fetchCurrent'],
+    settings,
   }),
 )(Settings);
