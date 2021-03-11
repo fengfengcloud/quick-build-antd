@@ -22,9 +22,10 @@ const FavoriteView: React.FC<FavoriteViewProps> = ({ dispatch, settings }) => {
     });
   };
   return (
-    <Card title="偏好设置" bordered={false}>
+    <Card title="偏好设置" bordered={false} bodyStyle={{ padding: 0, margin: 0, marginTop: '2px' }}>
       <Form form={form} labelCol={{ flex: '0 0 120px' }}>
         <Card
+          className="card_border_top_first"
           title={
             <>
               <BlockOutlined /> 界面总体设置
@@ -85,6 +86,7 @@ const FavoriteView: React.FC<FavoriteViewProps> = ({ dispatch, settings }) => {
           </Form.Item>
         </Card>
         <Card
+          className="card_border_top_first"
           title={
             <>
               <BlockOutlined /> 列表和表单设置
