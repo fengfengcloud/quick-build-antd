@@ -341,12 +341,12 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
     <ProLayout
       logo="/api/login/systemfavicon.do"
       // formatMessage={formatMessage}
-      menuHeaderRender={(logoDom, titleDom) => (
-        <Link to="/">
-          {logoDom}
-          {titleDom}
-        </Link>
-      )}
+      // menuHeaderRender={(logoDom, titleDom) => (
+      //   <Link to="/">
+      //     {logoDom}
+      //     {titleDom}
+      //   </Link>
+      // )}
       onCollapse={handleMenuCollapse}
       menuItemRender={(menuItemProps, defaultDom) => {
         if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {

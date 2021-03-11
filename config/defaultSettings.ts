@@ -9,8 +9,7 @@ const proSettings: DefaultSettings = {
   // 拂晓蓝
   primaryColor: '#1890ff',
   // 'side' | 'top' | 'mix';
-  // 以后更新到ant-design-pro 5.x 版本
-  layout: 'top',
+  layout: 'side',
   contentWidth: 'Fluid',
   fixedHeader: true,
   fixSiderbar: true,

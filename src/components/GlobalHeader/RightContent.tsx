@@ -23,7 +23,6 @@ const ENVTagColor = {
 const GlobalHeaderRight: React.FC<GlobalHeaderRightProps> = (props) => {
   const { theme, layout } = props;
   let className = styles.right;
-
   if ((theme === 'dark' && layout === 'top') || layout === 'mix') {
     className = `${styles.right}  ${styles.dark}`;
   }
