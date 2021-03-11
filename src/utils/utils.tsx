@@ -44,6 +44,14 @@ export const templateReplace = (str: string, object: object) => {
   });
 };
 
+export const getLocalMonetaryType = () => {
+  return (localStorage.getItem('settings-monetaryType') as any) || 'tenthousand';
+};
+
+export const getLocalMonetaryPosition = () => {
+  return (localStorage.getItem('settings-monetaryPosition') as any) || 'behindnumber';
+};
+
 const digitsFormat: string[] = [
   '0,0',
   '0,0.0',

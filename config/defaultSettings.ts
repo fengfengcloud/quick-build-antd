@@ -2,6 +2,8 @@ import { Settings as ProSettings } from '@ant-design/pro-layout';
 
 type DefaultSettings = ProSettings & {
   pwa: boolean;
+  monetaryType: 'unit' | 'thousand' | 'tenthousand' | 'million' | 'hundredmillion';
+  monetaryPosition: 'behindnumber' | 'columntitle';
 };
 
 const proSettings: DefaultSettings = {
@@ -20,6 +22,9 @@ const proSettings: DefaultSettings = {
   title: '快速架构系统',
   pwa: false,
   iconfontUrl: '',
+
+  monetaryType: 'tenthousand',
+  monetaryPosition: 'behindnumber',
 };
 
 export type { DefaultSettings };

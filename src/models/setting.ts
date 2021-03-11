@@ -1,3 +1,4 @@
+import { getLocalMonetaryPosition, getLocalMonetaryType } from '@/utils/utils';
 import { Reducer } from 'umi';
 import defaultSettings, {
   DefaultSettings as SettingModelState,
@@ -27,6 +28,9 @@ const getFavoriteSetting = (settings: SettingModelState) => {
     contentWidth: (localStorage.getItem('settings-contentWidth') as any) || 'Fluid',
     fixedHeader: localStorage.getItem('settings-fixedHeader') !== 'false',
     fixSiderbar: localStorage.getItem('settings-fixSiderbar') !== 'false',
+
+    monetaryType: getLocalMonetaryType(),
+    monetaryPosition: getLocalMonetaryPosition(),
   };
   return favoriteSetting;
 };

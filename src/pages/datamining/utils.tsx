@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { MD5 } from '@/utils/utils';
+import { getLocalMonetaryPosition, getLocalMonetaryType, MD5 } from '@/utils/utils';
 import { DataminingModal, SchemeSettingModal } from './data';
 import { getMonetary } from '../module/grid/monetary';
 import {
@@ -68,8 +68,8 @@ export const getInitDataminingState = (moduleName: string): DataminingModal => {
     selectedRowKeys: [], // 当前选中的记录
     expandedRowKeys: [ROOTROWID], // 树形结构展开的节点
     fetchLoading: false,
-    monetary: getMonetary('tenthousand'),
-    monetaryPosition: 'behindnumber',
+    monetary: getMonetary(getLocalMonetaryType()),
+    monetaryPosition: getLocalMonetaryPosition(),
     currentScheme: {
       schemeid: '',
       text: '',

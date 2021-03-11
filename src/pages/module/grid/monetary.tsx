@@ -1,3 +1,4 @@
+import { getLocalMonetaryPosition, getLocalMonetaryType } from '@/utils/utils';
 import React from 'react';
 
 import { TextValue } from '../data';
@@ -65,7 +66,7 @@ export const getMonetarysValueText = (): TextValue[] => {
 
 export const getMonetary = (key: string): MonetaryType => {
   const result = monetarys.find((monetary) => monetary.type === key);
-  return result ? result.monerary : monetarys[0].monerary;
+  return result ? result.monerary : monetarys[2].monerary;
 };
 
 export const getMonetaryUnit = (key: string): number => {
@@ -76,17 +77,18 @@ export const getMonetaryUnit = (key: string): number => {
 // 每一个模块的数值单位的当前选中值
 const moduleMonetaryTypes = {};
 export const getDefaultMonetaryType = (moduleName: string) => {
-  return moduleMonetaryTypes[moduleName];
+  return moduleMonetaryTypes[moduleName] || getLocalMonetaryType();
 };
 export const setDefaultMonetaryType = (moduleName: string, type: MonetaryType) => {
-  moduleMonetaryTypes[moduleName] = type;
+  moduleMonetaryTypes[moduleName] = type.type;
 };
 
 // 每一个模块的数值单位的放置位置 'behindnumber' | 'columntitle'
 const moduleMonetaryPositions = {};
 export const getDefaultMonetaryPosition = (moduleName: string) => {
-  return moduleMonetaryPositions[moduleName];
+  return moduleMonetaryPositions[moduleName] || getLocalMonetaryPosition();
 };
+
 export const setDefaultMonetaryPosition = (moduleName: string, position: string) => {
   moduleMonetaryPositions[moduleName] = position;
 };
