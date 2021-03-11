@@ -47,6 +47,9 @@ const GlobalHeaderRight: React.FC<GlobalHeaderRightProps> = (props) => {
       />
       <Tooltip title="使用文档">
         <a
+          style={{
+            color: 'inherit',
+          }}
           target="_blank"
           href="https://pro.ant.design/docs/getting-started"
           rel="noopener noreferrer"
