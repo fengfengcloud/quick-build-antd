@@ -157,7 +157,7 @@ const ModuleForm: React.FC<ModuleFormProps> = ({
           formType
         )}
         <span style={{ fontWeight: 400, marginLeft: '4px' }}> {moduleInfo.title}</span>
-        {title ? ` 『 ${title}』` : null}
+        <span style={{ fontSize: '16px' }}>{title ? ` 『 ${title}』` : null}</span>
         {moduleInfo.moduleLimit.hasapprove &&
         currRecord[primarykey] &&
         moduleName !== 'VActRuTask' ? (
@@ -837,7 +837,7 @@ const ModuleForm: React.FC<ModuleFormProps> = ({
               {showType === 'mainregion' ? (
                 <Tooltip title="返回列表界面">
                   <a>
-                    <RollbackOutlined style={{ padding: '0 12px' }} />
+                    <RollbackOutlined style={{ padding: '0 12px', fontSize: '16px' }} />
                   </a>
                 </Tooltip>
               ) : (
