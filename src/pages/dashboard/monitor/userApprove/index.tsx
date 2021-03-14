@@ -22,7 +22,7 @@ const cardParams: CardProps = {
 
 export const UserApprove: React.FC = () => {
   return (
-    <Row gutter={[12, 12]} style={{ margin: '12px 6px' }}>
+    <Row gutter={[12, 12]}>
       <Col md={24} lg={12}>
         <UserApprovePie title="用户审批模块分析" groupfieldid={{ fieldname: 'objecttitle' }} />
       </Col>

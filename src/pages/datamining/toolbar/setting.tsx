@@ -23,7 +23,7 @@ const DataminingSetting: React.FC = () => {
   };
 
   const actionMenu = [
-    <Menu.ItemGroup title="数值单位设置">
+    <Menu.ItemGroup title="数值单位设置" key="itemgroupmonerary">
       <Menu.Item key="monetarytype">
         <div>
           数值单位：
@@ -66,7 +66,7 @@ const DataminingSetting: React.FC = () => {
         </div>
       </Menu.Item>
     </Menu.ItemGroup>,
-    <Menu.ItemGroup title="数据分析设置">
+    <Menu.ItemGroup title="数据分析设置" key="itemgroupexpandrowadd">
       <Menu.Item key="expandRowAddGroupName">
         <div>
           展开行时加入分组名称行：

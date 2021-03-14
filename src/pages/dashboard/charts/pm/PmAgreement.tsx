@@ -33,7 +33,7 @@ const cardParams: CardProps = {
 
 export default () => {
   const result = (
-    <Row gutter={[12, 12]} style={{ margin: '12px 6px' }}>
+    <Row gutter={[12, 12]}>
       <Col md={24} lg={12}>
         <PmAgreementGlobal />
       </Col>

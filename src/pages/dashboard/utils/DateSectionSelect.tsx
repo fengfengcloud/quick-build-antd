@@ -26,12 +26,9 @@ export const DateSectionSelect: React.FC<DateSectionSelectProps> = ({
             autoHidden
             callback={(value: any) => {
               setDateSection(value);
-              form.setFieldsValue({
-                logindate: value,
-              });
             }}
           />
-          <Form.Item noStyle name="logindate">
+          <Form.Item noStyle>
             <RangePicker
               value={dateSection}
               onChange={(values) => {

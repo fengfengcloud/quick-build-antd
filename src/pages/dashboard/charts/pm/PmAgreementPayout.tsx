@@ -34,7 +34,7 @@ const cardParams: CardProps = {
 
 export default () => {
   return (
-    <Row gutter={[12, 12]} style={{ margin: '12px 6px' }}>
+    <Row gutter={[12, 12]}>
       <Col md={24} lg={12}>
         <OrganizationPmAgreementPayoutPie />
       </Col>
@@ -377,7 +377,9 @@ const PmAgreementPayoutYearMonthColumn: React.FC = (params) => {
             }}
           >
             {sectionTypes.map((type) => (
-              <Radio.Button value={type.value}>{type.text}</Radio.Button>
+              <Radio.Button key={type.value} value={type.value}>
+                {type.text}
+              </Radio.Button>
             ))}
           </Radio.Group>
           <span>已付金额柱状图</span>
