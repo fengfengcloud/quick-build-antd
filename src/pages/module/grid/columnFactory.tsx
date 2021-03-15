@@ -106,7 +106,11 @@ export const getSubTotalFields = (items: any[], namefield: string) => {
     fields.forEach((item: any) => {
       if (item.children) {
         genFields(item.children);
-      } else if (item.dataIndex && item.fieldDefine && item.fieldDefine.allowsummary)
+      } else if (
+        item.dataIndex &&
+        item.fieldDefine &&
+        (item.fieldDefine.allowsummary || item.isOneToMany)
+      )
         result.push(item);
       else if (item.dataIndex === namefield)
         result.push({
@@ -746,7 +750,6 @@ const getColumn = ({
     }
   }
   if (fieldDefine.isOneToMany) {
-    // field.xtype = 'onetomanycolumn';
     field.isOneToMany = true;
     let ft = fieldDefine.fieldtype;
     ft = ft.substring(ft.indexOf('<') + 1, ft.indexOf('>'));
@@ -766,6 +769,8 @@ const getColumn = ({
         fieldahead: field.fieldahead,
         moduleInfo,
         dispatch,
+        field,
+        moduleState,
       });
   }
   if (fieldDefine.aggregate) {
@@ -795,6 +800,8 @@ const getColumn = ({
         dispatch,
         fieldahead: field.fieldahead,
         moduleInfo,
+        field,
+        moduleState,
       });
   }
 

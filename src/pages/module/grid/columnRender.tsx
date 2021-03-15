@@ -100,189 +100,6 @@ export const nameFieldRender = (
   );
 };
 
-/**
- * manytoone  字段的显示，可以点击图标显示manytoone记录的信息
- * @param value
- * @param record
- * @param recno_
- * @param param3
- */
-export const manyToOneFieldRender = (
-  value: any,
-  record: Object,
-  recno_: number,
-  {
-    moduleInfo,
-    keyField,
-    dispatch,
-  }: { moduleInfo: ModuleModal; keyField: string; dispatch: Dispatch },
-) => {
-  return (
-    <div className={styles.manytoonefield}>
-      <span className={styles.manytoonefieldvalue}>
-        {typeof value === 'string' && value.length > 30 ? (
-          <Tooltip title={value}>{`${value.substr(0, 28)}...`}</Tooltip>
-        ) : (
-          value
-        )}
-      </span>
-      <span className={styles.manytoonefieldicon}>
-        <PopoverDescriptionWithId
-          id={record[keyField]}
-          moduleInfo={moduleInfo}
-          dispatch={dispatch}
-        />
-      </span>
-    </div>
-  );
-};
-
-export const oneToManyFieldRender = (
-  value: any,
-  record: Object,
-  recno_: number,
-  {
-    fieldtitle,
-    childModuleName,
-    fieldahead,
-    moduleInfo,
-    dispatch,
-  }: {
-    fieldtitle: string;
-    childModuleName: string;
-    fieldahead: string;
-    moduleInfo: ModuleModal;
-    dispatch: Dispatch;
-  },
-) => {
-  const formScheme = getFormSchemeFormType(childModuleName, 'onetomanytooltip');
-  const openOrEnter = (openInNewWindow: boolean) => {
-    const parentFilter: ParentFilterModal = {
-      moduleName: moduleInfo.modulename,
-      fieldahead: fieldahead.split('.with.')[1],
-      fieldName: moduleInfo.primarykey,
-      fieldtitle: moduleInfo.title,
-      operator: '=',
-      fieldvalue: record[moduleInfo.primarykey],
-      text: record[moduleInfo.namefield],
-    };
-    const parentFilterParam = encodeURIComponent(JSON.stringify(parentFilter));
-    const pathname = getModuleUrlFormSysMenu(childModuleName);
-    if (openInNewWindow) {
-      const url = `${pathname}?parentFilter=${parentFilterParam}`;
-      window.open(url);
-    } else {
-      history.push({
-        pathname,
-        // query ,可以用 location.query 获取值,
-        // state ,可以用 location.state 获取值,state方式下，url中?后面的参数不显示在网址中，刷新后参数丢失
-        state: {
-          parentFilter: parentFilterParam,
-        },
-      });
-    }
-  };
-
-  return (
-    <span className={styles.onetomanyfield}>
-      {value ? <span>{`${value} 条`}</span> : null}
-      {formScheme ? (
-        <Popover
-          trigger="click"
-          title={
-            <span>
-              {`${record[moduleInfo.namefield]} 的 ${fieldtitle}`}
-              <Space style={{ float: 'right', marginRight: '12px', marginLeft: '12px' }}>
-                <Tooltip title={`转到${fieldtitle}`}>
-                  <a onClick={() => openOrEnter(false)}>
-                    <FormOutlined />
-                  </a>
-                </Tooltip>
-                <Tooltip title="新页面中打开">
-                  <a onClick={() => openOrEnter(true)}>
-                    <SelectOutlined rotate={90} />
-                  </a>
-                </Tooltip>
-              </Space>
-            </span>
-          }
-          content={
-            <OneTowManyTooltip
-              moduleName={moduleInfo.modulename}
-              fieldahead={fieldahead}
-              childModuleName={childModuleName}
-              parentid={record[moduleInfo.primarykey]}
-              count={value || 0}
-              dispatch={dispatch}
-            />
-          }
-        >
-          <Text type="secondary" className={styles.onetomanyfieldinfo}>
-            <InfoCircleOutlined />
-          </Text>
-        </Popover>
-      ) : null}
-    </span>
-  );
-};
-
-const maxTagCount = 5;
-
-export const manyToManyFieldRender = (
-  value: any,
-  record_: Object,
-  recno_: number,
-  { moduleName, dispatch }: { moduleName: string; dispatch: Dispatch },
-) => {
-  if (!value) return null;
-  const moduleInfo = getModuleInfo(moduleName);
-  const getTag = (record: any) => (
-    <PopoverDescriptionWithId id={record.key} moduleInfo={moduleInfo} dispatch={dispatch}>
-      <Tag
-        color="default"
-        style={{ marginBottom: 4, marginTop: 4, borderRadius: '4px' }}
-        closable={false}
-        onClose={() => {}}
-      >
-        {record.title}
-      </Tag>
-    </PopoverDescriptionWithId>
-  );
-  const records: any[] = value;
-  let result: any[] = [];
-  if (records.length <= maxTagCount)
-    result = records.map((record: any) => {
-      return getTag(record);
-    });
-  else {
-    result = records
-      .filter((_, index) => index < maxTagCount)
-      .map((record: any) => {
-        return getTag(record);
-      });
-    result.push(
-      <Popover
-        title={`其他${records.length - maxTagCount}个${moduleInfo.title}`}
-        trigger="click"
-        content={
-          <div style={{ maxWidth: '600px' }}>
-            {records
-              .filter((_, index) => index >= maxTagCount)
-              .map((record: any) => {
-                return getTag(record);
-              })}
-          </div>
-        }
-      >
-        <Tag style={{ marginBottom: 4, marginTop: 4 }} color="warning">
-          更多...
-        </Tag>
-      </Popover>,
-    );
-  }
-  return <div>{result}</div>;
-};
-
 export const rateRender = (value: number) => {
   return <Rate allowHalf className={styles.ratefield} disabled value={value} />;
 };
@@ -461,4 +278,203 @@ export const treeNodePinFieldRender = (
       ) : null}
     </span>
   );
+};
+
+/**
+ * manytoone  字段的显示，可以点击图标显示manytoone记录的信息
+ * @param value
+ * @param record
+ * @param recno_
+ * @param param3
+ */
+export const manyToOneFieldRender = (
+  value: any,
+  record: Object,
+  recno_: number,
+  {
+    moduleInfo,
+    keyField,
+    dispatch,
+  }: { moduleInfo: ModuleModal; keyField: string; dispatch: Dispatch },
+) => {
+  return (
+    <div className={styles.manytoonefield}>
+      <span className={styles.manytoonefieldvalue}>
+        {typeof value === 'string' && value.length > 30 ? (
+          <Tooltip title={value}>{`${value.substr(0, 28)}...`}</Tooltip>
+        ) : (
+          value
+        )}
+      </span>
+      <span className={styles.manytoonefieldicon}>
+        <PopoverDescriptionWithId
+          id={record[keyField]}
+          moduleInfo={moduleInfo}
+          dispatch={dispatch}
+        />
+      </span>
+    </div>
+  );
+};
+
+export const oneToManyFieldRender = (
+  value: any,
+  record: Object,
+  recno: number,
+  {
+    fieldtitle,
+    childModuleName,
+    fieldahead,
+    moduleInfo,
+    dispatch,
+    field,
+    moduleState,
+  }: {
+    fieldtitle: string;
+    childModuleName: string;
+    fieldahead: string;
+    moduleInfo: ModuleModal;
+    dispatch: Dispatch;
+    field: any;
+    moduleState: ModuleState;
+  },
+) => {
+  const formScheme = getFormSchemeFormType(childModuleName, 'onetomanytooltip');
+  const openOrEnter = (openInNewWindow: boolean) => {
+    const parentFilter: ParentFilterModal = {
+      moduleName: moduleInfo.modulename,
+      fieldahead: fieldahead.split('.with.')[1],
+      fieldName: moduleInfo.primarykey,
+      fieldtitle: moduleInfo.title,
+      operator: '=',
+      fieldvalue: record[moduleInfo.primarykey],
+      text: record[moduleInfo.namefield],
+    };
+    const parentFilterParam = encodeURIComponent(JSON.stringify(parentFilter));
+    const pathname = getModuleUrlFormSysMenu(childModuleName);
+    if (openInNewWindow) {
+      const url = `${pathname}?parentFilter=${parentFilterParam}`;
+      window.open(url);
+    } else {
+      history.push({
+        pathname,
+        // query ,可以用 location.query 获取值,
+        // state ,可以用 location.state 获取值,state方式下，url中?后面的参数不显示在网址中，刷新后参数丢失
+        state: {
+          parentFilter: parentFilterParam,
+        },
+      });
+    }
+  };
+  let valueText: any = '';
+  if (value) {
+    if ((field.dataIndex as string).startsWith('count')) {
+      valueText = `${value} 条`;
+    } else if (field.fieldDefine.ismonetary) {
+      valueText = monetaryRender(value, record, recno, moduleState, field.fieldDefine.digitslen);
+    } else if (field.fieldDefine.fieldtype.toLowerCase() === 'integer') {
+      // 整型，浮点，百分比
+      valueText = integerRender(value);
+    } else {
+      valueText = floatRender(value, field.fieldDefine.digitslen);
+    }
+  }
+  return (
+    <span className={styles.onetomanyfield}>
+      {valueText}
+      {formScheme && moduleInfo ? (
+        <Popover
+          trigger="click"
+          title={
+            <span>
+              {`${record[moduleInfo.namefield]} 的 ${fieldtitle}`}
+              <Space style={{ float: 'right', marginRight: '12px', marginLeft: '12px' }}>
+                <Tooltip title={`转到${fieldtitle}`}>
+                  <a onClick={() => openOrEnter(false)}>
+                    <FormOutlined />
+                  </a>
+                </Tooltip>
+                <Tooltip title="新页面中打开">
+                  <a onClick={() => openOrEnter(true)}>
+                    <SelectOutlined rotate={90} />
+                  </a>
+                </Tooltip>
+              </Space>
+            </span>
+          }
+          content={
+            <OneTowManyTooltip
+              moduleName={moduleInfo.modulename}
+              fieldahead={fieldahead}
+              childModuleName={childModuleName}
+              parentid={record[moduleInfo.primarykey]}
+              count={value || 0}
+              dispatch={dispatch}
+            />
+          }
+        >
+          <Text type="secondary" className={styles.onetomanyfieldinfo}>
+            <InfoCircleOutlined />
+          </Text>
+        </Popover>
+      ) : null}
+    </span>
+  );
+};
+
+const maxTagCount = 5;
+
+export const manyToManyFieldRender = (
+  value: any,
+  record_: Object,
+  recno_: number,
+  { moduleName, dispatch }: { moduleName: string; dispatch: Dispatch },
+) => {
+  if (!value) return null;
+  const moduleInfo = getModuleInfo(moduleName);
+  const getTag = (record: any) => (
+    <PopoverDescriptionWithId id={record.key} moduleInfo={moduleInfo} dispatch={dispatch}>
+      <Tag
+        color="default"
+        style={{ marginBottom: 4, marginTop: 4, borderRadius: '4px' }}
+        closable={false}
+        onClose={() => {}}
+      >
+        {record.title}
+      </Tag>
+    </PopoverDescriptionWithId>
+  );
+  const records: any[] = value;
+  let result: any[] = [];
+  if (records.length <= maxTagCount)
+    result = records.map((record: any) => {
+      return getTag(record);
+    });
+  else {
+    result = records
+      .filter((_, index) => index < maxTagCount)
+      .map((record: any) => {
+        return getTag(record);
+      });
+    result.push(
+      <Popover
+        title={`其他${records.length - maxTagCount}个${moduleInfo.title}`}
+        trigger="click"
+        content={
+          <div style={{ maxWidth: '600px' }}>
+            {records
+              .filter((_, index) => index >= maxTagCount)
+              .map((record: any) => {
+                return getTag(record);
+              })}
+          </div>
+        }
+      >
+        <Tag style={{ marginBottom: 4, marginTop: 4 }} color="warning">
+          更多...
+        </Tag>
+      </Popover>,
+    );
+  }
+  return <div>{result}</div>;
 };

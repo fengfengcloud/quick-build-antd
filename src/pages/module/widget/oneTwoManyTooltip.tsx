@@ -50,7 +50,6 @@ const OneTowManyTooltip = ({
   const array = [];
   for (let i = 0; i < Math.min(count, 20); i += 1) array.push({ [RECNOUNDERLINE]: i + 1 });
   const [data, setData] = useState(array);
-  // console.log(data);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetchChildModuleData({
@@ -82,20 +81,29 @@ const OneTowManyTooltip = ({
     const isinteger = ft === 'integer';
     const ispercent = ft === 'percent';
     const isdate = ft === 'date' || ft === 'datetime' || ft === 'timestamp';
-    const style: CSSProperties = { wordBreak: 'keep-all' };
+    const style: CSSProperties = { wordBreak: 'keep-all', whiteSpace: 'nowrap' };
     if (isfloat || isdate || isinteger || ispercent)
       apply(style, {
         display: 'block',
-        textAlign: 'center',
+        // textAlign: 'center',
       });
     return {
       title: (
-        <span style={style}>
+        <span
+          style={{
+            wordBreak: 'keep-all',
+            whiteSpace: 'nowrap',
+            display: 'inline-block',
+            width: '100%',
+            textAlign: 'center',
+          }}
+        >
           <>
             {fieldDefine.fieldtitle}{' '}
             {fieldDefine.unittext ? (
               <>
-                <br />({fieldDefine.unittext})
+                <br />
+                <span style={{ color: 'green' }}>({fieldDefine.unittext})</span>
               </>
             ) : null}
           </>
@@ -113,7 +121,7 @@ const OneTowManyTooltip = ({
       align: isfloat ? 'right' : 'left',
       render: (value: any, record: Object, recno_: number) => {
         return (
-          <span style={{ wordBreak: 'keep-all' }}>
+          <span style={style}>
             {
               /* eslint-disable */
               cModuleInfo.namefield === fieldDefine.fieldname

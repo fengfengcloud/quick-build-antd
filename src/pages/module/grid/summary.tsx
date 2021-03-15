@@ -1,7 +1,12 @@
 import React from 'react';
 import { Table, Typography } from 'antd';
 import { ModuleFieldType, ModuleState } from '../data';
-import { monetaryRender, percentRenderWithTooltip } from './columnRender';
+import {
+  floatRender,
+  integerRender,
+  monetaryRender,
+  percentRenderWithTooltip,
+} from './columnRender';
 import styles from './columnFactory.less';
 
 const { Text } = Typography;
@@ -29,6 +34,16 @@ export const tableSummary = (pageData: any[], moduleState: ModuleState, subTotal
         denominator,
       );
     }
+    if (field.isOneToMany) {
+      if (field.dataIndex.startsWith('count'))
+        return (
+          <span style={{ marginRight: '17px' }}>
+            {integerRender(sum)}
+            <span className={styles.onetomanyfield}> 条</span>
+          </span>
+        );
+      return floatRender(sum, 2);
+    }
     return field.render(sum);
   };
   const getRemoteFieldTotal = (field: any) => {
@@ -45,6 +60,16 @@ export const tableSummary = (pageData: any[], moduleState: ModuleState, subTotal
         divisor,
         denominator,
       );
+    }
+    if (field.isOneToMany) {
+      if (field.dataIndex.startsWith('count'))
+        return (
+          <span style={{ marginRight: '17px' }}>
+            {integerRender(value)}
+            <span className={styles.onetomanyfield}> 条</span>
+          </span>
+        );
+      return floatRender(value, 2);
     }
     return field.render(value);
   };
