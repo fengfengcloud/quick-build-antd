@@ -166,7 +166,6 @@ export const getLockedLeftColumns = (
       ),
       dataIndex: 'actProcState',
       align: 'center',
-      width: 50,
       key: 'approvecolumn',
       menuText: '审批状态',
       fixed: 'left',
@@ -186,7 +185,6 @@ export const getLockedLeftColumns = (
         </Tooltip>
       ),
       dataIndex: 'auditingName',
-      width: 50,
       key: 'auditcolumn',
       menuText: '审核信息',
       fixed: 'left',

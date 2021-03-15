@@ -103,7 +103,9 @@ const pmPaymentPayoutStatus: React.FC<BusinessRenderProps> = ({
       {value === '10' ? (
         <ClockCircleOutlined />
       ) : value === '20' ? (
-        <span className="approveaction x-fa fa-jpy fa-fw" />
+        <a>
+          <span className="approveaction x-fa fa-jpy fa-fw" />
+        </a>
       ) : (
         <CheckOutlined />
       )}

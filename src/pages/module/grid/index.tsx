@@ -135,10 +135,11 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
     });
   };
 
+  // 如果是选中的同一条记录，那就不再重新触发事件
   const selectRow = (record: any) => {
     const { selectedRowKeys } = moduleState;
     const { primarykey } = moduleInfo;
-    if (!(selectedRowKeys.length === 1 && selectedRowKeys[0] === [record[primarykey]])) {
+    if (!(selectedRowKeys.length === 1 && selectedRowKeys[0] === record[primarykey])) {
       dispatch({
         type: 'modules/selectedRowKeysChanged',
         payload: {

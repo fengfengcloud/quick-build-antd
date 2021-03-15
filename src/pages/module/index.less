@@ -19,6 +19,16 @@
     border-top: 2px dashed #1890ff !important;
   }
 
+  // table 中字段最小宽度
+  .moduletable .ant-table-thead > tr > th {
+    min-width: 38px !important;
+  }
+
+  // 记录展开按钮改成38px,原来是48,偏左了
+  .moduletable colgroup col.ant-table-expand-icon-col {
+    width: 38px;
+  }
+
   // table的toolbar 总计部分100%，这样可以把自定义按钮放在最前面
   .ant-pagination-total-text {
     width: 100%;
