@@ -368,7 +368,7 @@ export const oneToManyFieldRender = (
   };
   let valueText: any = '';
   if (value) {
-    if ((field.dataIndex as string).startsWith('count')) {
+    if ((field.dataIndex as string).startsWith('count') || field.fieldDefine.isOneToMany) {
       valueText = `${value} 条`;
     } else if (field.fieldDefine.ismonetary) {
       valueText = monetaryRender(value, record, recno, moduleState, field.fieldDefine.digitslen);
