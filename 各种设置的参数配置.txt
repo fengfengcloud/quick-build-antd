@@ -6,6 +6,8 @@
     responsive: ['xl']          可以配置响应式显示或隐藏，lg,xl,xxl
     disableSorter : false,      禁止排序
     disableSearch : false,      禁止列搜索
+
+    disableGridType:'onetomanygrid'  ,['a','b']      设置字段在某种模式下不显示
     
     titleIconCls : 'x-fa fa-question', 列头使用一个图标，tooltip里写入title
 

@@ -663,6 +663,25 @@ const getColumn = ({
   dispatch: Dispatch;
   gridType: GridOperateType;
 }) => {
+  // 如果在某种 gridType中不显示该列,可以设置成  disableGridType:'onetomanygrid',disableGridType:['a','b']
+  if (gridField.disableGridType) {
+    const gt = gridField.disableGridType;
+    if (typeof gt === 'string' && gt === gridType) {
+      return null;
+    }
+    if (Array.isArray(gt)) {
+      for (let i = 0; i < gt.length; i += 1) {
+        if (gt[i] === gridType) return null;
+      }
+    }
+  }
+  // 如果是onetomanygrid，如果是父模块的字段，则不用显示了
+  if (
+    gridType === 'onetomanygrid' &&
+    fieldDefine.fieldname === moduleState.filters.parentfilter?.fieldahead
+  ) {
+    return null;
+  }
   // 要分成三种情况来行成列了。基本字段,manytoone，onetomany字段，
   const field: any = {
     maxWidth: gridField.maxwidth || 600,
@@ -872,11 +891,7 @@ const getColumn = ({
     delete field.filterDropdown;
     delete field.filters;
   }
-  if (
-    gridType === 'onetomanygrid' &&
-    fieldDefine.fieldname === moduleState.filters.parentfilter?.fieldahead
-  )
-    return null;
+
   const businessRender = getBusinessColumnRender(moduleState.moduleName, field.dataIndex);
   if (businessRender) {
     field.render = (value: any, record: any, recno: number) =>
