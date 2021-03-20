@@ -10,6 +10,7 @@ import ModuleForm from '../form';
 import { DetailModelContext } from '../detailGrid/model';
 import { ActionParamsModal } from './systemAction';
 import { NAME } from '../constants';
+import { deviceCheckOnline } from './abcGate/Actions';
 
 const AGREEMENTID = 'agreementId';
 const PLANID = 'planId';
@@ -457,6 +458,8 @@ export const businessActions: BusinessActionStore = {
   agreementPlanAutoCreate,
   agreementPlanAutoBalance,
   agreementPlanbalanceByRecord,
+
+  deviceCheckOnline,
 };
 
 /**
