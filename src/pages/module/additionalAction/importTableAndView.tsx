@@ -25,6 +25,7 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { serialize } from 'object-to-formdata';
 import { ActionParamsModal } from './systemAction';
 import { getParentOrNavigateIdAndText } from '../modules';
+import { download } from '@/utils/utils';
 
 interface ImportDrawerProps extends DrawerProps {
   children: any;
@@ -326,8 +327,8 @@ const FormComponent = () => {
   const toolbar = (
     <div>
       <Card bodyStyle={{ padding: 0, margin: 0 }} style={{ marginBottom: '16px' }}>
-        <Form form={form}>
-          <Space size="large" style={{ padding: '16px', margin: 0 }}>
+        <Form form={form} style={{ padding: '16px' }}>
+          <Space size="large" style={{ margin: 0 }}>
             <Form.Item label="选择数据库：" name="schema" style={{ marginBottom: 0 }}>
               <Select
                 showSearch
@@ -352,6 +353,19 @@ const FormComponent = () => {
               </Button>
             </Form.Item>
           </Space>
+          <span style={{ float: 'right' }}>
+            <Tooltip title="打包下载当前选中数据库的Java Bean文件。">
+              <Button
+                onClick={() => {
+                  download('/api/platform/database/downloadbeanfiles.do', {
+                    schemeName: schema,
+                  });
+                }}
+              >
+                下载JavaBean文件
+              </Button>
+            </Tooltip>
+          </span>
         </Form>
       </Card>
       <Row gutter={16}>
