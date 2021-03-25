@@ -2,6 +2,7 @@ import { Effect } from 'dva';
 import { Reducer } from 'redux';
 
 import { query as querySystemInfo } from '@/services/systeminfo';
+import { apply } from '@/utils/utils';
 
 export interface SystemInfo {
   company: {
@@ -24,6 +25,7 @@ export interface SystemInfo {
     systemname: string; // 系统名称
     systemshortname?: string; // 系统简称，要放在主页的右边的图标后面，最多9个汉字
     systemversion?: string; // 系统版本号
+    systemkey?: string; // 业务系统key值，用于标记不同的业务系统，在前台可以加入不同的界面和功能
     systemaddition?: string; // 系统附件信息
     copyrightinfo?: string; // 版权信息
     copyrightowner?: string; // 版权所有
@@ -31,7 +33,7 @@ export interface SystemInfo {
     disableActiviti?: boolean; // 是否禁用审批流
     disablePopupWindow?: boolean; // 是否禁用弹出式提醒
     disableThemeSelect?: boolean; // 是否禁用主题更换
-  }
+  };
 }
 
 export interface SystemInfoState {
@@ -49,17 +51,21 @@ export interface SystemInfoModelType {
   };
 }
 
+const emptySystemInfo = {
+  company: {},
+  loginsettinginfo: {},
+  systeminfo: {
+    systemname: '',
+  },
+};
+
+export const systemInfo: SystemInfo = emptySystemInfo;
+
 const SystemInfoModel: SystemInfoModelType = {
   namespace: 'systemInfo',
 
   state: {
-    systemInfo: {
-      company: {},
-      loginsettinginfo: {},
-      systeminfo: {
-        systemname: '',
-      },
-    },
+    systemInfo: emptySystemInfo,
   },
 
   effects: {
@@ -69,8 +75,8 @@ const SystemInfoModel: SystemInfoModelType = {
       const { systeminfo } = response;
       let { systemname } = systeminfo;
       let pos = systemname.indexOf('(');
-      if (pos === -1) pos = systemname.indexOf('（')
-      if (pos !== -1) systemname = systemname.substring(0, pos >= 9 ? 9 : pos)
+      if (pos === -1) pos = systemname.indexOf('（');
+      if (pos !== -1) systemname = systemname.substring(0, pos >= 9 ? 9 : pos);
       // 显示在主页图标后面的系统名称，最大只能9个汉字
       systeminfo.systemshortname = systeminfo.systemshortname || systemname;
       payload.dispatch({
@@ -78,7 +84,7 @@ const SystemInfoModel: SystemInfoModelType = {
         payload: {
           title: systeminfo.systemshortname,
         },
-      })
+      });
       yield put({
         type: 'saveSystemInfo',
         payload: response,
@@ -88,7 +94,10 @@ const SystemInfoModel: SystemInfoModelType = {
 
   reducers: {
     saveSystemInfo(state, action) {
-      if (action.payload.loginsettinginfo.allowsavepassword === false) localStorage.removeItem('login-allow-save-pwd')
+      if (action.payload.loginsettinginfo.allowsavepassword === false) {
+        localStorage.removeItem('login-allow-save-pwd');
+      }
+      apply(systemInfo, action.payload);
       return {
         systemInfo: action.payload || {},
       };
