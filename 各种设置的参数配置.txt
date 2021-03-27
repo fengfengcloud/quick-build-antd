@@ -127,3 +127,8 @@
 {totalPrice:"总金额不能为负数！",aaa:"other error"}
 sql server :
     raisError('{totalPrice:"总金额不能为负数！",aaa:"other field error"}', 16, 11);
+
+
+
+审核人员的修改：
+admin 和 administrator 可以对审核人员进行修改。要先取消审核，再进行审核人员的修改，修改时录入人员登录代码。

@@ -23,9 +23,9 @@ import { EditOutlined, ImportOutlined } from '@ant-design/icons';
 import request from '@/utils/request';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { serialize } from 'object-to-formdata';
+import { download } from '@/utils/utils';
 import { ActionParamsModal } from './systemAction';
 import { getParentOrNavigateIdAndText } from '../modules';
-import { download } from '@/utils/utils';
 
 interface ImportDrawerProps extends DrawerProps {
   children: any;

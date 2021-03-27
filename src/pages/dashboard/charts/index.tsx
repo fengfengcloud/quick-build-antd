@@ -2,9 +2,9 @@ import React from 'react';
 import { Card } from 'antd';
 import { CardProps } from 'antd/lib/card';
 import { hasModuleInSysMenu } from '@/layouts/BasicLayout';
+import { systemInfo } from '@/models/systeminfo';
 import { PmCharts } from './pm';
 import Monitor from '../monitor';
-import { systemInfo } from '@/models/systeminfo';
 
 export default (): React.ReactNode => {
   const cardProps: CardProps = {
