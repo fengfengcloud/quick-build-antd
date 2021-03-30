@@ -1,10 +1,10 @@
 import React from 'react';
 import { Card } from 'antd';
 import { CardProps } from 'antd/lib/card';
-import { hasModuleInSysMenu } from '@/layouts/BasicLayout';
 import { systemInfo } from '@/models/systeminfo';
-import { PmCharts } from './pm';
 import Monitor from '../monitor';
+import { PmCharts } from './pm';
+import { AbcgateCharts } from './abcgate';
 
 export default (): React.ReactNode => {
   const cardProps: CardProps = {
@@ -23,7 +23,16 @@ export default (): React.ReactNode => {
     return (
       <Card {...cardProps}>
         {/* 工程管理系统的图表 */}
-        {hasModuleInSysMenu('PmAgreement') ? <PmCharts /> : null}
+        <PmCharts />
+      </Card>
+    );
+  }
+
+  if (systemInfo.systeminfo.systemkey === 'abcgate') {
+    return (
+      <Card {...cardProps}>
+        {/* abcgate的图表 */}
+        <AbcgateCharts />
       </Card>
     );
   }
