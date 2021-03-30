@@ -13,6 +13,7 @@ import FOrganizationTreeSelect from './components/OrganizationTreeSelect';
 import DataTable from './components/DataTable';
 import ToggleTableChartButton from './components/ToggleTableChartButton';
 import { EchartsDemo } from './echartsDemo';
+import { chartsColSpan } from '..';
 
 const numeral = require('numeral');
 
@@ -34,10 +35,10 @@ const cardParams: CardProps = {
 export default () => {
   const result = (
     <Row gutter={[12, 12]}>
-      <Col md={24} lg={12}>
+      <Col {...chartsColSpan}>
         <PmAgreementGlobal />
       </Col>
-      <Col md={24} lg={12}>
+      <Col {...chartsColSpan}>
         <PmAgreementCountPie />
       </Col>
       <Col span={24}>
@@ -45,12 +46,11 @@ export default () => {
           <PmAgreementSignYearMonthColumn />
         </Card>
       </Col>
-      <Col xs={24} sm={24} md={24} lg={12}>
+      <Col {...chartsColSpan}>
         <Card title="echarts图表" bodyStyle={{ paddingTop: 12, paddingBottom: 12 }}>
           <EchartsDemo id="echarts1" />
         </Card>
       </Col>
-      <Col xs={24} sm={24} md={24} lg={12} />
     </Row>
   );
   return result;

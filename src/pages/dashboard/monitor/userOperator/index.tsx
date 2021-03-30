@@ -12,6 +12,7 @@ import { TextValue } from '@/pages/module/data';
 import { ColumnConfig } from '@ant-design/charts/es/column';
 import { DateFormat } from '@/pages/module/moduleUtils';
 import { DateSectionSelect } from '../../utils/DateSectionSelect';
+import { chartsColSpan } from '../../charts';
 
 const numeral = require('numeral');
 
@@ -23,10 +24,10 @@ const cardParams: CardProps = {
 export const UserOperator: React.FC = () => {
   return (
     <Row gutter={[12, 12]}>
-      <Col md={24} lg={12}>
+      <Col {...chartsColSpan}>
         <UserOperatorPie title="用户操作类型分析" groupfieldid={{ fieldname: 'dotype' }} />
       </Col>
-      <Col md={24} lg={12}>
+      <Col {...chartsColSpan}>
         <UserOperatorPie title="用户操作模块分析" groupfieldid={{ fieldahead: 'FDataobject' }} />
       </Col>
       <Col span={24}>

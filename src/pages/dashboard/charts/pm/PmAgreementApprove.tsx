@@ -15,6 +15,7 @@ import { DateFormat } from '@/pages/module/moduleUtils';
 import DataTable from './components/DataTable';
 import ToggleTableChartButton from './components/ToggleTableChartButton';
 import { DateSectionSelect } from '../../utils/DateSectionSelect';
+import { chartsColSpan } from '..';
 
 const numeral = require('numeral');
 
@@ -26,10 +27,10 @@ const cardParams: CardProps = {
 export default () => {
   return (
     <Row gutter={[12, 12]}>
-      <Col md={24} lg={12}>
+      <Col {...chartsColSpan}>
         <OrganizationPmAgreementApprovePie />
       </Col>
-      <Col md={24} lg={12}>
+      <Col {...chartsColSpan}>
         <YearPmAgreementApprovePie />
       </Col>
       <Col span={24}>

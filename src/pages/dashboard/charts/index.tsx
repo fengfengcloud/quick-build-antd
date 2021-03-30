@@ -6,6 +6,16 @@ import Monitor from '../monitor';
 import { PmCharts } from './pm';
 import { AbcgateCharts } from './abcgate';
 
+// 图像Col的列数
+export const chartsColSpan: any = {
+  xs: 24,
+  sm: 24,
+  md: 24,
+  lg: 12,
+  xl: 12,
+  xxl: 12,
+};
+
 export default (): React.ReactNode => {
   const cardProps: CardProps = {
     bordered: false,

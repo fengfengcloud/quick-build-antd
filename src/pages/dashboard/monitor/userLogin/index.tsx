@@ -13,6 +13,7 @@ import { TextValue } from '@/pages/module/data';
 import { ColumnConfig } from '@ant-design/charts/es/column';
 import { DateFormat } from '@/pages/module/moduleUtils';
 import { DateSectionSelect } from '../../utils/DateSectionSelect';
+import { chartsColSpan } from '../../charts';
 
 const numeral = require('numeral');
 
@@ -24,10 +25,10 @@ const cardParams: CardProps = {
 export const UserLogin: React.FC = () => {
   return (
     <Row gutter={[12, 12]}>
-      <Col md={24} lg={12}>
+      <Col {...chartsColSpan}>
         <UserLogginPie title="用户登录地址分析" groupfieldid={{ fieldname: 'ipaddress' }} />
       </Col>
-      <Col md={24} lg={12}>
+      <Col {...chartsColSpan}>
         <UserLogginInOutColumn />
       </Col>
       <Col span={24}>

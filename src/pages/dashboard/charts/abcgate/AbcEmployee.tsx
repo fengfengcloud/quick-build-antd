@@ -6,6 +6,7 @@ import { serialize } from 'object-to-formdata';
 import { stringifyObjectField } from '@/utils/utils';
 import { PieConfig } from '@ant-design/charts/es/pie';
 import { Pie } from '@ant-design/charts';
+import { chartsColSpan } from '..';
 
 const numeral = require('numeral');
 
@@ -17,13 +18,13 @@ const cardParams: CardProps = {
 export default () => {
   const result = (
     <Row gutter={[12, 12]}>
-      <Col md={24} lg={12}>
+      <Col {...chartsColSpan}>
         <EmployeeTemperaturePie
           title="人员当天体温状态图"
           groupfieldid={{ fieldname: 'todayState' }}
         />
       </Col>
-      <Col md={24} lg={12}>
+      <Col {...chartsColSpan}>
         <EmployeeTemperaturePie
           title="人员当天体温值图"
           groupfieldid={{ fieldname: 'todayTemperature' }}
