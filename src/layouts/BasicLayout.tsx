@@ -167,6 +167,7 @@ const generateMenu = (
   menuDefine: {
     menuid: string;
     text: any;
+    engname: string | undefined;
     objectid: any;
     iconCls: string;
     children: any[];
@@ -180,7 +181,7 @@ const generateMenu = (
   // 有些隐藏的菜单只有administrator才能看到
   if (!menuDefine.visible) return null; // currentUser.usercode != 'administrator' &&
   let menu: any = {
-    path: `${parentPath}/${menuDefine.text}`,
+    path: `${parentPath}/${menuDefine.engname || menuDefine.text}`,
     name: menuDefine.text, // 菜单的标题
     title: menuDefine.text, // 面包屑里面的文字
     icon: menuDefine.iconCls,

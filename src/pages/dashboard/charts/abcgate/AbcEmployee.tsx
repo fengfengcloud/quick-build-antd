@@ -73,7 +73,7 @@ const EmployeeTemperaturePie: React.FC<any> = ({
       setData(
         (response as any[])
           .map((rec) => ({
-            type: rec.text ? `${rec.text}℃` : '未检温',
+            type: rec.text ? `${rec.text}℃` : '未检测',
             value: rec[COUNT],
           }))
           .sort((rec1, rec2) => rec2.value - rec1.value),
