@@ -45,6 +45,11 @@
   .desc_card_border_top .ant-card-head {
     background-color: @background-color-light;
   }
+
+  // 单元格行合并时，不显示th，在td里显示另一个Descriptions
+  th.hiddenlabel {
+    display: none;
+  }
 }
 
 .manytooneinfo {

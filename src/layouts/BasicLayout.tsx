@@ -52,7 +52,7 @@ export interface BasicLayoutProps extends ProLayoutProps {
   };
   settings: Settings;
   dispatch: Dispatch;
-  systemInfo: SystemInfo;
+  systemInfo?: SystemInfo;
 }
 
 export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
@@ -272,7 +272,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
       dispatch({
         type: 'settings/getSetting',
       });
-      if (!systemInfo.company.companyname) {
+      if (systemInfo && !systemInfo.company.companyname) {
         dispatch({
           type: 'systemInfo/fetch',
           payload: {

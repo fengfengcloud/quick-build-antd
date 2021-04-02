@@ -234,7 +234,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         <NoticeIcon.Tab
           hidden={!!disableActiviti}
           tabKey="event"
-          title="审批待办"
+          title="待　办"
           emptyText="你已完成所有待办事项"
           list={noticeData.event}
           showViewMore
