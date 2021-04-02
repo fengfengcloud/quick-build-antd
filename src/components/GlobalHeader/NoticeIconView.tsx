@@ -14,6 +14,7 @@ import styles from './index.less';
 export interface GlobalHeaderRightProps extends Partial<ConnectProps> {
   notices?: NoticeItem[];
   currentUser?: CurrentUser;
+  disableActiviti?: boolean;
   fetchingNotices?: boolean;
   onNoticeVisibleChange?: (visible: boolean) => void;
   onNoticeClear?: (tabName?: string) => void;
@@ -195,7 +196,12 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   };
 
   render() {
-    const { currentUser: user, fetchingNotices, onNoticeVisibleChange } = this.props;
+    const {
+      currentUser: user,
+      fetchingNotices,
+      onNoticeVisibleChange,
+      disableActiviti,
+    } = this.props;
     const noticeData = this.getNoticeData();
     const unreadMsg = this.getUnreadData(noticeData);
     return (
@@ -226,6 +232,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         clearClose
       >
         <NoticeIcon.Tab
+          hidden={!!disableActiviti}
           tabKey="event"
           title="审批待办"
           emptyText="你已完成所有待办事项"
@@ -243,7 +250,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
           tabKey="message"
           count={unreadMsg.message}
           list={noticeData.message}
-          title="通知"
+          title="通　知"
           emptyText="您已读完所有通知消息"
           showViewMore
         />
@@ -252,9 +259,10 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   }
 }
 
-export default connect(({ user, global, loading }: ConnectState) => ({
+export default connect(({ user, global, loading, systemInfo }: ConnectState) => ({
   currentUser: user.currentUser,
   collapsed: global.collapsed,
+  disableActiviti: systemInfo.systemInfo?.systeminfo.disableActiviti,
   fetchingMoreNotices: loading.effects['global/fetchMoreNotices'],
   fetchingNotices: loading.effects['global/fetchNotices'],
   notices: global.notices,

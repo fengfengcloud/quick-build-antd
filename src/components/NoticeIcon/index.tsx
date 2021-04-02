@@ -78,7 +78,10 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
       if (!child) {
         return;
       }
-      const { list, title, count, tabKey, showClear, showViewMore } = child.props;
+      const { list, title, count, tabKey, showClear, showViewMore, hidden } = child.props;
+      if (hidden) {
+        return;
+      }
       let len = 0;
       if (list && list.length) {
         list.forEach((rec) => {

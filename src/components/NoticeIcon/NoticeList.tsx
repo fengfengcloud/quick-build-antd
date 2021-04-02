@@ -12,6 +12,7 @@ import { NoticeIconData } from './index';
 import styles from './NoticeList.less';
 
 export interface NoticeIconTabProps {
+  hidden?: boolean;
   loading?: boolean;
   count?: number;
   name?: string;

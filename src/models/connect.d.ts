@@ -5,7 +5,7 @@ import { GlobalModelState } from './global';
 import { DefaultSettings as SettingModelState } from '../../config/defaultSettings';
 import { UserModelState } from './user';
 import { StateType } from './login';
-import { SystemInfoModelType } from './systeminfo';
+import { SystemInfoState } from './systeminfo';
 
 export { GlobalModelState, SettingModelState, UserModelState };
 
@@ -28,7 +28,7 @@ export interface ConnectState {
   settings: SettingModelState;
   user: UserModelState;
   login: StateType;
-  systemInfo: SystemInfoModelType;
+  systemInfo: SystemInfoState;
 }
 
 export interface Route extends MenuDataItem {
