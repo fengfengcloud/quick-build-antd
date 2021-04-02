@@ -526,6 +526,10 @@ export const DataminingReducer = (state: DataminingModal, action: ActionProps): 
       break;
     case ACT_DATAMINING_FETCHDATA:
       newState = update(state, {
+        // 更新过数据之后将方案改变状态置为false
+        schemeChanged: {
+          $set: false,
+        },
         schemeState: {
           dataSource: {
             $set: payload.dataSource,
@@ -586,6 +590,8 @@ export const DataminingReducer = (state: DataminingModal, action: ActionProps): 
       break;
     case ACT_UPDATE_DATAMINING_SCHEMEINFO:
       newState = update(state, {
+        // 方案是否改变了
+        schemeChanged: { $apply: () => payload.schemeChanged === true },
         refreshAllCount: { $apply: (c) => c + 1 },
         schemeState: {
           $merge: payload.schemeState,

@@ -65,6 +65,7 @@ export const getInitDataminingState = (moduleName: string): DataminingModal => {
     schemes: [],
     refreshAllCount: -1, // 第一次是默认的
     refreshFilterDataSourceCount: 0,
+    schemeChanged: false,
     selectedRowKeys: [], // 当前选中的记录
     expandedRowKeys: [ROOTROWID], // 树形结构展开的节点
     fetchLoading: false,

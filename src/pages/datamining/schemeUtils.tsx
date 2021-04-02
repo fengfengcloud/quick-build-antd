@@ -20,6 +20,8 @@ import { CurrentSchemeModal, DataminingModal, ColumnGroupModal, FieldModal } fro
 import { getLeafColumns } from './resultTree/columnFactory';
 import { expandRowWithNavigateRecords, refreshRowData } from './rowActionUtils';
 import {
+  getAllhasChildrenRowids,
+  getAllleafRowids,
   getDefaultDataminingSetting,
   getTreeRecordByKey,
   removeFromParentNode,
@@ -241,6 +243,7 @@ export const currentSchemeChanged = async (state: DataminingModal, dispatch: Fun
   dispatch({
     type: ACT_UPDATE_DATAMINING_SCHEMEINFO,
     payload: {
+      schemeChanged: true,
       schemeState,
       dispatch,
     },
@@ -629,10 +632,18 @@ export const refreshAllDataminingData = async (state: DataminingModal, dispatch:
     // schemeState ,是当前读取到的，不是原来state里面的
     await executeAllRowPath(state, dataSource);
   }
+  let expandedRowKeys: any[] = [];
+  // 如果是方案改变，先展开所有的记录
+  if (state.schemeChanged) {
+    // 在方案改变以后，所有叶节点记录在300条以下的，就全部展开
+    if (getAllleafRowids(dataSource).length < 300)
+      expandedRowKeys = getAllhasChildrenRowids(dataSource);
+  }
   dispatch({
     type: ACT_DATAMINING_FETCHDATA,
     payload: {
       dataSource,
+      expandedRowKeys,
     },
   });
   setFetchLoading({ dispatch, fetchLoading: false });

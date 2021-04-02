@@ -181,6 +181,7 @@ export interface DataminingModal {
   fromCache: boolean; // 当前state是否是从cache中调用，如果是，则只渲染，不进行任何操作
   refreshAllCount: number; // 是否需要刷新所有的数据，0不刷新，不为0刷新，+1，则刷新
   refreshFilterDataSourceCount: number; // 是否需要刷新条件列表中的记录数，0不刷新，+1，刷新
+  schemeChanged: boolean; // 是否改变了筛选方案，加载方案后改为true, 刷新数据后改为false
   fetchLoading: boolean; // 数据分析数是否正在加载
   selectedRowKeys: any[]; // 当前选中的记录
   expandedRowKeys: any[]; // 树形结构展开的节点
