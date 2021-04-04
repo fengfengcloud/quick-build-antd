@@ -28,6 +28,8 @@ import { EMPTY_MENU_ICON, getAuthorityFromRouter, getMenuAwesomeIcon } from '@/u
 import { SystemInfo } from '@/models/systeminfo';
 import { getSystemMenu } from '@/services/systeminfo';
 import { dataminingList } from '@/pages/dashboard/analysis';
+import { PopoverDescriptionWithId } from '@/pages/module/descriptions';
+import { getModuleInfo } from '@/pages/module/modules';
 import styles from './BasicLayout.less';
 
 const noMatch = (
@@ -89,9 +91,15 @@ export const getModuleUrlFormSysMenu = (moduleName: string): string => {
 export const footerRender = (props: any) => {
   const {
     systemInfo: { company, systeminfo },
+    isLogin,
   } = props;
   const { servicetelnumber: telnumber } = company;
-
+  const companyText = (
+    <a className={styles.serviceman} target="_blank" rel="noopener noreferrer">
+      <BankOutlined className={styles.icon} />
+      {company.companyname}
+    </a>
+  );
   let serviceDepartment = (
     <span className={styles.icon}>{`服务单位:${company.servicedepartment || ''}`}</span>
   );
@@ -133,7 +141,17 @@ export const footerRender = (props: any) => {
   return (
     <>
       <div className={styles.footer}>
-        <BankOutlined className={styles.icon} /> {company.companyname}
+        {isLogin ? (
+          <PopoverDescriptionWithId
+            id="00"
+            moduleInfo={getModuleInfo('FCompany')}
+            dispatch={() => {}}
+          >
+            {companyText}
+          </PopoverDescriptionWithId>
+        ) : (
+          companyText
+        )}
         {serviceDepartment}
         {company.servicemen ? (
           <Popover trigger="click" title={<>服务人员：{company.servicemen}</>} content={content}>
@@ -388,8 +406,9 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
   );
 };
 
-export default connect(({ global, settings, systemInfo }: ConnectState) => ({
+export default connect(({ global, settings, systemInfo, user }: ConnectState) => ({
   collapsed: global.collapsed,
   settings,
   ...systemInfo,
+  isLogin: !!user.currentUser?.usercode,
 }))(BasicLayout);
