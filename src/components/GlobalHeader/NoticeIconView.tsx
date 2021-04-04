@@ -196,12 +196,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   };
 
   render() {
-    const {
-      currentUser: user,
-      fetchingNotices,
-      onNoticeVisibleChange,
-      disableActiviti,
-    } = this.props;
+    const { currentUser: user, fetchingNotices, onNoticeVisibleChange } = this.props;
     const noticeData = this.getNoticeData();
     const unreadMsg = this.getUnreadData(noticeData);
     return (
@@ -232,26 +227,26 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         clearClose
       >
         <NoticeIcon.Tab
-          hidden={!!disableActiviti}
+          // hidden={!!disableActiviti}
           tabKey="event"
-          title="待审"
-          emptyText="您已完成所有审核审批事项"
+          title="待办"
+          emptyText="您已完成所有待办"
           list={noticeData.event}
           showViewMore
         />
         <NoticeIcon.Tab
-          tabKey="question"
-          list={noticeData.question}
-          title="待办"
-          emptyText="您已处理所有待办事项"
+          tabKey="notification"
+          count={unreadMsg.notification}
+          list={noticeData.notification}
+          title="通知"
+          emptyText="您已查看所有通知"
           showViewMore
         />
         <NoticeIcon.Tab
           tabKey="message"
-          count={unreadMsg.message}
           list={noticeData.message}
-          title="通知"
-          emptyText="您已读完所有通知消息"
+          title="消息"
+          emptyText="您已读完所有消息"
           showViewMore
         />
       </NoticeIcon>
