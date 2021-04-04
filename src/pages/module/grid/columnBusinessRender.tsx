@@ -114,6 +114,22 @@ const pmPaymentPayoutStatus: React.FC<BusinessRenderProps> = ({
   /* eslint-enable */
 };
 
+export const abcEmployeeTodayState: React.FC<BusinessRenderProps> = ({ value }) => {
+  /* eslint-disable */
+  const status: PresetStatusColorType =
+    value === '体温正常'
+      ? 'success'
+      : value === '体温过高异常' || value === '体温过低异常'
+      ? 'error'
+      : 'default';
+  /* eslint-enable */
+  return (
+    <span>
+      <Badge status={status} text={value} />
+    </span>
+  );
+};
+
 // 我的待办事项的namefield，点击显示该记录的信息
 const VActRuTaskTitle: React.FC<BusinessRenderProps> = ({ value, record, dispatch }) => {
   return (
@@ -136,11 +152,18 @@ const VActRuTaskTitle: React.FC<BusinessRenderProps> = ({ value, record, dispatc
 };
 
 const BusinessColumnRender: BusinessColumnRender = {
+  // system
+  'VActRuTask--actBusinessName': VActRuTaskTitle,
+  'VActFinishTask--actBusinessName': VActRuTaskTitle,
+
+  // pm
   'PmGlobal--state': pmGlobalState,
   'PmAgreement--pmAgreementState.name': pmAgreementState,
   'PmPayment--payoutStatus': pmPaymentPayoutStatus,
-  'VActRuTask--actBusinessName': VActRuTaskTitle,
-  'VActFinishTask--actBusinessName': VActRuTaskTitle,
+
+  // abcgate
+  'AbcEmployee--todayState': abcEmployeeTodayState,
+  'AbcInoutEmployeeRecord--state': abcEmployeeTodayState,
 };
 
 export const getBusinessColumnRender = (moduleName: string, dataIndex: string) => {

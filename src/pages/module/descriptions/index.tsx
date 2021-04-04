@@ -28,6 +28,7 @@ import ProgressField from '../form/field/ProgressField';
 import { isAudited } from '../audit/utils';
 import { execPrintRecordScheme } from '../toolbar/export/PrintRecordScheme';
 import { AuditFinished, AuditWaititng, NOIMAGE_PNG } from '../constants';
+import { getBusinessDescriptionItemRender } from './itemBusinessRender';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -380,7 +381,11 @@ const generateField = ({
   }
   if (field.ishidden || field.isdisable) return null;
   let value: any = record[field.fieldname];
-  if (field.fDictionaryid) value = record[`${field.fieldname}_dictname`];
+
+  // 如果有自定义的渲染
+  const render = getBusinessDescriptionItemRender(moduleInfo.modulename, field.fieldname);
+  if (render) value = render({ value, record, dataIndex: field.fieldname, dispatch });
+  else if (field.fDictionaryid) value = record[`${field.fieldname}_dictname`];
   else if (field.fieldname === moduleInfo.namefield) value = <b>{value}</b>;
   else if (field.isManyToOne) {
     value = record[field.manyToOneInfo.nameField];

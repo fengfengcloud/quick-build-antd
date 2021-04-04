@@ -234,23 +234,23 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         <NoticeIcon.Tab
           hidden={!!disableActiviti}
           tabKey="event"
-          title="待　办"
-          emptyText="你已完成所有待办事项"
+          title="待审"
+          emptyText="您已完成所有审核审批事项"
           list={noticeData.event}
           showViewMore
         />
         <NoticeIcon.Tab
           tabKey="question"
           list={noticeData.question}
-          title="待处理"
-          emptyText="你已处理所有待处理问题"
+          title="待办"
+          emptyText="您已处理所有待办事项"
           showViewMore
         />
         <NoticeIcon.Tab
           tabKey="message"
           count={unreadMsg.message}
           list={noticeData.message}
-          title="通　知"
+          title="通知"
           emptyText="您已读完所有通知消息"
           showViewMore
         />
