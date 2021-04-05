@@ -205,12 +205,18 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         count={user && user.unreadCount}
         onItemClick={(item_) => {
           const item = item_ as NoticeItem;
+          // 待办里面包括，可以审核，可以审批，可以接受任务，以及自定义的待办事项
           if (item.type === 'event') {
-            if (item.action === 'approve') this.pushApprove(item);
-            else if (item.action === 'claim') this.pushClaim(item);
-            else if (item.action === 'audit') this.pushAudit(item);
-          } else if (item.type === 'question') {
-            this.pushQuestionModule(item);
+            if (item.action === 'approve') {
+              this.pushApprove(item);
+            } else if (item.action === 'claim') {
+              this.pushClaim(item);
+            } else if (item.action === 'audit') {
+              this.pushAudit(item);
+            } else this.pushQuestionModule(item);
+          } else if (item.type === 'notification') {
+            // this.pushQuestionModule(item);
+            message.info('您点击了通知事项');
           }
           // this.changeReadState(item);
         }}
