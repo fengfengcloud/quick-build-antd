@@ -3,6 +3,7 @@ import { Avatar, List, Spin } from 'antd';
 import React from 'react';
 import classNames from 'classnames';
 import {
+  CarryOutFilled,
   CloseCircleFilled,
   InfoCircleFilled,
   QuestionCircleFilled,
@@ -74,6 +75,11 @@ const NoticeList: React.SFC<NoticeIconTabProps> = ({
           if (avatar === 'info') avatar = <InfoCircleFilled style={{ color: '#1890ff' }} />;
           if (avatar === 'error') avatar = <CloseCircleFilled style={{ color: '#f5222d' }} />;
           if (avatar === 'question') avatar = <QuestionCircleFilled style={{ color: '#fa8c16' }} />;
+          if (['audit', 'approve'].includes(item.action!)) {
+            avatar = <CarryOutFilled style={{ color: '#1890ff' }} />;
+          } else if (item.action === 'claim') {
+            avatar = <InfoCircleFilled style={{ color: '#1890ff' }} />;
+          }
           let leftIcon = null;
           if (avatar)
             leftIcon =

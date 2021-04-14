@@ -23,7 +23,7 @@ export interface NoticeIconData {
 
   data?: TextValue[];
   maxhours?: number;
-  action?: 'approve' | 'claim';
+  action?: 'approve' | 'claim' | 'audit';
   moduleName?: string;
   count?: number;
 
