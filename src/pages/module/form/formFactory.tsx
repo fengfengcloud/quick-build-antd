@@ -476,6 +476,7 @@ const ManyToOneSelectPopover = ({
       trigger="click"
       visible={visible}
       onVisibleChange={(v) => setVisible(v)}
+      overlayClassName="manytoonepopover"
       overlayStyle={{
         width: '80%',
         maxHeight: `${document.body.clientHeight - 200}px`,
