@@ -51,9 +51,12 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   };
 
   handleNoticeClear = (title: string, key: string) => {
-    const { dispatch } = this.props;
+    const { dispatch, currentUser } = this.props;
+    if (currentUser?.unreadCount) {
+      message.warn('所有通知都阅读后，才能清空！');
+      return;
+    }
     message.success(`${'清空了'} ${title}`);
-
     if (dispatch) {
       dispatch({
         type: 'global/clearNotices',
@@ -202,7 +205,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
     return (
       <NoticeIcon
         className={styles.action}
-        count={user && user.unreadCount}
+        count={user && user.notifyCount}
         onItemClick={(item_) => {
           const item = item_ as NoticeItem;
           // 待办里面包括，可以审核，可以审批，可以接受任务，以及自定义的待办事项
@@ -215,7 +218,10 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
               this.pushAudit(item);
             } else this.pushQuestionModule(item);
           } else if (item.type === 'notification') {
-            // this.pushQuestionModule(item);
+            // 消息还没有阅读
+            // if (!item.read){
+            this.changeReadState(item);
+            // }
             message.info('您点击了通知事项');
           }
           // this.changeReadState(item);
@@ -238,6 +244,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
           title="待办"
           emptyText="您已完成所有待办"
           list={noticeData.event}
+          showRefresh
           showViewMore
         />
         <NoticeIcon.Tab
@@ -246,6 +253,8 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
           list={noticeData.notification}
           title="通知"
           emptyText="您已查看所有通知"
+          showClear
+          showRefresh={false}
           showViewMore
         />
         <NoticeIcon.Tab
@@ -253,7 +262,6 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
           list={noticeData.message}
           title="消息"
           emptyText="您已读完所有消息"
-          showViewMore
         />
       </NoticeIcon>
     );

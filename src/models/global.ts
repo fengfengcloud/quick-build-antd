@@ -1,7 +1,7 @@
 import { Subscription, Reducer, Effect } from 'umi';
 
 import { NoticeIconData } from '@/components/NoticeIcon';
-import { queryNotices } from '@/services/user';
+import { notificationRead, notificationClear, queryNotices } from '@/services/user';
 import { ConnectState } from './connect.d';
 
 export interface NoticeItem extends NoticeIconData {
@@ -43,10 +43,11 @@ const GlobalModel: GlobalModelType = {
     *fetchNotices(_, { call, put }) {
       const data = yield call(queryNotices);
       let count = 0;
+      let unreadCount: number = 0;
       data.forEach((record: NoticeItem) => {
         const rec = record;
-        count += rec.count || 0;
         if (rec.type === 'event') {
+          count += rec.count || 0;
           rec.status = 'urgent';
           if (rec.maxhours) {
             if (rec.maxhours >= 48) rec.extra = `最长已等待${Math.floor(rec.maxhours / 24)}天`;
@@ -59,20 +60,21 @@ const GlobalModel: GlobalModelType = {
           } else if (rec.action === 'audit') {
             rec.description = `有 ${rec.count} 条记录等待审核`;
           }
+        } else if (rec.type === 'notification') {
+          // 每一个通知消息，被阅读取就不计数了
+          count += !rec.read ? 1 : 0;
+          unreadCount += !rec.read ? 1 : 0;
         }
       });
       yield put({
         type: 'saveNotices',
         payload: data,
       });
-      // const unreadCount: number = yield select(
-      //   (state: ConnectState) => state.global.notices.filter((item) => !item.read).length,
-      // );
       yield put({
         type: 'user/changeNotifyCount',
         payload: {
           totalCount: count,
-          unreadCount: count,
+          unreadCount,
         },
       });
     },
@@ -82,15 +84,19 @@ const GlobalModel: GlobalModelType = {
         type: 'saveClearedNotices',
         payload,
       });
-      const count: number = yield select((state: ConnectState) => state.global.notices.length);
-      const unreadCount: number = yield select(
-        (state: ConnectState) => state.global.notices.filter((item) => !item.read).length,
-      );
+      let count: number = 0;
+      const notices: NoticeItem[] = yield select((state: ConnectState) => state.global.notices);
+      notices.forEach((rec) => {
+        if (rec.type === 'event') {
+          count += rec.count || 0;
+        }
+      });
+      yield notificationClear();
       yield put({
         type: 'user/changeNotifyCount',
         payload: {
           totalCount: count,
-          unreadCount,
+          unreadCount: 0,
         },
       });
     },
@@ -109,15 +115,22 @@ const GlobalModel: GlobalModelType = {
         type: 'saveNotices',
         payload: notices,
       });
-      let count = 0;
+      let count: number = 0;
+      let unreadCount: number = 0;
       notices.forEach((rec) => {
-        count += rec.count || 0;
+        if (rec.type === 'event') {
+          count += rec.count || 0;
+        } else if (rec.type === 'notification') {
+          count += !rec.read ? 1 : 0;
+          unreadCount += !rec.read ? 1 : 0;
+        }
       });
+      yield notificationRead(payload);
       yield put({
         type: 'user/changeNotifyCount',
         payload: {
           totalCount: count,
-          unreadCount: notices.filter((item) => !item.read).length,
+          unreadCount,
         },
       });
     },

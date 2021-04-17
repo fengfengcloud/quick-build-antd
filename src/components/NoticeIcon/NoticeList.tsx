@@ -37,15 +37,15 @@ export interface NoticeIconTabProps {
 const NoticeList: React.SFC<NoticeIconTabProps> = ({
   data = [],
   onClick,
-  // onClear,
+  onClear,
   onRefresh,
   refreshText,
-  showRefresh = true,
+  showRefresh,
   title,
   onViewMore,
   emptyText,
-  // showClear = true,
-  // clearText,
+  showClear,
+  clearText,
   viewMoreText,
   showViewMore = false,
   loading,
@@ -115,11 +115,11 @@ const NoticeList: React.SFC<NoticeIconTabProps> = ({
         }}
       />
       <div className={styles.bottomBar}>
-        {/* {showClear ? (
+        {showClear ? (
           <div onClick={onClear}>
             {clearText} {title}
           </div>
-        ) : null} */}
+        ) : null}
         {showRefresh ? (
           <div onClick={onRefresh}>
             {refreshText} {title}

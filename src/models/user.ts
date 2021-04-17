@@ -27,6 +27,7 @@ export interface CurrentUser {
     label: string;
   }[];
   userid?: string;
+  notifyCount?: number;
   unreadCount?: number;
   canselectdatarole?: CanSelectDataRole[];
 }
@@ -85,16 +86,11 @@ const UserModel: UserModelType = {
       };
     },
 
-    changeNotifyCount(
-      state = {
-        currentUser: {},
-      },
-      action,
-    ) {
+    changeNotifyCount(state, action) {
       return {
         ...state,
         currentUser: {
-          ...state.currentUser,
+          ...state!.currentUser,
           notifyCount: action.payload.totalCount,
           unreadCount: action.payload.unreadCount,
         },
