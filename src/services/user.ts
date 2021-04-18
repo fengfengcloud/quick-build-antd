@@ -20,6 +20,14 @@ export async function notificationRead(notificationId: string): Promise<any> {
   });
 }
 
+export async function notificationRemove(notificationId: string): Promise<any> {
+  return request('/api/platform/systemframe/notificationremove.do', {
+    params: {
+      notificationId,
+    },
+  });
+}
+
 export async function notificationClear(): Promise<any> {
   return request('/api/platform/systemframe/notificationclear.do');
 }

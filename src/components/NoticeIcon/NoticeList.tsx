@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import {
   CarryOutFilled,
   CloseCircleFilled,
+  CloseOutlined,
   InfoCircleFilled,
   QuestionCircleFilled,
   WarningFilled,
@@ -26,6 +27,7 @@ export interface NoticeIconTabProps {
   data?: NoticeIconData[];
   onClick?: (item: NoticeIconData) => void;
   onClear?: () => void;
+  onRemove?: (item: NoticeIconData) => void;
   onRefresh?: () => void;
   emptyText?: string;
   clearText?: string;
@@ -38,6 +40,7 @@ const NoticeList: React.SFC<NoticeIconTabProps> = ({
   data = [],
   onClick,
   onClear,
+  onRemove,
   onRefresh,
   refreshText,
   showRefresh,
@@ -101,6 +104,14 @@ const NoticeList: React.SFC<NoticeIconTabProps> = ({
                   <div className={styles.title}>
                     {item.title}
                     <div className={styles.extra}>{item.extra}</div>
+                    {item.read ? (
+                      <CloseOutlined
+                        style={{ float: 'right' }}
+                        onClick={() => {
+                          onRemove!(item);
+                        }}
+                      />
+                    ) : null}
                   </div>
                 }
                 description={

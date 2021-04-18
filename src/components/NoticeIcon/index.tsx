@@ -39,6 +39,7 @@ export interface NoticeIconProps {
   className?: string;
   loading?: boolean;
   onClear?: (tabName: string, tabKey: string) => void;
+  onRemove?: (item: NoticeIconData, tabProps: NoticeIconTabProps) => void;
   onRefresh?: () => void;
   onItemClick?: (item: NoticeIconData, tabProps: NoticeIconTabProps) => void;
   onViewMore?: (tabProps: NoticeIconTabProps, e: MouseEvent) => void;
@@ -64,6 +65,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
       onClear,
       onTabChange,
       onItemClick,
+      onRemove,
       onViewMore,
       clearText,
       viewMoreText,
@@ -101,6 +103,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
             data={list}
             onClear={(): void => onClear && onClear(title, tabKey)}
             onClick={(item): void => onItemClick && onItemClick(item, child.props)}
+            onRemove={(item): void => onRemove && onRemove(item, child.props)}
             onViewMore={(event): void => onViewMore && onViewMore(child.props, event)}
             showClear={showClear}
             showViewMore={showViewMore}

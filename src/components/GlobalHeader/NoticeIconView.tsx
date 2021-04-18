@@ -65,6 +65,19 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
     }
   };
 
+  // 删除一个通知
+  handleNoticeRemove = (clickedItem: NoticeItem): void => {
+    const { id } = clickedItem;
+    const { dispatch } = this.props;
+    if (dispatch) {
+      dispatch({
+        type: 'global/removeNotice',
+        payload: id,
+      });
+    }
+    message.warn('已删除一条通知！');
+  };
+
   getNoticeData = (): {
     [key: string]: NoticeItem[];
   } => {
@@ -219,12 +232,11 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
             } else this.pushQuestionModule(item);
           } else if (item.type === 'notification') {
             // 消息还没有阅读
-            // if (!item.read){
-            this.changeReadState(item);
-            // }
-            message.info('您点击了通知事项');
+            if (!item.read) {
+              this.changeReadState(item);
+              message.info('已阅读一条通知！');
+            }
           }
-          // this.changeReadState(item);
         }}
         loading={fetchingNotices}
         clearText="清空"
@@ -232,6 +244,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
         onRefresh={refreshNotices}
         viewMoreText="查看更多"
         onClear={this.handleNoticeClear}
+        onRemove={(item) => this.handleNoticeRemove(item as NoticeItem)}
         onPopupVisibleChange={onNoticeVisibleChange}
         onViewMore={(props) => {
           message.info(`没有更多的${props.title}事项了！`);
