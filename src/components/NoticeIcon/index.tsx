@@ -35,6 +35,7 @@ export interface NoticeIconData {
 
 export interface NoticeIconProps {
   count?: number;
+  unreadCount?: number;
   bell?: React.ReactNode;
   className?: string;
   loading?: boolean;
@@ -71,6 +72,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
       viewMoreText,
       onRefresh,
       refreshText,
+      unreadCount,
     } = props;
     if (!children) {
       return null;
@@ -101,6 +103,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
             clearText={clearText}
             viewMoreText={viewMoreText}
             data={list}
+            unreadCount={unreadCount}
             onClear={(): void => onClear && onClear(title, tabKey)}
             onClick={(item): void => onItemClick && onItemClick(item, child.props)}
             onRemove={(item): void => onRemove && onRemove(item, child.props)}

@@ -101,12 +101,17 @@ const GlobalModel: GlobalModelType = {
     },
 
     *clearNotices({ payload }, { put, select }) {
+      // 当前显示的所有通知都被清除，未显示的可能是后来增加的不清除
+      const items: string[] = yield select((state: ConnectState) =>
+        state.global.notices.filter((item) => item.type === payload).map((item) => item.id),
+      );
       yield put({
         type: 'saveClearedNotices',
         payload,
       });
       const notices: NoticeItem[] = yield select((state: ConnectState) => state.global.notices);
-      yield notificationClear();
+
+      yield notificationClear(items);
       yield put({
         type: 'user/changeNotifyCount',
         payload: {

@@ -51,11 +51,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
   };
 
   handleNoticeClear = (title: string, key: string) => {
-    const { dispatch, currentUser } = this.props;
-    if (currentUser?.unreadCount) {
-      message.warn('所有通知都阅读后，才能清空！');
-      return;
-    }
+    const { dispatch } = this.props;
     message.success(`${'清空了'} ${title}`);
     if (dispatch) {
       dispatch({
@@ -219,6 +215,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
       <NoticeIcon
         className={styles.action}
         count={user && user.notifyCount}
+        unreadCount={user && user.unreadCount}
         onItemClick={(item_) => {
           const item = item_ as NoticeItem;
           // 待办里面包括，可以审核，可以审批，可以接受任务，以及自定义的待办事项

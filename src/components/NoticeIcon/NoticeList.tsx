@@ -1,6 +1,6 @@
-import { Avatar, List, Spin } from 'antd';
+import { Avatar, List, Popconfirm, Spin } from 'antd';
 
-import React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import {
   CarryOutFilled,
@@ -17,6 +17,7 @@ export interface NoticeIconTabProps {
   hidden?: boolean;
   loading?: boolean;
   count?: number;
+  unreadCount?: number;
   name?: string;
   showClear?: boolean;
   showViewMore?: boolean;
@@ -36,9 +37,11 @@ export interface NoticeIconTabProps {
   list: NoticeIconData[];
   onViewMore?: (e: any) => void;
 }
-const NoticeList: React.SFC<NoticeIconTabProps> = ({
+const NoticeList: React.FC<NoticeIconTabProps> = ({
   data = [],
+  unreadCount,
   onClick,
+  // 清除所有通知
   onClear,
   onRemove,
   onRefresh,
@@ -53,6 +56,8 @@ const NoticeList: React.SFC<NoticeIconTabProps> = ({
   showViewMore = false,
   loading,
 }) => {
+  const [clearVisible, setClearVisible] = useState<boolean>(false);
+
   if (!data || data.length === 0) {
     return (
       <Spin spinning={loading}>
@@ -127,9 +132,27 @@ const NoticeList: React.SFC<NoticeIconTabProps> = ({
       />
       <div className={styles.bottomBar}>
         {showClear ? (
-          <div onClick={onClear}>
-            {clearText} {title}
-          </div>
+          <Popconfirm
+            visible={clearVisible}
+            onVisibleChange={(visible) => {
+              if (!visible) {
+                setClearVisible(visible);
+                return;
+              }
+              // 如果还有未阅读的通知，提醒一下
+              if (unreadCount) {
+                setClearVisible(visible);
+              } else {
+                onClear!();
+              }
+            }}
+            title={`还有 ${unreadCount} 条${title}未查看，确定要清除吗？`}
+            onConfirm={onClear}
+          >
+            <div>
+              {clearText} {title}
+            </div>
+          </Popconfirm>
         ) : null}
         {showRefresh ? (
           <div onClick={onRefresh}>

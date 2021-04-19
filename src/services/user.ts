@@ -1,4 +1,5 @@
 import request from '@/utils/request';
+import { serialize } from 'object-to-formdata';
 
 /**
  * 取得当前登录的用户信息和系统信息
@@ -28,6 +29,11 @@ export async function notificationRemove(notificationId: string): Promise<any> {
   });
 }
 
-export async function notificationClear(): Promise<any> {
-  return request('/api/platform/systemframe/notificationclear.do');
+export async function notificationClear(deleteds: string[]): Promise<any> {
+  return request('/api/platform/systemframe/notificationclear.do', {
+    method: 'POST',
+    data: serialize({
+      deleteds: deleteds.join(','),
+    }),
+  });
 }
