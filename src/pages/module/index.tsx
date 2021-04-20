@@ -1,5 +1,5 @@
 import React, { createContext, useEffect } from 'react';
-import { PageHeaderWrapper, GridContent } from '@ant-design/pro-layout';
+import { PageHeaderWrapper, GridContent, WaterMark } from '@ant-design/pro-layout';
 import { Spin, Card, Skeleton, Space, Layout } from 'antd';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
@@ -216,7 +216,15 @@ const ModuleUrlEntry: React.FC<ModuleProps> = (params) => {
   return (
     <HOCDndProvider>
       <ModuleContext.Provider value={{ state: moduleState, dispatch }}>
-        {component}
+        <WaterMark
+          rotate={-22}
+          content="Quick Build System"
+          fontColor="rgba(0,0,0,.15)"
+          fontSize={16}
+          zIndex={30009}
+        >
+          {component}
+        </WaterMark>
       </ModuleContext.Provider>
     </HOCDndProvider>
   );
