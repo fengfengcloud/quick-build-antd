@@ -11,7 +11,7 @@ import {
   MoreOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { match } from 'pinyin-match';
+import PinyinMatch from 'pinyin-match';
 import { Dispatch } from 'redux';
 import { apply } from '@/utils/utils';
 import { useDrop } from 'react-dnd';
@@ -309,7 +309,7 @@ const genSearchedPingYingTreeData = (
   const result: any[] = [];
   const matchedCount = mCount;
   nodes.forEach((node: any) => {
-    const find = match(node.title, search);
+    const find = PinyinMatch.match(node.title, search);
     if (find) matchedCount[0] += 1;
     const treeNode = getNode(node, find ? node.title.substring(find[0], find[1] + 1) : '');
     if (node.isLeaf) {
@@ -622,7 +622,7 @@ const Navigate = ({ moduleState, dispatch }: { moduleState: ModuleState; dispatc
             .filter((_, index: number) => index < EXPANDLEVELMAXCOUNT)
             .map((item: any) => {
               if (isletter) {
-                const find = match(item.title, search as string);
+                const find = PinyinMatch.match(item.title, search as string);
                 return getNode(item, find ? item.title.substring(find[0], find[1] + 1) : '');
               }
               return getNode(item, scheme.search);

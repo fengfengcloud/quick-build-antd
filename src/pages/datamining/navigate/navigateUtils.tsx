@@ -4,7 +4,7 @@ import Highlighter from 'react-highlight-words';
 import { DragPreviewImage, useDrag, useDrop } from 'react-dnd';
 import request from '@/utils/request';
 import { serialize } from 'object-to-formdata';
-import { match } from 'pinyin-match';
+import PinyinMatch from 'pinyin-match';
 import { getSqlparamFilter } from '@/pages/module/grid/filterUtils';
 import { apply } from '@/utils/utils';
 import {
@@ -413,7 +413,7 @@ export const onNavigateSearch = (
   const searchChildren = (array: any[]) => {
     array.forEach((rec) => {
       const record = rec;
-      const find = match(record.text, search);
+      const find = PinyinMatch.match(record.text, search);
       record[MATCH_FIRST_POS] = find ? find[0] : NO_MATCH;
       record[TITLE] = (
         <NavigateRecordTitle

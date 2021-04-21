@@ -71,7 +71,7 @@
     "object-to-formdata": "^4.1.0",
     "omit.js": "^2.0.2",
     "path-to-regexp": "2.4.0",
-    "pinyin-match": "^1.1.1",
+    "pinyin-match": "^1.2.1",
     "qs": "^6.9.0",
     "re-resizable": "^6.5.5",
     "react": "^16.8.6",
