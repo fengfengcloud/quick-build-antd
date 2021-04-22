@@ -1,5 +1,6 @@
 import request, { syncRequest } from '@/utils/request';
 import { applyIf, apply } from '@/utils/utils';
+import { isMoment } from 'moment';
 import { serialize } from 'object-to-formdata';
 import { ModuleState, FetchObjectResponse } from './data';
 import { getAllFilterAjaxParam } from './grid/filterUtils';
@@ -155,8 +156,16 @@ export const saveOrUpdateRecordRequestPayload = async (params: any) => {
 
 // 新建一条记录或者修改记录，这个是用的 form data 方式，不会乱码，
 // 看这个网址 https://segmentfault.com/a/1190000018774494
-//
+// 注意+8的时区，data[k] = data[k].format(DATE_TIME); 将返回当前时区的时间
+// 在mysql中，必须设置default-time-zone=+08:00，才可以，否则保存数据和显示数据会不一致
+const DATE_TIME = 'YYYY-MM-DD HH:mm:ss';
 export const saveOrUpdateRecord = async (params: any) => {
+  const data = { ...params.data };
+  Object.keys(data).forEach((k) => {
+    if (isMoment(data[k])) {
+      data[k] = data[k].format(DATE_TIME);
+    }
+  });
   return new Promise((resolve) => {
     request('/api/platform/dataobject/saveorupdatedata.do', {
       params: {
@@ -164,7 +173,7 @@ export const saveOrUpdateRecord = async (params: any) => {
         opertype: params.opertype === 'insert' ? 'new' : params.opertype,
       },
       // serialize 生成 formdata
-      data: serialize({ data: JSON.stringify(params.data) }),
+      data: serialize({ data: JSON.stringify(data) }),
       method: 'POST',
     }).then((response) => {
       resolve(response);
