@@ -155,6 +155,8 @@ const BusinessColumnRender: BusinessColumnRender = {
   // system
   'VActRuTask--actBusinessName': VActRuTaskTitle,
   'VActFinishTask--actBusinessName': VActRuTaskTitle,
+  'VActAllRuTask--actBusinessName': VActRuTaskTitle,
+  'VActAllFinishTask--actBusinessName': VActRuTaskTitle,
 
   // pm
   'PmGlobal--state': pmGlobalState,
