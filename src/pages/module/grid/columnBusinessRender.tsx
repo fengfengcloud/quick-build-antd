@@ -123,9 +123,26 @@ export const abcEmployeeTodayState: React.FC<BusinessRenderProps> = ({ value }) 
       ? 'error'
       : 'default';
   /* eslint-enable */
-  return (
+  return value ? (
     <span>
       <Badge status={status} text={value} />
+    </span>
+  ) : null;
+};
+
+/**
+ * 人脸状态0识别，1未识别，2未上传
+ * @param param0
+ * @returns
+ */
+export const abcEmployeefaceState: React.FC<BusinessRenderProps> = ({ value, record }) => {
+  /* eslint-disable */
+  const status: PresetStatusColorType =
+    value === '0' ? 'success' : value === '1' ? 'error' : 'default';
+  /* eslint-enable */
+  return (
+    <span>
+      <Badge status={status} text={record.faceState_dictname} />
     </span>
   );
 };
@@ -165,6 +182,7 @@ const BusinessColumnRender: BusinessColumnRender = {
 
   // abcgate
   'AbcEmployee--todayState': abcEmployeeTodayState,
+  'AbcEmployee--faceState': abcEmployeefaceState,
   'AbcInoutEmployeeRecord--state': abcEmployeeTodayState,
 };
 
