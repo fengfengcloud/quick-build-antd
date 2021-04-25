@@ -5,7 +5,8 @@ import { ModuleModal, ModuleState, TextValue } from '../data';
 import FilterInfoButton from './FilterInfoButton';
 import ExportButton from './export/ExportButton';
 import BatchOperateButton, { getToolbarButton } from './BatchOperateButton';
-import { hasInsert } from '../modules';
+import { getGridBatchImport, hasInsert } from '../modules';
+import BatchImportButton from '../grid/batchImport';
 
 const ModuleToolbar = ({
   moduleState,
@@ -59,9 +60,14 @@ const ModuleToolbar = ({
               });
             }}
           >
-            <PlusOutlined /> 新建{' '}
+            <PlusOutlined /> 新建
           </Button>
         ) : null}
+
+        {hasInsert(moduleInfo) && getGridBatchImport(moduleInfo) && !readOnly ? (
+          <BatchImportButton moduleState={moduleState} />
+        ) : null}
+
         {!readOnly
           ? // 模块附加功能中菜单名称是toolbar的
             getToolbarButton({ moduleState, dispatch })

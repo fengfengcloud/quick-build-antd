@@ -136,8 +136,10 @@ export const getNewDefaultValues = (
   // 再加入导航和父模块的设定值
   navigate.forEach((rec: any) => {
     const ahead: string | null = rec.fieldahead;
-    // fieldahead 没有或者不能有二级以上的才可以加入缺省值
-    if (!ahead || ahead.indexOf('.') === -1) {
+    // fieldahead 没有或者不能有二级以上的才可以加入缺省值,
+    // if (!ahead || ahead.indexOf('.') === -1) {
+    // 基本字段不要加入导航值，必须是manytoone的才加，（如果都要加，加入条件!ahead || ）
+    if (ahead && ahead.indexOf('.') === -1) {
       const key: string = (ahead ? `${ahead}.` : '') + rec.fieldName;
       if (key in fields) {
         result[key] = rec.fieldvalue;
@@ -153,7 +155,7 @@ export const getNewDefaultValues = (
   });
   if (pf) {
     const ahead: string | null = pf.fieldahead;
-    if (!ahead || ahead.indexOf('.') === -1) {
+    if (ahead && ahead.indexOf('.') === -1) {
       const key: string = (ahead ? `${ahead}.` : '') + pf.fieldName;
       if (key in fields) {
         result[key] = pf.fieldvalue;

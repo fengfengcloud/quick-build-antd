@@ -344,6 +344,17 @@ export const hasEdit = (moduleInfo: ModuleModal): boolean => {
 };
 
 /**
+ * 判断当前模块有没有设置为gridimportfields 的 form方案。有的话，可以进行数据导入
+ * @param moduleInfo
+ * @returns
+ */
+export const getGridBatchImport = (moduleInfo: ModuleModal): any => {
+  return (
+    moduleInfo && moduleInfo.formschemes.find((scheme) => scheme.formtype === 'gridimportfields')
+  );
+};
+
+/**
  * 判断记录的附件否可以新增。审批过后只有录入人员才可以新增附件
  * @param moduleInfo
  * @param record

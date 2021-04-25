@@ -218,7 +218,7 @@ const ModuleUrlEntry: React.FC<ModuleProps> = (params) => {
       <ModuleContext.Provider value={{ state: moduleState, dispatch }}>
         <WaterMark
           rotate={-22}
-          content="Quick Build System"
+          // content="Quick Build System"
           fontColor="rgba(0,0,0,.15)"
           fontSize={16}
           zIndex={30009}
