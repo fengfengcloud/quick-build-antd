@@ -65,7 +65,7 @@ const ModuleToolbar = ({
         ) : null}
 
         {hasInsert(moduleInfo) && getGridBatchImport(moduleInfo) && !readOnly ? (
-          <BatchImportButton moduleState={moduleState} />
+          <BatchImportButton moduleState={moduleState} dispatch={dispatch} />
         ) : null}
 
         {!readOnly

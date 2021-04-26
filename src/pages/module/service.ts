@@ -5,7 +5,7 @@ import { serialize } from 'object-to-formdata';
 import { ModuleState, FetchObjectResponse } from './data';
 import { getAllFilterAjaxParam } from './grid/filterUtils';
 import { getModuleInfo } from './modules';
-import { generateTreeParent } from './moduleUtils';
+import { DateTimeFormat, generateTreeParent } from './moduleUtils';
 
 // 'GET /api/get_module_info?moduleid=personnel'
 export const queryModuleInfo = async (params: any) => {
@@ -158,12 +158,11 @@ export const saveOrUpdateRecordRequestPayload = async (params: any) => {
 // 看这个网址 https://segmentfault.com/a/1190000018774494
 // 注意+8的时区，data[k] = data[k].format(DATE_TIME); 将返回当前时区的时间
 // 在mysql中，必须设置default-time-zone=+08:00，才可以，否则保存数据和显示数据会不一致
-const DATE_TIME = 'YYYY-MM-DD HH:mm:ss';
 export const saveOrUpdateRecord = async (params: any) => {
   const data = { ...params.data };
   Object.keys(data).forEach((k) => {
     if (isMoment(data[k])) {
-      data[k] = data[k].format(DATE_TIME);
+      data[k] = data[k].format(DateTimeFormat);
     }
   });
   return new Promise((resolve) => {
