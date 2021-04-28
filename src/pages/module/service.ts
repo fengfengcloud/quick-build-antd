@@ -7,7 +7,6 @@ import { getAllFilterAjaxParam } from './grid/filterUtils';
 import { getModuleInfo } from './modules';
 import { DateTimeFormat, generateTreeParent } from './moduleUtils';
 
-// 'GET /api/get_module_info?moduleid=personnel'
 export const queryModuleInfo = async (params: any) => {
   return request(`${API_HEAD}/platform/module/getmoduleinfo.do`, {
     method: 'POST',
@@ -15,7 +14,6 @@ export const queryModuleInfo = async (params: any) => {
   });
 };
 
-// 'GET /api/get_module_info?moduleid=personnel'
 export const querySyncModuleInfo = (moduleName: string): object => {
   return syncRequest(`${API_HEAD}/platform/module/getmoduleinfo.do`, {
     type: 'POST',
@@ -327,7 +325,6 @@ export const fetchNavigateTreeDataSync = (params: any): any => {
   });
 };
 
-// 'GET /api/get_module_info?moduleid=personnel'
 export const fetchChildModuleData = async (params: any) => {
   return request(`${API_HEAD}/platform/dataobject/fetchchilddata.do`, {
     method: 'POST',

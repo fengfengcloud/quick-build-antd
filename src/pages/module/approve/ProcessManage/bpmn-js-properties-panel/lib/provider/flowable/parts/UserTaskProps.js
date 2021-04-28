@@ -4,13 +4,13 @@ var is = require('bpmn-js/lib/util/ModelUtil').is,
   entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory');
 
 var syncRequest = require('../../../../../../../../../utils/request').syncRequest;
-
+var API_HEAD = require('../../../../../../../../../utils/request').API_HEAD;
 var users = [];
 var groups = [];
 
 function getUsers() {
   if (users.length === 0) {
-    var usersResult = syncRequest("/api/platform/dataobject/fetchcombodata.do", {
+    var usersResult = syncRequest(API_HEAD + "/platform/dataobject/fetchcombodata.do", {
       params: {
         moduleName: 'FUser'
       }
@@ -27,7 +27,7 @@ function getUsers() {
 }
 function getGroups() {
   if (groups.length === 0) {
-    var usersResult = syncRequest("/api/platform/dataobject/fetchcombodata.do", {
+    var usersResult = syncRequest(API_HEAD +"/platform/dataobject/fetchcombodata.do", {
       params: {
         moduleName: 'FRole'
       }

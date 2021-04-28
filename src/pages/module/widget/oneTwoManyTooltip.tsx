@@ -19,7 +19,7 @@ import {
 import { RECNOUNDERLINE } from '../constants';
 /**
  *  post formdata
- *  /api/platform/dataobject/fetchchilddata.do
+ *  /platform/dataobject/fetchchilddata.do
  *  objectid: FDictionary
     parentid: 8a53b78262ea6e6d0162ea6e8b9c009b
     childModuleName: FDictionarydetail
