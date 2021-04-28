@@ -1,3 +1,5 @@
+如果不要使用 /api,修改  request.ts 和 document.ejs 中的配置
+
 
 列表grid
 1.grid scheme 的附加设置中配置  width:2000,可以设置grid的总宽度
