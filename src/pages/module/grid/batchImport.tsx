@@ -287,6 +287,7 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
             </span>
           </span>
         }
+        bodyStyle={{ border: '16px #f0f2f5 solid', margin: 0 }}
         visible={batchImportVisible}
         width="100%"
         onClose={() => {
@@ -406,36 +407,37 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
               prefix={<LikeOutlined />}
             />
           </div>
-
-          <Card style={{ flex: 1 }} bodyStyle={{ height: '100%' }}>
-            {step === Steps.Init || step === Steps.CopyCliboard ? (
-              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <span style={{ marginBottom: 12 }}>
-                  字段顺序：{columns.map((col, index) => `${index + 1}.${col.title}`).join('  ')}
+          <div style={{ padding: 16, flex: 1, backgroundColor: '#f0f2f5' }}>
+            <Card style={{ height: '100%' }} bodyStyle={{ height: '100%' }}>
+              {step === Steps.Init || step === Steps.CopyCliboard ? (
+                <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                  <span style={{ marginBottom: 12 }}>
+                    字段顺序：{columns.map((col, index) => `${index + 1}.${col.title}`).join('  ')}
+                  </span>
+                  <Form style={{ flex: 1 }} initialValues={{ uploaddata: dataText }}>
+                    <Form.Item noStyle name="uploaddata">
+                      <Input.TextArea
+                        style={{ height: '100%' }}
+                        autoSize={false}
+                        onChange={(element) => {
+                          const { value } = element.target;
+                          setDataText(value);
+                          setStep(value ? Steps.CopyCliboard : Steps.Init);
+                        }}
+                        placeholder="请将导入的数据粘贴在此处，每行中以Tab或逗号分隔字段。可以在Excel中选择数据复制后，粘贴进来即可。"
+                      />
+                    </Form.Item>
+                  </Form>
+                </div>
+              ) : null}
+              {step === Steps.FirstValidate ? (
+                <span>
+                  数据校验:
+                  <ImportGrid />
                 </span>
-                <Form style={{ flex: 1 }} initialValues={{ uploaddata: dataText }}>
-                  <Form.Item noStyle name="uploaddata">
-                    <Input.TextArea
-                      style={{ height: '100%' }}
-                      autoSize={false}
-                      onChange={(element) => {
-                        const { value } = element.target;
-                        setDataText(value);
-                        setStep(value ? Steps.CopyCliboard : Steps.Init);
-                      }}
-                      placeholder="请将导入的数据粘贴在此处，每行中以Tab或逗号分隔字段。可以在Excel中选择数据复制后，粘贴进来即可。"
-                    />
-                  </Form.Item>
-                </Form>
-              </div>
-            ) : null}
-            {step === Steps.FirstValidate ? (
-              <span>
-                数据校验:
-                <ImportGrid />
-              </span>
-            ) : null}
-          </Card>
+              ) : null}
+            </Card>
+          </div>
         </span>
       </Drawer>
     </React.Fragment>

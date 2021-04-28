@@ -38,7 +38,7 @@ const GridSizeButton = ({
       }}
     >
       <Menu.ItemGroup title="表格密度">
-        {getIcon('default', '默认')}
+        {getIcon('default', '宽松')}
         {getIcon('middle', '中等')}
         {getIcon('small', '紧凑')}
       </Menu.ItemGroup>

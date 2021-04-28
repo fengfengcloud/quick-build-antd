@@ -229,6 +229,7 @@ export interface AdditionFunctionModal {
   visibleWithEmpty?: boolean; // 记录为空时显示
   visibleWithRecord?: boolean; // 有记录时显示
   needParentFilter?: boolean; // 需要一个导航值
+  remark?: string;
 }
 
 // 模块记录单条打印方案

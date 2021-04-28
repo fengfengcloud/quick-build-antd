@@ -51,7 +51,7 @@ const GlobalHeaderRight: React.FC<GlobalHeaderRightProps> = (props) => {
             color: 'inherit',
           }}
           target="_blank"
-          href="https://pro.ant.design/docs/getting-started"
+          href="https://pro.ant.design/docs/getting-started-cn"
           rel="noopener noreferrer"
           className={styles.action}
         >

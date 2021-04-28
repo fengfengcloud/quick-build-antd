@@ -777,10 +777,11 @@ const ModuleForm: React.FC<ModuleFormProps> = ({
   requiredMark = requiredMark !== false;
   formLayout = formLayout === 'vertical' ? 'vertical' : 'horizontal';
   formSize = formSize === 'small' || formSize === 'large' ? formSize : 'middle';
+  // 如果是horizontal，那么字段label最少120px,vertical则不设置;
   const labelCol =
     formLayout === 'vertical'
       ? {}
-      : { flex: `0 0 ${scheme.labelWidth || (showType === 'mainregion' ? 120 : 120)}px` }; // 如果是horizontal，那么字段label最少120px,vertical则不设置;
+      : { flex: `0 0 ${scheme.labelWidth || (showType === 'mainregion' ? 120 : 120)}px` };
   const formPanel = getFormSchemePanel({
     moduleInfo,
     details: scheme.details,

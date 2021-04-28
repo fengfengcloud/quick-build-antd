@@ -288,6 +288,29 @@ const deployWorkFlow = (params: ActionParamsModal) => {
   });
 };
 
+/**
+ * 在iframe中可以进行界面和表单列表配置的extjs的程序
+ * @param params
+ */
+const extjsSetting = (params: ActionParamsModal) => {
+  const title = '所有配置设置程序';
+  const props = {
+    visible: true,
+    title: (
+      <span>
+        <span className="x-fa fa-link" style={{ marginRight: '8px' }} />
+        {title}
+      </span>
+    ),
+    width: '100%',
+    zIndex: undefined,
+    children: <iframe title={title} width="100%" height="100%" src={params.funcDefine.remark} />,
+    onClose: () => setGlobalDrawerProps(() => ({ visible: false })),
+    bodyStyle: { backgroundColor: '#f0f2f5', padding: 0, margin: 0 },
+  };
+  setGlobalDrawerProps(props);
+};
+
 interface ActionStore {
   [actionName: string]: Function;
 }
@@ -307,6 +330,7 @@ export const systemActions: ActionStore = apply(
     designworkflow: designWorkFlow,
     deployworkflow: deployWorkFlow,
     importtableandview: importTableAndView,
+    extjsSetting,
     // 实体对象和实体对象共用
     refreshfields: refreshFields,
     // 数据源的操作
