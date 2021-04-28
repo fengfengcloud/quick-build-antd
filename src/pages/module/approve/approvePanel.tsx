@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Dispatch } from 'redux';
-import request, { syncRequest } from '@/utils/request';
+import request, { API_HEAD, syncRequest } from '@/utils/request';
 import {
   Form,
   Input,
@@ -50,7 +50,7 @@ const FormItem = Form.Item;
 const getProcTaskDef = (procdefid: string, taskkey: string): any => {
   const key = `${procdefid}+${taskkey}`;
   if (!actProcTaskDefs.has(key)) {
-    const result: ProcTaskDefine = syncRequest('/api/platform/workflow/task/getdefinfo.do', {
+    const result: ProcTaskDefine = syncRequest(`${API_HEAD}/platform/workflow/task/getdefinfo.do`, {
       params: {
         procdefid,
         taskkey,
@@ -87,7 +87,7 @@ export const ApproveForm: React.FC<ApproveFormPrpos> = ({ moduleInfo, record, di
     if (Object.getOwnPropertyNames(moduledata).length > 0) {
       moduledata[moduleInfo.primarykey] = id;
     } else moduledata = null;
-    request('/api/platform/workflow/runtime/complete.do', {
+    request(`${API_HEAD}/platform/workflow/runtime/complete.do`, {
       params: {
         objectName: moduleName,
         id,

@@ -6,7 +6,7 @@ import { connect } from 'dva';
 import classNames from 'classnames';
 import { CanSelectDataRole } from 'umi';
 import { Badge, Dropdown, Menu, message, Switch } from 'antd';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import actionstyles from './index.less';
 import styles from '../NoticeIcon/index.less';
 
@@ -40,7 +40,7 @@ const CanSelectRoleIconView: React.FC<CanSelectRoleProps> = ({ dataRole, dispatc
   };
   const onRoleSwitch = (checked: boolean, event: Event, role: CanSelectDataRole) => {
     event.stopPropagation();
-    request('/api/platform/userfavourite/toggledatarole.do', {
+    request(`${API_HEAD}/platform/userfavourite/toggledatarole.do`, {
       params: {
         roleid: role.roleId,
         checked,
@@ -66,7 +66,7 @@ const CanSelectRoleIconView: React.FC<CanSelectRoleProps> = ({ dataRole, dispatc
         roleId: role.roleId,
         checked: role.checked,
       }));
-      request('/api/platform/userfavourite/updatedefaultdatarole.do', {
+      request(`${API_HEAD}/platform/userfavourite/updatedefaultdatarole.do`, {
         params: {
           rolestates: JSON.stringify(roleStates),
         },
@@ -79,7 +79,7 @@ const CanSelectRoleIconView: React.FC<CanSelectRoleProps> = ({ dataRole, dispatc
   };
 
   const resetToDefault = () => {
-    request('/api/platform/userfavourite/resetdefaultdatarole.do', {
+    request(`${API_HEAD}/platform/userfavourite/resetdefaultdatarole.do`, {
       params: {},
     }).then((response: any) => {
       if (response.success) {

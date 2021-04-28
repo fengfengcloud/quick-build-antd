@@ -1,5 +1,5 @@
 import { getColumnDataIndex, getColumnsDataIndex } from '@/pages/datamining/utils';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { stringifyObjectField } from '@/utils/utils';
 import { Column } from '@ant-design/charts';
 import { ColumnConfig } from '@ant-design/charts/es/column';
@@ -51,7 +51,7 @@ const PmLiabilityYearColumn: React.FC = () => {
   const fields = JSON.stringify(['sum.nopayAmount']);
   const NOPAYAMOUNT = getColumnDataIndex('sum.nopayAmount');
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -147,7 +147,7 @@ const PmAgreementPlanYearStackColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -229,7 +229,7 @@ const PmAgreementPlanYearColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -315,7 +315,7 @@ const PmAgreementPlanYearMonthColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({

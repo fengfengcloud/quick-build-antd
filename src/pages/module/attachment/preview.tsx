@@ -1,3 +1,4 @@
+import { API_HEAD } from '@/utils/request';
 import { getPdfjsUrl, isSafari } from '@/utils/utils';
 import { Button, Card, Result } from 'antd';
 import React from 'react';
@@ -11,7 +12,7 @@ interface AttachmentPreviewProps {
   match: any;
 }
 
-const baseurl = '/api/platform/attachment';
+const baseurl = `${API_HEAD}/platform/attachment`;
 const errorTitle = '预览已过期';
 /**
  * http://localhost:8000/attachment/preview?attachmentid=id&saveName=filename.pdf

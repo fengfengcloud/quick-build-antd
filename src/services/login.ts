@@ -18,7 +18,7 @@ export interface LoginParamsType {
  * @param params 登录参数
  */
 export async function fakeAccountLogin(params: LoginParamsType) {
-  return request('/api/login/validate.do', {
+  return request(`${API_HEAD}/login/validate.do`, {
     method: 'POST',
     body: serialize(params),
   });
@@ -28,7 +28,7 @@ export async function fakeAccountLogin(params: LoginParamsType) {
  * 用户登出
  */
 export async function fakeAccountLogout() {
-  return request('/api/login/logout.do', {
+  return request(`${API_HEAD}/login/logout.do`, {
     method: 'POST',
   });
 }

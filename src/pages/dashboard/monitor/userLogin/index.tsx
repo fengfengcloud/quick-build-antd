@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardProps, Col, Radio, Row } from 'antd';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 import { stringifyObjectField } from '@/utils/utils';
 import { getColumnDataIndex } from '@/pages/datamining/utils';
@@ -74,7 +74,7 @@ const UserLogginPie: React.FC<any> = ({
         }`,
       });
     }
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -182,7 +182,7 @@ const UserLogginInOutColumn: React.FC<any> = () => {
         }`,
       });
     }
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -200,7 +200,7 @@ const UserLogginInOutColumn: React.FC<any> = () => {
           group: '登录',
         }))
         .sort((rec1, rec2) => rec2.value - rec1.value);
-      request('/api/platform/datamining/fetchdata.do', {
+      request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
         method: 'POST',
         data: serialize(
           stringifyObjectField({
@@ -294,7 +294,7 @@ const UserLogginYearMonthColumn: React.FC = (params) => {
       operator: '=',
       value: currentUser.userid,
     };
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({

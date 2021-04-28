@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Pie, Bar, Column, Rose } from '@ant-design/charts';
 import { PieConfig } from '@ant-design/charts/es/pie';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { ColumnConfig } from '@ant-design/charts/es/column';
 import { RoseConfig } from '@ant-design/charts/es/rose';
 import { Card, Col, Radio, Row } from 'antd';
@@ -66,7 +66,7 @@ const OrganizationPmAgreementApprovePie: React.FC = () => {
         }`,
       });
     }
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -162,7 +162,7 @@ const YearPmAgreementApprovePie: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [showGrid, setShowGrid] = useState<boolean>(false);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -234,7 +234,7 @@ const OrgYearPmAgreementApproveColumn: React.FC = (params) => {
   const [orgyear, setOrgyear] = useState<boolean>(true);
   const asyncFetch = () => {
     setLoading(true);
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -344,7 +344,7 @@ export const PmAgreementApproveYearMonthColumn: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any[]>([]);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({

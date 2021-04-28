@@ -250,7 +250,7 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
         message.warn('尚有关联表还没有加入，请先导入该表');
         return;
       }
-      request('/api/platform/datasource/importtableorview.do', {
+      request(`${API_HEAD}/platform/datasource/importtableorview.do`, {
         params: {
           databaseschemeid,
           tablename: selected,
@@ -351,7 +351,7 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
 
     // 获取数据库未导入的表和视图
     const getTableViews = () => {
-      request('/api/platform/datasource/getnotimporttableview.do', {
+      request(`${API_HEAD}/platform/datasource/getnotimporttableview.do`, {
         params: {
           databaseschemeid,
         },

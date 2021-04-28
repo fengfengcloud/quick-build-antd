@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Pie, Column } from '@ant-design/charts';
 import { PieConfig } from '@ant-design/charts/es/pie';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { ColumnConfig } from '@ant-design/charts/es/column';
 import { Card, Col, Radio, Row } from 'antd';
 import { CardProps } from 'antd/lib/card';
@@ -71,7 +71,7 @@ const OrganizationPmAgreementPayoutPie: React.FC = () => {
         }`,
       });
     }
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -186,7 +186,7 @@ const PlatformPmAgreementPayoutPie: React.FC = () => {
         }`,
       });
     }
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -302,7 +302,7 @@ const PmAgreementPayoutYearMonthColumn: React.FC = (params) => {
   const [sectionType, setSectionType] = useState<string>(sectionTypes[0].value || '');
   const asyncFetch = () => {
     setLoading(true);
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({

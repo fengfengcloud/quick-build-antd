@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { Card } from 'antd';
 import marked from 'marked';
 import { ModuleModal } from '../data';
@@ -14,7 +14,7 @@ export const RemoteExpandBody: React.FC<ExpandBodyParams> = ({ moduleInfo, recor
   const { modulename: moduleName, primarykey } = moduleInfo;
   const [data, setData] = useState<string>('loading');
   useEffect(() => {
-    request('/api/platform/dataobject/getexpandbody.do', {
+    request(`${API_HEAD}/platform/dataobject/getexpandbody.do`, {
       params: {
         moduleName,
         recordId: record[primarykey],

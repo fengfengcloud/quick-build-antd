@@ -4,7 +4,7 @@ import { apply } from '@/utils/utils';
 import { CloseOutlined, PushpinOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Input, message, Popover, Tabs, Tooltip } from 'antd';
 import { history } from 'umi';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 import { isAdmin, isAdministrator } from '@/utils/Authorized';
 import { CHILDREN } from '../datamining/constants';
@@ -313,7 +313,7 @@ export const ModuleHelpMarkDown: React.FC<ModuleHelpMarkDownProps> = ({ moduleIn
         type="primary"
         style={{ margin: 8, position: 'absolute', right: '18px', top: '40px', zIndex: 1 }}
         onClick={() => {
-          request('/api/platform/systemcommon/saveobjectmarkdown.do', {
+          request(`${API_HEAD}/platform/systemcommon/saveobjectmarkdown.do`, {
             method: 'post',
             body: serialize({
               moduleName: moduleInfo.modulename,

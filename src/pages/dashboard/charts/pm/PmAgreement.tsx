@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Column, DualAxes, Pie } from '@ant-design/charts';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { DualAxesConfig } from '@ant-design/charts/es/dualAxes';
 import { ColumnConfig } from '@ant-design/charts/es/column';
 import { Card, Col, Form, Row, Select, Switch } from 'antd';
@@ -95,7 +95,7 @@ const PmAgreementGlobal: React.FC = () => {
         operator: 'startwith',
         value: orgid,
       });
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -348,7 +348,7 @@ const PmAgreementCountPie: React.FC = () => {
       grouptype,
     });
     setUnitText(indextype.unitText);
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -480,7 +480,7 @@ const PmAgreementSignYearMonthColumn: React.FC = () => {
   const fields = ['count.agreementId', 'sum.singAmount'];
   const [COUNT, SUMAMOUNT] = getColumnsDataIndex(fields);
   const asyncFetch = () => {
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({

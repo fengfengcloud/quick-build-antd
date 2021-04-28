@@ -1,4 +1,4 @@
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import React, { useEffect, useState } from 'react';
 import { Modal, message, Form, Select, Input, Button } from 'antd';
 import { setGlobalModalProps } from '@/layouts/BasicLayout';
@@ -12,7 +12,7 @@ import { ActionParamsModal } from './systemAction';
 export const testDataSource = (params: ActionParamsModal) => {
   const { record, moduleInfo } = params;
   const datasourceid = record[moduleInfo.primarykey];
-  request('/api/platform/datasource/testconnect.do', {
+  request(`${API_HEAD}/platform/datasource/testconnect.do`, {
     timeout: 60 * 1000,
     params: {
       datasourceid,
@@ -50,7 +50,7 @@ export const testDataSource = (params: ActionParamsModal) => {
 export const breakDataSource = (params: ActionParamsModal) => {
   const { record, moduleInfo } = params;
   const datasourceid = record[moduleInfo.primarykey];
-  request('/api/platform/datasource/breakconnect.do', {
+  request(`${API_HEAD}/platform/datasource/breakconnect.do`, {
     timeout: 60 * 1000,
     params: {
       datasourceid,
@@ -82,7 +82,7 @@ export const importSchema = (params: ActionParamsModal) => {
     const [schemes, setSchemes] = useState<string[]>([]);
     const datasourceid = record[moduleInfo.primarykey];
     useEffect(() => {
-      request('/api/platform/datasource/getschemas.do', {
+      request(`${API_HEAD}/platform/datasource/getschemas.do`, {
         method: 'POST',
         data: serialize({
           datasourceid,
@@ -145,7 +145,7 @@ export const importSchema = (params: ActionParamsModal) => {
                   });
                   return;
                 }
-                request('/api/platform/datasource/addschema.do', {
+                request(`${API_HEAD}/platform/datasource/addschema.do`, {
                   params: {
                     datasourceid,
                     name: values.name,

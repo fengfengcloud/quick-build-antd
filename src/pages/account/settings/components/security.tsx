@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { Card, Form, List, message, Modal } from 'antd';
 import Password from 'antd/lib/input/Password';
 import { ValidateStatus } from 'antd/lib/form/FormItem';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 
 const SecurityView = ({ user, dispatch }: { user: any; dispatch: Dispatch }) => {
@@ -56,7 +56,7 @@ const SecurityView = ({ user, dispatch }: { user: any; dispatch: Dispatch }) => 
   const submitChange = () => {
     form.validateFields().then((values) => {
       setConfirmLoading(true);
-      request('/api/platform/systemframe/changepassword.do', {
+      request(`${API_HEAD}/platform/systemframe/changepassword.do`, {
         method: 'post',
         data: serialize({
           oldPassword: values.oldPassword,

@@ -141,7 +141,7 @@ export const fetchObjectRecord = async (params: any) => {
 /// ///////////////////////
 export const saveOrUpdateRecordRequestPayload = async (params: any) => {
   return new Promise((resolve) => {
-    request('/api/platform/dataobject/saveorupdate.do', {
+    request(`${API_HEAD}/platform/dataobject/saveorupdate.do`, {
       params: {
         objectname: params.moduleName,
         opertype: params.opertype === 'insert' ? 'new' : params.opertype,
@@ -166,7 +166,7 @@ export const saveOrUpdateRecord = async (params: any) => {
     }
   });
   return new Promise((resolve) => {
-    request('/api/platform/dataobject/saveorupdatedata.do', {
+    request(`${API_HEAD}/platform/dataobject/saveorupdatedata.do`, {
       params: {
         objectname: params.moduleName,
         opertype: params.opertype === 'insert' ? 'new' : params.opertype,
@@ -182,7 +182,7 @@ export const saveOrUpdateRecord = async (params: any) => {
 
 // 删除模块的一条记录
 export const deleteModuleRecord = async (params: any) => {
-  return request('/api/platform/dataobject/remove.do', {
+  return request(`${API_HEAD}/platform/dataobject/remove.do`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     params: {
@@ -201,7 +201,7 @@ export const deleteModuleRecord = async (params: any) => {
 //   titles : grid.getSelectionTitleTpl().join("~~")
 // },
 export const deleteModuleRecords = async (params: any) => {
-  return request('/api/platform/dataobject/removerecords.do', {
+  return request(`${API_HEAD}/platform/dataobject/removerecords.do`, {
     method: 'POST',
     body: serialize(params),
   });
@@ -271,7 +271,7 @@ export const downloadGridExcel = async (params: any) => {
   });
   const form = window.document.createElement('form');
   form.method = 'post';
-  form.action = '/api/platform/dataobjectexport/exporttoexcel.do';
+  form.action = `${API_HEAD}/platform/dataobjectexport/exporttoexcel.do`;
   children.forEach((child) => form.appendChild(child));
   document.body.appendChild(form);
   form.submit();
@@ -294,7 +294,7 @@ export const downloadRecordExcel = async (params: any) => {
   });
   const form = window.document.createElement('form');
   form.method = 'post';
-  form.action = '/api/platform/dataobjectexport/exportexcelscheme.do';
+  form.action = `${API_HEAD}/platform/dataobjectexport/exportexcelscheme.do`;
   children.forEach((child) => form.appendChild(child));
   document.body.appendChild(form);
   form.submit();
@@ -309,7 +309,7 @@ export const fetchNavigateTreeData = async (params: any) => {
     reverseOrder: 0,
     parentFilter: null,
   });
-  return request('/api/platform/navigatetree/fetchnavigatedata.do', {
+  return request(`${API_HEAD}/platform/navigatetree/fetchnavigatedata.do`, {
     params,
   });
 };
@@ -322,7 +322,7 @@ export const fetchNavigateTreeDataSync = (params: any): any => {
     reverseOrder: 0,
     parentFilter: null,
   });
-  return syncRequest('/api/platform/navigatetree/fetchnavigatedata.do', {
+  return syncRequest(`${API_HEAD}/platform/navigatetree/fetchnavigatedata.do`, {
     params,
   });
 };

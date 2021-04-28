@@ -1,6 +1,6 @@
 import { getOperateTitle, getSqlparamFilter } from '@/pages/module/grid/filterUtils';
 import { changeUserFilterToParam } from '@/pages/module/UserDefineFilter';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { uuid } from '@/utils/utils';
 import { serialize } from 'object-to-formdata';
 import { ACT_FILTER_DATASOURCE_UPDATE } from '../constants';
@@ -42,7 +42,7 @@ export const refreshFilterCount = (state: DataminingModal, dispatch: Function) =
       default:
     }
   });
-  request('/api/platform/datamining/getfiltercount.do', {
+  request(`${API_HEAD}/platform/datamining/getfiltercount.do`, {
     method: 'POST',
     data: serialize({
       moduleName: state.moduleName,

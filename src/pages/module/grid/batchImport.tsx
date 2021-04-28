@@ -17,6 +17,7 @@ import {
   message,
 } from 'antd';
 import moment from 'moment';
+import { API_HEAD } from '@/utils/request';
 import { ModuleFieldType, ModuleState, ParentFilterModal } from '../data';
 import { getFieldDefine, getGridBatchImport, getModuleInfo } from '../modules';
 import { integerRender } from './columnRender';
@@ -275,7 +276,7 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
                 size="small"
                 type="link"
                 onClick={() => {
-                  download('/api/platform/dataobjectimport/downloadimporttemplate.do', {
+                  download(`${API_HEAD}/platform/dataobjectimport/downloadimporttemplate.do`, {
                     objectid: moduleName,
                   });
                 }}

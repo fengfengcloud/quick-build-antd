@@ -275,7 +275,7 @@ const FormComponent = () => {
       message.warn('请录入模块中文名称！');
       return;
     }
-    request('/api/platform/database/importtableorview.do', {
+    request(`${API_HEAD}/platform/database/importtableorview.do`, {
       params: {
         schema,
         tablename: selected,
@@ -300,7 +300,7 @@ const FormComponent = () => {
 
   // 获取数据库未导入的表和视图
   const getTableViews = (aschema: string | null) => {
-    request('/api/platform/database/getnotimporttableview.do', {
+    request(`${API_HEAD}/platform/database/getnotimporttableview.do`, {
       params: {
         schema: aschema,
       },
@@ -357,7 +357,7 @@ const FormComponent = () => {
             <Tooltip title="打包下载当前选中数据库的Java Bean文件。">
               <Button
                 onClick={() => {
-                  download('/api/platform/database/downloadbeanfiles.do', {
+                  download(`${API_HEAD}/platform/database/downloadbeanfiles.do`, {
                     schemeName: schema,
                   });
                 }}
@@ -413,13 +413,13 @@ const FormComponent = () => {
   );
 
   useEffect(() => {
-    request('/api/platform/database/getschemas.do').then((response: any[]) => {
+    request(`${API_HEAD}/platform/database/getschemas.do`).then((response: any[]) => {
       setSchemes(response.map(({ text }) => ({ label: text, value: text })));
       form.setFieldsValue({ schema: response[0].text });
       getTableViews(null);
     });
 
-    request('/api/platform/systemcommon/getobjectgroups.do').then((response: any[]) => {
+    request(`${API_HEAD}/platform/systemcommon/getobjectgroups.do`).then((response: any[]) => {
       setGroups(response.map(({ text, value }) => ({ label: text, value })));
     });
   }, []);
@@ -440,7 +440,7 @@ const refreshFieldsInDataobjectFields = (params: ActionParamsModal) => {
   }
   const title = filter.text;
   const objectid = filter.id;
-  request('/api/platform/database/refreshtablefields.do', {
+  request(`${API_HEAD}/platform/database/refreshtablefields.do`, {
     method: 'POST',
     data: serialize({
       objectid,
@@ -472,7 +472,7 @@ export const refreshFields = (params: ActionParamsModal) => {
   if (moduleName === 'FDataobjectfield') refreshFieldsInDataobjectFields(params);
   const { title } = record;
   const { objectid } = record;
-  request('/api/platform/database/refreshtablefields.do', {
+  request(`${API_HEAD}/platform/database/refreshtablefields.do`, {
     method: 'POST',
     data: serialize({
       objectid,

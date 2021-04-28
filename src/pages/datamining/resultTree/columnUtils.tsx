@@ -5,7 +5,7 @@ import { DoubleLeftOutlined, DoubleRightOutlined, ToTopOutlined } from '@ant-des
 import { apply } from '@/utils/utils';
 import { changeUserFilterToParam } from '@/pages/module/UserDefineFilter';
 import { serialize } from 'object-to-formdata';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { getSqlparamFilter } from '@/pages/module/grid/filterUtils';
 import { findParentLastLevel, getAggregateFieldNames } from '../schemeUtils';
 import { DataminingModal, HeaderCellType } from '../data';
@@ -435,7 +435,7 @@ export const getFieldColumnWithGroup = async (
     });
   }
   // 取得当前所选分组字段的所有值，限定在 condition的条件下
-  const columns: any[] = await request('/api/platform/datamining/fetchdata.do', {
+  const columns: any[] = await request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
     method: 'POST',
     params: {
       moduleName_: moduleName,

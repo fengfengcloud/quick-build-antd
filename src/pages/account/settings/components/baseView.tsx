@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Dispatch } from 'redux';
 import { Button, Card, Col, Form, Input, message, Row, Select, Modal, Typography } from 'antd';
 import { apply, applyIf } from '@/utils/utils';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import ImageField from '@/pages/module/form/field/ImageField';
 import { serialize } from 'object-to-formdata';
 import PhoneView from './PhoneView';
@@ -48,7 +48,7 @@ const BaseView = ({ personnel, dispatch }: { personnel: any; dispatch: Dispatch 
       Object.keys(values).forEach((key) => {
         if (values[key] === undefined) values[key] = null;
       });
-      request('/api/platform/systemframe/savepersonnelinfo.do', {
+      request(`${API_HEAD}/platform/systemframe/savepersonnelinfo.do`, {
         method: 'POST',
         data: serialize({ data: JSON.stringify(values) }),
       })

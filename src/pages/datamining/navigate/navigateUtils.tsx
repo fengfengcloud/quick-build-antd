@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { message, Typography } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { DragPreviewImage, useDrag, useDrop } from 'react-dnd';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 import PinyinMatch from 'pinyin-match';
 import { getSqlparamFilter } from '@/pages/module/grid/filterUtils';
@@ -127,7 +127,7 @@ export const expandNavigateRowWithGroup = ({
     parentConditions.push(`${record.groupfieldid}=${record.value}`);
     record = record.parentNode;
   } while (record);
-  request('/api/platform/datamining/fetchdata.do', {
+  request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
     method: 'POST',
     params: {
       moduleName_: moduleName,
@@ -336,7 +336,7 @@ export const fetchNavigateData = async (
   parentConditions: string[],
 ) => {
   const { moduleName, filters } = state;
-  return request('/api/platform/datamining/fetchdata.do', {
+  return request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
     method: 'POST',
     params: {
       moduleName_: moduleName,

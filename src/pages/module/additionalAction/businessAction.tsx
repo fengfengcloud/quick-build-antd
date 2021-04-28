@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Button, message, Modal } from 'antd';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { getMenuAwesomeIcon, showResultInfo } from '@/utils/utils';
 import { ModuleModal, ModuleState, ParentFormModal, ParentFilterModal } from '../data';
@@ -48,7 +48,7 @@ export const agreementPlanAutoCreate = (params: ActionParamsModal) => {
   // operator: "="
   // text: "asfasfadfdfdss这是国际电子商务平台土建施工平台的的施工合同"
   const text = `『${parentfilter.text}』`;
-  request('/api/pm/plan/autoplan.do', {
+  request(`${API_HEAD}/pm/plan/autoplan.do`, {
     params: {
       agreementId: parentfilter.fieldvalue,
     },
@@ -85,7 +85,7 @@ export const agreementPlanAutoBalance = (params: ActionParamsModal) => {
     return;
   }
   const text = `『${parentfilter.text}』`;
-  request('/api/pm/plan/autobalance.do', {
+  request(`${API_HEAD}/pm/plan/autobalance.do`, {
     params: {
       agreementId: parentfilter.fieldvalue,
     },
@@ -127,7 +127,7 @@ export const agreementPlanbalanceByRecord = (params: ActionParamsModal) => {
     icon: <QuestionCircleOutlined />,
     onOk() {
       const text = `『${parentfilter.text}』`;
-      request('/api/pm/plan/balancebyrecord.do', {
+      request(`${API_HEAD}/pm/plan/balancebyrecord.do`, {
         params: {
           planId: record[PLANID],
         },
@@ -327,7 +327,7 @@ export const agreementFiledButton = (params: ActionParamsModal) => {
             icon: <QuestionCircleOutlined />,
             width: 500,
             onOk() {
-              request('/api/pm/agreement/filed.do', {
+              request(`${API_HEAD}/pm/agreement/filed.do`, {
                 params: {
                   agreementId: record[primarykey],
                 },

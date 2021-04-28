@@ -406,7 +406,7 @@ export const startProcess = (moduleInfo: ModuleModal, record: any, dispatch: Dis
   const moduleName = moduleInfo.objectname;
   const id = record[moduleInfo.primarykey];
   const name = record[moduleInfo.namefield];
-  request('/api/platform/workflow/runtime/start.do', {
+  request(`${API_HEAD}/platform/workflow/runtime/start.do`, {
     params: {
       objectName: moduleName,
       id,
@@ -448,7 +448,7 @@ const cancelProcess = (moduleName: string, record: any, dispatch: Dispatch) => {
   }
   const id = record[moduleInfo.primarykey];
   const name = record[moduleInfo.namefield];
-  request('/api/platform/workflow/runtime/cancel.do', {
+  request(`${API_HEAD}/platform/workflow/runtime/cancel.do`, {
     params: {
       objectName: moduleName,
       id,
@@ -488,7 +488,7 @@ export const pauseProcess = (moduleInfo: ModuleModal, record: any, dispatch: Dis
   const moduleName = moduleInfo.objectname;
   const id = record[moduleInfo.primarykey];
   const name = record[moduleInfo.namefield];
-  request('/api/platform/workflow/runtime/pause.do', {
+  request(`${API_HEAD}/platform/workflow/runtime/pause.do`, {
     params: {
       objectName: moduleName,
       id,

@@ -4,7 +4,7 @@ import request, { API_HEAD, syncRequest } from '@/utils/request';
  * 取得系统信息
  */
 export async function query(): Promise<any> {
-  return request('/api/login/getsysteminfo.do');
+  return request(`${API_HEAD}/login/getsysteminfo.do`);
 }
 
 /**

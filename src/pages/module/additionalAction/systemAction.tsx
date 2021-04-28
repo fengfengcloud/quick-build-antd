@@ -3,7 +3,7 @@ import { message, Modal } from 'antd';
 import { Dispatch } from 'redux';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { DrawerProps } from 'antd/lib/drawer';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { apply, download } from '@/utils/utils';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import { ModuleModal, ModuleState, AdditionFunctionModal } from '../data';
@@ -117,7 +117,7 @@ const exportExcelTemplate = (params: ActionParamsModal) => {
   const { moduleInfo, records } = params;
   const { primarykey } = moduleInfo;
   const fieldids = records?.map((record: any) => record[primarykey]);
-  download('/api/platform/dataobjectexport/exportexceltemplate.do', {
+  download(`${API_HEAD}/platform/dataobjectexport/exportexceltemplate.do`, {
     fieldids,
   });
 };
@@ -264,7 +264,7 @@ const deployWorkFlow = (params: ActionParamsModal) => {
     dispatch,
   } = params;
   const workflowid = record[primarykey];
-  request('/api/platform/workflowdesign/deploy.do', {
+  request(`${API_HEAD}/platform/workflowdesign/deploy.do`, {
     params: {
       workflowid,
     },

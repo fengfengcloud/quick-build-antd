@@ -23,7 +23,7 @@ import {
 } from '@ant-design/icons';
 import { deleteSecond, showResultInfo } from '@/utils/utils';
 import { isAdmin, isAdministrator } from '@/utils/Authorized';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { ModuleModal, ModuleState } from '../data';
 import { getModuleInfo } from '../modules';
 
@@ -110,7 +110,7 @@ const changeAuditUser = (moduleState: ModuleState, record: any, dispatch: Dispat
     ),
     onOk: () => {
       if (usercode) {
-        request('/api/platform/audit/setaudituser.do', {
+        request(`${API_HEAD}/platform/audit/setaudituser.do`, {
           params: {
             moduleName,
             usercode,
@@ -211,7 +211,7 @@ const getCanStartPopover = ({
 
 export const auditRecord = (record: any, moduleInfo: ModuleModal, dispatch: Dispatch) => {
   const moduleName = moduleInfo.modulename;
-  request('/api/platform/audit/doaudit.do', {
+  request(`${API_HEAD}/platform/audit/doaudit.do`, {
     params: {
       moduleName,
       recordId: record[moduleInfo.primarykey],
@@ -241,7 +241,7 @@ export const auditRecord = (record: any, moduleInfo: ModuleModal, dispatch: Disp
 
 export const cancelAudit = (record: any, moduleInfo: ModuleModal, dispatch: Dispatch) => {
   const moduleName = moduleInfo.modulename;
-  request('/api/platform/audit/cancel.do', {
+  request(`${API_HEAD}/platform/audit/cancel.do`, {
     params: {
       moduleName,
       recordId: record[moduleInfo.primarykey],

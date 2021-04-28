@@ -1,4 +1,4 @@
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { apply } from '@/utils/utils';
 import { message } from 'antd';
 import { serialize } from 'object-to-formdata';
@@ -37,7 +37,7 @@ export const refreshRowData = async (state: DataminingModal, record: any, isrefr
     if (key.indexOf('jf') === 0) apply(record, { [key]: null });
   });
   const { moduleName, filters, schemeState: currentScheme } = state;
-  const result = await request('/api/platform/datamining/fetchdata.do', {
+  const result = await request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
     method: 'POST',
     params: {
       moduleName_: moduleName,

@@ -29,6 +29,7 @@ import { UploadFile } from 'antd/es/upload/interface';
 import Zmage, { IStaticSetParams } from 'react-zmage';
 import { UploadListType } from 'antd/lib/upload/interface';
 import { Dispatch } from 'redux';
+import { API_HEAD } from '@/utils/request';
 import { deleteModuleRecord } from '../service';
 import { AttachmentModal, ModuleModal } from '../data';
 import styles from '../grid/columnFactory.less';
@@ -70,7 +71,7 @@ const getImageType = (fileext: string): string => {
  * @param isLink       是否要 <a> 标签
  */
 
-const baseurl = '/api/platform/attachment';
+const baseurl = `${API_HEAD}/platform/attachment`;
 let openInNewWindowGlobal = false; // 打开PDF或者可直接预览的文件时是否在新的标签页中
 
 interface AttachmentRenderProps {

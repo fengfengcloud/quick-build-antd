@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { API_HEAD } from '@/utils/request';
 import { getLocalMonetaryPosition, getLocalMonetaryType, MD5 } from '@/utils/utils';
 import { DataminingModal, SchemeSettingModal } from './data';
 import { getMonetary } from '../module/grid/monetary';
@@ -472,7 +473,7 @@ export const exportExcelOrPdf = (state: DataminingModal, topdf: boolean) => {
   });
   const form = window.document.createElement('form');
   form.method = 'post';
-  form.action = '/api/platform/datamining/exporttoexcel.do';
+  form.action = `${API_HEAD}/platform/datamining/exporttoexcel.do`;
   children.forEach((child) => form.appendChild(child));
   document.body.appendChild(form);
   form.submit();

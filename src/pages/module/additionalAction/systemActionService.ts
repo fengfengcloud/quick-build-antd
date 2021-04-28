@@ -27,7 +27,7 @@ export async function queryResetUserPassword(params: any) {
  * @param params
  */
 export async function queryUserAllLimits({ userid }: { userid: string }) {
-  return request('/api/platform/userrole/getuseralllimit.do', {
+  return request(`${API_HEAD}/platform/userrole/getuseralllimit.do`, {
     params: {
       userid,
     },
@@ -39,7 +39,7 @@ export async function queryUserAllLimits({ userid }: { userid: string }) {
  * @param param0
  */
 export async function queryUserLimits({ userid }: { userid: string }) {
-  return request('/api/platform/userrole/getuserlimit.do', {
+  return request(`${API_HEAD}/platform/userrole/getuserlimit.do`, {
     params: {
       userid,
       addall: true,
@@ -52,7 +52,7 @@ export async function queryUserLimits({ userid }: { userid: string }) {
  * @param param0
  */
 export async function saveUserLimits(params: any) {
-  return request('/api/platform/userrole/saveuserlimit.do', {
+  return request(`${API_HEAD}/platform/userrole/saveuserlimit.do`, {
     method: 'POST',
     body: serialize(params),
   });
@@ -63,7 +63,7 @@ export async function saveUserLimits(params: any) {
  * @param param0
  */
 export async function queryRoleLimits({ roleid }: { roleid: string }) {
-  return request('/api/platform/userrole/getrolelimit.do', {
+  return request(`${API_HEAD}/platform/userrole/getrolelimit.do`, {
     params: {
       roleid,
     },
@@ -75,7 +75,7 @@ export async function queryRoleLimits({ roleid }: { roleid: string }) {
  * @param param0
  */
 export async function saveRoleLimits(params: any) {
-  return request('/api/platform/userrole/saverolelimit.do', {
+  return request(`${API_HEAD}/platform/userrole/saverolelimit.do`, {
     method: 'POST',
     body: serialize(params),
   });

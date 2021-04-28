@@ -1,5 +1,5 @@
 import React from 'react';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { Alert, message, Modal, Space } from 'antd';
 import { ActionParamsModal } from '../systemAction';
 
@@ -10,7 +10,7 @@ import { ActionParamsModal } from '../systemAction';
  */
 export const deviceCheckOnline = (params: ActionParamsModal) => {
   const { dispatch } = params;
-  request('/api/abcgate/device/checkonline.do', {}).then((response) => {
+  request(`${API_HEAD}/abcgate/device/checkonline.do`, {}).then((response) => {
     if (response.success) {
       dispatch({
         type: 'modules/fetchData',
@@ -47,7 +47,7 @@ export const dispatchEmployeePhoto = (params: ActionParamsModal) => {
     0,
   );
 
-  request('/api/abcgate/class/dispatchemployeephoto.do', {
+  request(`${API_HEAD}/abcgate/class/dispatchemployeephoto.do`, {
     timeout: 10 * 60 * 1000,
     params: {
       classId,

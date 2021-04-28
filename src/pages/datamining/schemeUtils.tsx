@@ -1,5 +1,5 @@
 import React from 'react';
-import request, { syncRequest } from '@/utils/request';
+import request, { API_HEAD, syncRequest } from '@/utils/request';
 import { Form, Input, message, Modal } from 'antd';
 import { serialize } from 'object-to-formdata';
 import { PlusOutlined } from '@ant-design/icons';
@@ -61,7 +61,7 @@ export const saveNewScheme = (state: DataminingModal, dispatch: Function) => {
       </Form>
     ),
     onOk: () => {
-      request('/api/platform/datamining/addscheme.do', {
+      request(`${API_HEAD}/platform/datamining/addscheme.do`, {
         method: 'POST',
         data: serialize({
           moduleName,
@@ -104,7 +104,7 @@ export const saveNewScheme = (state: DataminingModal, dispatch: Function) => {
  */
 export const saveEditScheme = (state: DataminingModal) => {
   const { currentScheme, schemeState } = state;
-  request('/api/platform/datamining/editscheme.do', {
+  request(`${API_HEAD}/platform/datamining/editscheme.do`, {
     method: 'POST',
     data: serialize({
       schemeid: currentScheme.schemeid,
@@ -130,7 +130,7 @@ export const saveEditScheme = (state: DataminingModal) => {
  */
 export const deleteCurrentScheme = (state: DataminingModal, dispatch: Function) => {
   const { currentScheme } = state;
-  request('/api/platform/datamining/deletescheme.do', {
+  request(`${API_HEAD}/platform/datamining/deletescheme.do`, {
     method: 'POST',
     data: serialize({
       schemeid: currentScheme.schemeid,
@@ -154,17 +154,17 @@ export const deleteCurrentScheme = (state: DataminingModal, dispatch: Function) 
  * @param action
  */
 export const fetchDataminingSchemes = (state: DataminingModal): DataminingModal => {
-  const schemes = syncRequest('/api/platform/datamining/getschemes.do', {
+  const schemes = syncRequest(`${API_HEAD}/platform/datamining/getschemes.do`, {
     params: {
       moduleName: state.moduleName,
     },
   });
-  const group = syncRequest('/api/platform/datamining/getexpandgroupfields.do', {
+  const group = syncRequest(`${API_HEAD}/platform/datamining/getexpandgroupfields.do`, {
     params: {
       moduleName: state.moduleName,
     },
   });
-  const fields = syncRequest('/api/platform/datamining/getfieldschemedetail.do', {
+  const fields = syncRequest(`${API_HEAD}/platform/datamining/getfieldschemedetail.do`, {
     params: {
       moduleName: state.moduleName,
     },
@@ -196,7 +196,7 @@ export const currentSchemeChanged = async (state: DataminingModal, dispatch: Fun
   if (state.currentScheme.schemeid) {
     // 读取方案的分组和字段
     // console.log(`准备读取方案：${  state.currentScheme.text}`);
-    const response = await request('/api/platform/datamining/getschemedetail.do', {
+    const response = await request(`${API_HEAD}/platform/datamining/getschemedetail.do`, {
       method: 'POST',
       data: serialize({
         schemeid: state.currentScheme?.schemeid,
@@ -278,7 +278,7 @@ export const getAggregateFieldNames = (fieldGroup: FieldModal[]) => {
 export const fetchRootData = async (state: DataminingModal) => {
   // console.log('读取方案的root行数据');
   const { moduleName, filters, schemeState } = state;
-  return request('/api/platform/datamining/fetchdata.do', {
+  return request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
     method: 'POST',
     params: {
       moduleName_: moduleName,
@@ -304,7 +304,7 @@ export const fetchRecordExpandChildren = async (
 ) => {
   // console.log(`读取记录的展开数据:${  text}`);
   const { moduleName, filters } = state;
-  return request('/api/platform/datamining/fetchdata.do', {
+  return request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
     method: 'POST',
     params: {
       moduleName_: moduleName,

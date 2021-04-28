@@ -12,7 +12,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { apply } from '@/utils/utils';
 import { getTreeRecordByKey } from '@/pages/datamining/utils';
 import { ModuleState } from '../data';
@@ -34,7 +34,7 @@ export const UpdateRecordOrderNoButton: React.FC<Params> = ({ moduleState, dispa
   const resetOrderno = () => {
     const ids: string[] = [];
     dataSource.forEach((record) => ids.push(record[moduleInfo.primarykey]));
-    request('/api/platform/dataobject/updateorderno.do', {
+    request(`${API_HEAD}/platform/dataobject/updateorderno.do`, {
       params: {
         objectid: moduleName,
         ids: ids.join(','),
@@ -69,7 +69,7 @@ export const UpdateRecordOrderNoButton: React.FC<Params> = ({ moduleState, dispa
   const updateOrderno = () => {
     const ids: string[] = [];
     dataSource.forEach((record) => ids.push(record[moduleInfo.primarykey]));
-    request('/api/platform/dataobject/updatepageorderno.do', {
+    request(`${API_HEAD}/platform/dataobject/updatepageorderno.do`, {
       params: {
         objectid: moduleName,
         ids: ids.join(','),
@@ -115,7 +115,7 @@ export const UpdateRecordOrderNoButton: React.FC<Params> = ({ moduleState, dispa
       ? selectRecord[PARENT_RECORD].children
       : dataSource;
     items.forEach((record) => ids.push(record[moduleInfo.primarykey]));
-    request('/api/platform/dataobject/updateorderno.do', {
+    request(`${API_HEAD}/platform/dataobject/updateorderno.do`, {
       params: {
         objectid: moduleName,
         ids: ids.join(','),

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardProps, Col, Row } from 'antd';
 import { getColumnDataIndex } from '@/pages/datamining/utils';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 import { stringifyObjectField } from '@/utils/utils';
 import { PieConfig } from '@ant-design/charts/es/pie';
@@ -60,7 +60,7 @@ const EmployeeTemperaturePie: React.FC<any> = ({
   const fetchData = () => {
     setLoading(true);
     const fields = ['count.*'];
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({

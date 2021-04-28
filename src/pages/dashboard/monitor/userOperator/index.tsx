@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardProps, Col, Radio, Row } from 'antd';
 import { currentUser } from 'umi';
 import { serialize } from 'object-to-formdata';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import moment from 'moment';
 import { stringifyObjectField } from '@/utils/utils';
 import { PieConfig } from '@ant-design/charts/es/pie';
@@ -71,7 +71,7 @@ const UserOperatorPie: React.FC<any> = ({
         }`,
       });
     }
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
@@ -195,7 +195,7 @@ const UserOperatorYearMonthColumn: React.FC = (params) => {
       operator: '=',
       value: currentUser.userid,
     };
-    request('/api/platform/datamining/fetchdata.do', {
+    request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
       method: 'POST',
       data: serialize(
         stringifyObjectField({
