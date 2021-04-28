@@ -1,4 +1,4 @@
-import request, { syncRequest } from '@/utils/request';
+import request, { API_HEAD, syncRequest } from '@/utils/request';
 import { applyIf, apply } from '@/utils/utils';
 import { isMoment } from 'moment';
 import { serialize } from 'object-to-formdata';
@@ -9,7 +9,7 @@ import { DateTimeFormat, generateTreeParent } from './moduleUtils';
 
 // 'GET /api/get_module_info?moduleid=personnel'
 export const queryModuleInfo = async (params: any) => {
-  return request(`/api/platform/module/getmoduleinfo.do`, {
+  return request(`${API_HEAD}/platform/module/getmoduleinfo.do`, {
     method: 'POST',
     body: serialize(params),
   });
@@ -17,7 +17,7 @@ export const queryModuleInfo = async (params: any) => {
 
 // 'GET /api/get_module_info?moduleid=personnel'
 export const querySyncModuleInfo = (moduleName: string): object => {
-  return syncRequest(`/api/platform/module/getmoduleinfo.do`, {
+  return syncRequest(`${API_HEAD}/platform/module/getmoduleinfo.do`, {
     type: 'POST',
     params: { moduleName },
   });
@@ -27,7 +27,7 @@ export const fetchObjectTreeData = async (params: any) => {
   apply(params, {
     start: (params.page - 1) * params.limit,
   });
-  return request(`/api/platform/dataobject/fetchtreedata.do?_dc=${new Date().getTime()}`, {
+  return request(`${API_HEAD}/platform/dataobject/fetchtreedata.do?_dc=${new Date().getTime()}`, {
     method: 'POST',
     params: {
       moduleName_: params.moduleName,
@@ -40,7 +40,7 @@ export const fetchObjectData = async (params: any) => {
   apply(params, {
     start: (params.page - 1) * params.limit,
   });
-  return request(`/api/platform/dataobject/fetchdata.do?_dc=${new Date().getTime()}`, {
+  return request(`${API_HEAD}/platform/dataobject/fetchdata.do?_dc=${new Date().getTime()}`, {
     method: 'POST',
     params: {
       moduleName_: params.moduleName,
@@ -53,7 +53,7 @@ export const fetchObjectDataSync = (params: any) => {
   apply(params, {
     start: (params.page - 1) * params.limit,
   });
-  return syncRequest(`/api/platform/dataobject/fetchdata.do?_dc=${new Date().getTime()}`, {
+  return syncRequest(`${API_HEAD}/platform/dataobject/fetchdata.do?_dc=${new Date().getTime()}`, {
     type: 'POST',
     params,
   });
@@ -110,7 +110,7 @@ export const fetchObjectDataWithState = async (moduleState: ModuleState) => {
  * id:
  */
 export const fetchObjectRecordSync = (params: any) => {
-  return syncRequest(`/api/platform/dataobject/fetchinfo.do?_dc=${new Date().getTime()}`, {
+  return syncRequest(`${API_HEAD}/platform/dataobject/fetchinfo.do?_dc=${new Date().getTime()}`, {
     type: 'POST',
     params,
   });
@@ -124,7 +124,7 @@ export const fetchObjectRecordSync = (params: any) => {
  */
 export const fetchObjectRecord = async (params: any) => {
   return new Promise((resolve) => {
-    request(`/api/platform/dataobject/fetchinfo.do?_dc=${new Date().getTime()}`, {
+    request(`${API_HEAD}/platform/dataobject/fetchinfo.do?_dc=${new Date().getTime()}`, {
       method: 'POST',
       params: {
         moduleName_: params.objectname,
@@ -213,7 +213,7 @@ export const deleteModuleRecords = async (params: any) => {
  * moduleName: moduleName
  */
 export const fetchObjectComboData = (params: any) => {
-  return syncRequest(`/api/platform/dataobject/fetchcombodata.do`, {
+  return syncRequest(`${API_HEAD}/platform/dataobject/fetchcombodata.do`, {
     params,
   });
 };
@@ -224,7 +224,7 @@ export const fetchObjectComboData = (params: any) => {
  * moduleName: moduleName
  */
 export const fetchObjectComboTreeData = (params: any) => {
-  return syncRequest(`/api/platform/dataobject/fetchpickertreedata.do`, {
+  return syncRequest(`${API_HEAD}/platform/dataobject/fetchpickertreedata.do`, {
     params,
   });
 };
@@ -235,7 +235,7 @@ export const fetchObjectComboTreeData = (params: any) => {
  * moduleName: moduleName
  */
 export const fetchObjectComboTreePathData = (params: any) => {
-  return syncRequest(`/api/platform/dataobject/fetchtreeselectpathdata.do`, {
+  return syncRequest(`${API_HEAD}/platform/dataobject/fetchtreeselectpathdata.do`, {
     params,
   });
 };
@@ -329,7 +329,7 @@ export const fetchNavigateTreeDataSync = (params: any): any => {
 
 // 'GET /api/get_module_info?moduleid=personnel'
 export const fetchChildModuleData = async (params: any) => {
-  return request(`/api/platform/dataobject/fetchchilddata.do`, {
+  return request(`${API_HEAD}/platform/dataobject/fetchchilddata.do`, {
     method: 'POST',
     body: serialize(params),
   });
@@ -337,7 +337,7 @@ export const fetchChildModuleData = async (params: any) => {
 
 // 新建记录时取得缺省值
 export const getAjaxNewDefault = async (params: any) => {
-  return request(`/api/platform/dataobject/getnewdefault.do`, {
+  return request(`${API_HEAD}/platform/dataobject/getnewdefault.do`, {
     method: 'POST',
     body: serialize(params),
   });
@@ -345,7 +345,7 @@ export const getAjaxNewDefault = async (params: any) => {
 
 // 树形结构中，将一个节点放在另一个节点之下
 export const updateParentKey = async (params: any) => {
-  return request(`/api/platform/dataobject/updateparentkey.do`, {
+  return request(`${API_HEAD}/platform/dataobject/updateparentkey.do`, {
     method: 'POST',
     body: serialize(params),
   });

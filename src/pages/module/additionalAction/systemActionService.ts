@@ -1,11 +1,11 @@
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 /**
  * 根据传入的人员id,生成该人员的用户
  * @param params
  */
 export async function queryCreatePersonnelUser(params: any) {
-  return request(`/api/platform/systemframe/createpersonnaluser.do`, {
+  return request(`${API_HEAD}/platform/systemframe/createpersonnaluser.do`, {
     method: 'POST',
     params,
   });
@@ -16,7 +16,7 @@ export async function queryCreatePersonnelUser(params: any) {
  * @param params
  */
 export async function queryResetUserPassword(params: any) {
-  return request(`/api/platform/systemframe/resetpassword.do`, {
+  return request(`${API_HEAD}/platform/systemframe/resetpassword.do`, {
     method: 'POST',
     params,
   });

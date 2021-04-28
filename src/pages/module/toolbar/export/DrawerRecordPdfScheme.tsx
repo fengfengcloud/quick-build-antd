@@ -1,3 +1,4 @@
+import { API_HEAD } from '@/utils/request';
 import { getPdfjsUrl, isSafari, onOpenInNewWindow, urlEncode } from '@/utils/utils';
 import { FilePdfOutlined, SelectOutlined } from '@ant-design/icons';
 import { Drawer, Tooltip } from 'antd';
@@ -30,7 +31,7 @@ export const DrawerRecordPdfScheme: React.FC<DrawerRecordPdfSchemeParam> = ({
       inline: true,
     };
     // 使用浏览器内置pdf的  url
-    const url = `/api/platform/dataobjectexport/exportexcelscheme.do?${urlEncode(params)}`;
+    const url = `${API_HEAD}/platform/dataobjectexport/exportexcelscheme.do?${urlEncode(params)}`;
     // 使用pdfjs的  pdfjsurl
     return getPdfjsUrl(url, `${scheme.title}.pdf`);
   };

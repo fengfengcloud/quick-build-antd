@@ -20,7 +20,7 @@ import {
 } from 'antd';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import { EditOutlined, ImportOutlined } from '@ant-design/icons';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { serialize } from 'object-to-formdata';
 import { download } from '@/utils/utils';
@@ -119,7 +119,7 @@ const FormComponent = () => {
     });
     if (selectedTableViewName) {
       request(
-        `/api/platform/database/getfields.do?schema=${
+        `${API_HEAD}/platform/database/getfields.do?schema=${
           schema || ''
         }&tablename=${selectedTableViewName}`,
       ).then((response: any) => {

@@ -1,4 +1,4 @@
-import request, { syncRequest } from '@/utils/request';
+import request, { API_HEAD, syncRequest } from '@/utils/request';
 
 /**
  * 取得系统信息
@@ -11,5 +11,8 @@ export async function query(): Promise<any> {
  * 取得系统菜单
  */
 export function getSystemMenu(): any {
-  return syncRequest(`/api/platform/systemframe/getmenutree.do`,{type:'GET',params :{}});
+  return syncRequest(`${API_HEAD}/platform/systemframe/getmenutree.do`, {
+    type: 'GET',
+    params: {},
+  });
 }

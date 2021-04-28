@@ -1,17 +1,17 @@
-import request, { syncRequest } from '@/utils/request';
+import request, { API_HEAD, syncRequest } from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 
 const DC = '_dc';
 
 export async function queryDicrionaryDefine(params: any) {
-  return request(`/api/dictionary/getdictionary.do`, {
+  return request(`${API_HEAD}/dictionary/getdictionary.do`, {
     method: 'POST',
     body: serialize(params),
   });
 }
 
 export async function queryDictionaryData(params: any) {
-  return request(`/api/dictionary/getDictionaryComboData.do`, {
+  return request(`${API_HEAD}/dictionary/getDictionaryComboData.do`, {
     params: {
       ...params,
       [DC]: new Date().getTime(),
@@ -20,19 +20,19 @@ export async function queryDictionaryData(params: any) {
 }
 
 export function querySyncDicrionaryDefine(params: any): any {
-  return syncRequest(`/api/dictionary/getdictionary.do`, {
+  return syncRequest(`${API_HEAD}/dictionary/getdictionary.do`, {
     params,
   });
 }
 
 export function querySyncDictionaryData(params: any): any {
-  return syncRequest(`/api/dictionary/getDictionaryComboData.do`, {
+  return syncRequest(`${API_HEAD}/dictionary/getDictionaryComboData.do`, {
     params,
   });
 }
 
 export function querySyncPropertys(params: any): any {
-  return syncRequest(`/api/dictionary/getPropertyComboData.do`, {
+  return syncRequest(`${API_HEAD}/dictionary/getPropertyComboData.do`, {
     params,
   });
 }

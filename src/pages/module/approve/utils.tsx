@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Dispatch } from 'redux';
 import { Steps, Popover, message, Popconfirm, Modal, Card, Tooltip, Space } from 'antd';
 import { currentUser } from 'umi';
-import request, { syncRequest } from '@/utils/request';
+import request, { API_HEAD, syncRequest } from '@/utils/request';
 import {
   QuestionCircleOutlined,
   PlayCircleOutlined,
@@ -178,7 +178,7 @@ const claimOrUnClaim = (moduleName: string, record: any, dispatch: Dispatch) => 
       act = 'unclaim';
       text = '退回';
     }
-    request(`/api/platform/workflow/runtime/${act}.do`, {
+    request(`${API_HEAD}/platform/workflow/runtime/${act}.do`, {
       params: {
         objectName: moduleName,
         id,
@@ -620,7 +620,7 @@ const getSVGFromProcDefId = (procDefId: string): string => {
   if (!procDefIdSVGMap.has(procDefId)) {
     procDefIdSVGMap.set(
       procDefId,
-      syncRequest(`/api/platform/workflowdesign/getsvg.do`, { params: { procDefId } }),
+      syncRequest(`${API_HEAD}/platform/workflowdesign/getsvg.do`, { params: { procDefId } }),
     );
   }
   return procDefIdSVGMap.get(procDefId) || '';

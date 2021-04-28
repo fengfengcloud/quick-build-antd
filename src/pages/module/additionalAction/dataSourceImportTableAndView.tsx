@@ -19,7 +19,7 @@ import {
   Typography,
 } from 'antd';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { EditOutlined } from '@ant-design/icons';
 import { apply } from '@/utils/utils';
@@ -91,7 +91,7 @@ export const dataSourceImportTableAndView = (params: ActionParamsModal) => {
       });
       if (selectedTableViewName) {
         request(
-          `/api/platform/datasource/getfields.do?databaseschemeid=${databaseschemeid}&tablename=${selectedTableViewName}`,
+          `${API_HEAD}/platform/datasource/getfields.do?databaseschemeid=${databaseschemeid}&tablename=${selectedTableViewName}`,
         ).then((response: any) => {
           setFieldSource(response);
         });

@@ -11,6 +11,7 @@ import { ConnectState } from '@/models/connect';
 import { SystemInfo } from '@/models/systeminfo';
 import { decryptString } from '@/utils/utils';
 import { WarningOutlined } from '@ant-design/icons';
+import { API_HEAD } from '@/utils/request';
 import LoginFrom from './components/Login';
 import styles from './style.less';
 
@@ -19,7 +20,7 @@ interface LoginProps {
   dispatch: Dispatch<AnyAction>;
   userLogin: StateType;
   submitting?: boolean;
-  systemInfo: SystemInfo;
+  systemInfo?: SystemInfo;
 }
 
 const LoginMessage: React.FC<{
@@ -39,18 +40,12 @@ const renderMessage = (content: string) => (
   <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />
 );
 
-const Login: React.FC<LoginProps> = (props) => {
+const Login: React.FC<LoginProps> = ({ dispatch, userLogin, submitting, systemInfo }) => {
   const {
-    dispatch,
-    userLogin,
-    submitting,
-    systemInfo: {
-      systeminfo: { forgetpassword = '' },
-    },
-    systemInfo: { loginsettinginfo },
-  } = props;
+    systeminfo: { forgetpassword = '' },
+    loginsettinginfo,
+  } = systemInfo!;
   const { alwaysneedidentifingcode, needidentifingcode, allowsavepassword } = loginsettinginfo;
-
   const { status, errorcode, type: loginType } = userLogin;
   const [type, setType] = useState<string>('account');
   const [savePassword, setSavePassword] = useState<boolean>(
@@ -58,7 +53,6 @@ const Login: React.FC<LoginProps> = (props) => {
   );
   const [identifingcodeT] = useState<number>(new Date().getTime());
   const loginValidationCodeId = 'login_validation_code';
-
   const handleSubmit = (values: LoginParamsType) => {
     dispatch({
       type: 'login/login',
@@ -143,7 +137,7 @@ const Login: React.FC<LoginProps> = (props) => {
                   id={loginValidationCodeId}
                   alt=""
                   style={{ height: '38px', width: '100px', paddingLeft: 10 }}
-                  src={`/api/login/validatecode.do?t=${identifingcodeT}`}
+                  src={`${API_HEAD}/login/validatecode.do?t=${identifingcodeT}`}
                 />
               </Col>
               <Col span={6}>
@@ -151,7 +145,7 @@ const Login: React.FC<LoginProps> = (props) => {
                   type="link"
                   onClick={() => {
                     const node: any = document.getElementById(loginValidationCodeId);
-                    node.src = `/api/login/validatecode.do?t=${new Date().getTime()}`;
+                    node.src = `${API_HEAD}/login/validatecode.do?t=${new Date().getTime()}`;
                   }}
                 >
                   换一张

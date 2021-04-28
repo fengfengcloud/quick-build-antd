@@ -1,9 +1,8 @@
 import React from 'react';
-
 import { Button, Menu, message, Tooltip } from 'antd';
 import { FilePdfOutlined, FileTextOutlined, SelectOutlined } from '@ant-design/icons';
-
 import { getPdfjsUrl, onOpenInNewWindow, urlEncode } from '@/utils/utils';
+import { API_HEAD } from '@/utils/request';
 import { ModuleState } from '../../data';
 import { downloadRecordExcel } from '../../service';
 import { getModuleInfo } from '../../modules';
@@ -48,7 +47,7 @@ const ExportRecordScheme = ({
       inline: openinwindow,
     };
     if (openinwindow) {
-      const url = `/api/platform/dataobjectexport/exportexcelscheme.do?${urlEncode(params)}`;
+      const url = `${API_HEAD}/platform/dataobjectexport/exportexcelscheme.do?${urlEncode(params)}`;
       const windowtitle = `${
         selectedTextValue[0].text +
         (selectedRowKeys.length === 1 ? '' : `等${selectedTextValue.length}条记录`)

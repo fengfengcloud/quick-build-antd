@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Card, Menu, message, Space } from 'antd';
 import { PrinterOutlined } from '@ant-design/icons';
+import { API_HEAD } from '@/utils/request';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import { ModuleState, RecordPrintSchemeModal } from '../../data';
 import { getModuleInfo } from '../../modules';
@@ -71,7 +72,7 @@ export const execPrintRecordScheme = ({
           title="_printrecord_"
           id="_printrecord_"
           src={
-            `/api/platform/dataobjectexport/printrecord.do?` +
+            `${API_HEAD}/platform/dataobjectexport/printrecord.do?` +
             `moduleName=${moduleName}&schemeId=${scheme.schemeid}&` +
             `id=${record[moduleInfo.primarykey]}&title=${moduleInfo.title}` +
             `&t=${new Date().getTime()}`

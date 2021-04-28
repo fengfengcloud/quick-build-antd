@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Select } from 'antd';
+import { API_HEAD } from '@/utils/request';
 import querystring from 'querystring';
 import { request } from 'umi';
 import { FormFieldProps } from '../formFactory';
@@ -45,7 +46,7 @@ export const ManyToOneRemote: React.FC<FormFieldProps> = (params) => {
         mainlinkage: true,
         query: value,
       });
-      request(`/api/platform/dataobject/fetchcombodata.do?${str}`).then((result: any) => {
+      request(`${API_HEAD}/platform/dataobject/fetchcombodata.do?${str}`).then((result: any) => {
         if (currentValue === value) {
           callback(result);
         }

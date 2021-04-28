@@ -1,4 +1,4 @@
-import request from '@/utils/request';
+import request, { API_HEAD } from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 
 export interface LoginParamsType {
@@ -40,5 +40,5 @@ export async function fakeAccountLogout() {
  * @param mobile 手机号码
  */
 export async function getFakeCaptcha(mobile: string) {
-  return request(`/api/login/captcha?mobile=${mobile}`);
+  return request(`${API_HEAD}/login/captcha?mobile=${mobile}`);
 }
