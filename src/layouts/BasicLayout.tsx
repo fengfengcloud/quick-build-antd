@@ -30,6 +30,7 @@ import { getSystemMenu } from '@/services/systeminfo';
 import { dataminingList } from '@/pages/dashboard/analysis';
 import { PopoverDescriptionWithId } from '@/pages/module/descriptions';
 import { getModuleInfo } from '@/pages/module/modules';
+import { API_HEAD } from '@/utils/request';
 import styles from './BasicLayout.less';
 
 const noMatch = (
@@ -358,7 +359,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
 
   return (
     <ProLayout
-      logo="/api/login/systemfavicon.do"
+      logo={`${API_HEAD}/login/systemfavicon.do`}
       // formatMessage={formatMessage}
       // menuHeaderRender={(logoDom, titleDom) => (
       //   <Link to="/">

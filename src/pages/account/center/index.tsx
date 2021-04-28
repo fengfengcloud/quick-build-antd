@@ -14,6 +14,7 @@ import { connect } from 'dva';
 import { ModalState } from '@/models/accountCenter';
 import { DisplayUserLimits } from '@/pages/module/additionalAction/userLimit';
 import DetailGrid, { DetailGridPrpos } from '@/pages/module/detailGrid';
+import { API_HEAD } from '@/utils/request';
 import { currentUser } from 'umi';
 import styles from './Center.less';
 import { CurrentUser } from './data.d';
@@ -204,7 +205,7 @@ class Center extends Component<CenterProps, CenterState> {
                   <div className={styles.avatarHolder}>
                     <img
                       alt="用户头像"
-                      src="/api/platform/systemframe/getuserfavicon.do"
+                      src={`${API_HEAD}/platform/systemframe/getuserfavicon.do`}
                       style={{ borderRadius: '50%' }}
                     />
                     <div className={styles.name}>{personnel.name}</div>

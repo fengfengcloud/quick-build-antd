@@ -4,6 +4,7 @@ import { useIntl, ConnectProps, connect } from 'umi';
 import React, { useEffect } from 'react';
 import { ConnectState } from '@/models/connect';
 import { SystemInfo } from '@/models/systeminfo';
+import { API_HEAD } from '@/utils/request';
 import { footerRender } from './BasicLayout';
 import styles from './UserLayout.less';
 
@@ -11,7 +12,7 @@ export interface UserLayoutProps extends Partial<ConnectProps> {
   breadcrumbNameMap: {
     [path: string]: MenuDataItem;
   };
-  systemInfo: SystemInfo;
+  systemInfo?: SystemInfo;
 }
 
 const UserLayout: React.FC<UserLayoutProps> = (props) => {
@@ -42,7 +43,7 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
       type: 'user/fetchCurrent',
     });
     // 如果系统信息还没有读取的话，则要去读取信息
-    if (!systemInfo.company.companyname) {
+    if (!systemInfo!.company.companyname) {
       dispatch({
         type: 'systemInfo/fetch',
         payload: {
@@ -62,10 +63,10 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
         <div className={styles.content}>
           <div className={styles.top}>
             <div className={styles.header}>
-              <img alt="logo" className={styles.logo} src="/api/login/systemfavicon.do" />
-              <span className={styles.title}>{systemInfo.systeminfo.systemname}</span>
+              <img alt="logo" className={styles.logo} src={`${API_HEAD}/login/systemfavicon.do`} />
+              <span className={styles.title}>{systemInfo!.systeminfo.systemname}</span>
             </div>
-            <div className={styles.desc}>{systemInfo.systeminfo.systemaddition}</div>
+            <div className={styles.desc}>{systemInfo!.systeminfo.systemaddition}</div>
           </div>
           {children}
         </div>

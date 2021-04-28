@@ -4,6 +4,7 @@ import React from 'react';
 import { history, ConnectProps, connect } from 'umi';
 import { ConnectState } from '@/models/connect';
 import { CurrentUser } from '@/models/user';
+import { API_HEAD } from '@/utils/request';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 
@@ -93,7 +94,7 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
           <Avatar
             size="small"
             className={styles.avatar}
-            src="/api/platform/systemframe/getuserfavicon.do"
+            src={`${API_HEAD}/platform/systemframe/getuserfavicon.do`}
             alt="avatar"
           />
           <span className={styles.name}>{currentUser.username}</span>
