@@ -5,6 +5,8 @@
 import { extend } from 'umi-request';
 import { notification, Modal } from 'antd';
 
+export const API = '/api';
+
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
