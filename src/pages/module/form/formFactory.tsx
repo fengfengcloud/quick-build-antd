@@ -29,7 +29,7 @@ import {
   SearchOutlined,
 } from '@ant-design/icons';
 import { FormInstance, Rule } from 'antd/lib/form';
-import { apply, getLastLevelLabel, numberFormatWithComma } from '@/utils/utils';
+import { apply, getLastLevelLabel, getNumberDigitsFormat } from '@/utils/utils';
 import { ModuleModal, ModuleFieldType, FormOperateType, FormShowType, TextValue } from '../data';
 import { getDictionary, getPropertys } from '../dictionary/dictionarys';
 
@@ -56,6 +56,8 @@ import { PopoverDescriptionWithId } from '../descriptions';
 import SelectGrid from '../detailGrid/selectGrid';
 import ImageField from './field/ImageField';
 import ProgressField from './field/ProgressField';
+
+const numeral = require('numeral');
 
 const FormItem = Form.Item;
 const { TabPane } = Tabs;
@@ -176,7 +178,7 @@ export const getFormSchemePanel: React.FC<FormSchemePanelProps> = (params): any 
         field = (
           <Card {...cardParams}>
             <span style={collapsed ? { display: 'none' } : {}}>
-              {getApproveSteps({ record: currRecord })}
+              {getApproveSteps({ record: currRecord, direction: item.direction })}
             </span>
           </Card>
         );
@@ -280,12 +282,15 @@ export const getFormSchemePanel: React.FC<FormSchemePanelProps> = (params): any 
           </Card>
         );
       } else {
+        // 这里仅仅加入一个Row,里面是Col,style可以自己指定 style:{padding:'16px 0px}
         delete cardParams.title;
         field = cols ? (
-          <Card {...cardParams}>
-            <Row gutter={16}>{children}</Row>
-          </Card>
+          // <Card {...cardParams}>
+          <Row style={item.style} gutter={16}>
+            {children}
+          </Row>
         ) : (
+          // </Card>
           <Card {...cardParams}>{children}</Card>
         );
       }
@@ -317,6 +322,7 @@ export const getFormSchemePanel: React.FC<FormSchemePanelProps> = (params): any 
 // 生成formField时的属性
 export interface FormFieldProps {
   moduleInfo: ModuleModal;
+  name: string;
   form: any;
   fieldDefine: ModuleFieldType;
   formFieldDefine: any;
@@ -708,7 +714,7 @@ export const getPercentFormField = (digitslen: number, fieldProps: any) => {
 };
 
 const getFieldInput: React.FC<FormFieldProps> = (props) => {
-  const { fieldDefine, formFieldDefine, fieldProps } = props;
+  const { fieldDefine, formFieldDefine, fieldProps, name } = props;
   const { fieldname } = fieldDefine;
   if (fieldDefine.fDictionaryid) {
     return getDictionaryInput(props);
@@ -766,8 +772,15 @@ const getFieldInput: React.FC<FormFieldProps> = (props) => {
           <InputNumber
             className="double"
             precision={fieldDefine.digitslen || 2}
-            formatter={(value) => numberFormatWithComma(`${value}`)}
-            parser={(value: any) => value.replace(/\$\s?|(,*)/g, '')}
+            formatter={(value) => {
+              if (!value) return '';
+              // 在不是焦点的时候才进行转换
+              if (document.activeElement!.id !== name) {
+                return numeral(value).format(getNumberDigitsFormat(fieldDefine.digitslen || 2));
+              }
+              return value;
+            }}
+            // parser={(value: any) => value.replace(/\$\s?|(,*)/g, '')}
             style={{ width: '135px' }}
             {...fieldProps}
           />
@@ -1017,6 +1030,7 @@ const FormField = ({
   } else {
     const fieldinput = getFieldInput({
       moduleInfo,
+      name: formItemProp.name,
       fieldDefine,
       formFieldDefine,
       form,
