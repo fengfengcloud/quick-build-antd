@@ -92,8 +92,10 @@ const getDoubleValue = (value: number, field: ModuleFieldType) => {
   );
 };
 
-const getPercentValue = (value: number) => {
-  return <ProgressField style={{ minWidth: '80px' }} value={value} />;
+const getPercentValue = (value: number, field: ModuleFieldType) => {
+  return (
+    <ProgressField style={{ minWidth: '80px' }} value={value} symbol digitslen={field.digitslen} />
+  );
   // return <span style={numberStyle}>{value ? numeral(value * 100).format('0,0.00') : ''} %</span>
 };
 
@@ -424,7 +426,7 @@ const generateField = ({
         else value = getIntegerValue(value, field);
         break;
       case 'percent':
-        value = getPercentValue(value);
+        value = getPercentValue(value, field);
         break;
       case 'date':
         value = getDateValue(value);

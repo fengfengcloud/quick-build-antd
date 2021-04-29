@@ -55,7 +55,7 @@ import { ApproveForm } from '../approve/approvePanel';
 import { PopoverDescriptionWithId } from '../descriptions';
 import SelectGrid from '../detailGrid/selectGrid';
 import ImageField from './field/ImageField';
-import ProgressField from './field/ProgressField';
+import { PercentField } from './field/PercentField';
 
 const numeral = require('numeral');
 
@@ -685,7 +685,7 @@ const getManyToManyInput: React.FC<FormFieldProps> = (params) => {
 };
 
 export const getPercentFormField = (digitslen: number, fieldProps: any) => {
-  return !fieldProps.readOnly ? (
+  return (
     <InputNumber
       precision={digitslen}
       step={0.01}
@@ -708,8 +708,6 @@ export const getPercentFormField = (digitslen: number, fieldProps: any) => {
       style={{ width: '100px' }}
       {...fieldProps}
     />
-  ) : (
-    <ProgressField />
   );
 };
 
@@ -804,7 +802,15 @@ const getFieldInput: React.FC<FormFieldProps> = (props) => {
     case 'percent': {
       // 默认是2位小数，百分比就是整数，设置4位小数，百分比小数位置是2位
       const digitslen = Math.max(fieldDefine.digitslen || 2, 2);
-      formField = getPercentFormField(digitslen, fieldProps);
+      formField = (
+        <PercentField
+          {...fieldProps}
+          digitslen={digitslen}
+          style={{ width: '100px' }}
+          className="double"
+          name={name}
+        />
+      );
       break;
     }
     case 'date':
@@ -929,7 +935,10 @@ const FormField = ({
     allowedit,
   } = fieldDefine;
   const fieldtitle = getLastLevelLabel(fieldDefine.fieldtitle);
-  const unittext = fieldDefine.unittext || (fieldDefine.isOneToMany ? '条' : fieldDefine.unittext);
+  let unittext = fieldDefine.unittext || (fieldDefine.isOneToMany ? '条' : fieldDefine.unittext);
+  if (!unittext && fieldDefine.fieldtype.toLowerCase() === 'percent') {
+    unittext = '%';
+  }
   let required = !!isrequired;
   let fieldReadOnly = readOnly;
   // 字段禁用的条件：父模块或子模块的字段，显示，新建方式下字段不允许新建修改，修改方式下字段不允许修改
