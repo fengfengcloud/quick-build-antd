@@ -296,7 +296,7 @@ export const getAllGridSchemes = (gridschemes: any): any[] => {
  */
 export const getFilterRegionVisible = (moduleInfo: ModuleModal): boolean => {
   const scheme: any = getFilterScheme(moduleInfo);
-  if (scheme) return scheme.details[0].regionVisible !== false; // 默认显示
+  if (scheme) return scheme.regionVisible !== false && scheme.details[0].regionVisible !== false; // 默认显示
   return true;
 };
 /**

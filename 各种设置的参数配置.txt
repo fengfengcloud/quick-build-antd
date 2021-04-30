@@ -85,6 +85,9 @@
 字段附加设置中加入 isRate : true, 控件即为评分组件，1-5分
 
 
+默认筛选区域只有第一个是显示的，默认隐藏修改 方案的 othersetting ,regionVisible : false
+或者第一个分组加上 regionVisible : false
+
 /**
  * 自定义筛选的附件属性：
  * allowEmpty : true        // 允许为空值(默认为false)：boolean类型，manytoone, dictionary 都会加入 未定义值
