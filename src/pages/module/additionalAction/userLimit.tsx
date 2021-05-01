@@ -23,10 +23,10 @@ const booleanFields = [
     dataIndex: 'new_',
     text: '可新建',
   },
-  // {
-  //     dataIndex: 'newnavigate_',
-  //     text: '新建向导'
-  // },
+  {
+    dataIndex: 'newnavigate_',
+    text: '新建向导',
+  },
   {
     dataIndex: 'edit_',
     text: '可修改',

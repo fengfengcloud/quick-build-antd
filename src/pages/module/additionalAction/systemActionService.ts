@@ -23,6 +23,18 @@ export async function queryResetUserPassword(params: any) {
 }
 
 /**
+ * 将所有的附加功能更新到公司的模块功能里,在设置角色权限时可进行设置。
+ * @param params
+ * @returns
+ */
+export async function updateToModuleFunction(params: any) {
+  return request(`${API_HEAD}/platform/userrole/updateadditionfunctiontocmodule.do`, {
+    method: 'POST',
+    params,
+  });
+}
+
+/**
  * 读取用户的所有操作权限,是所有权限和角色的并集
  * @param params
  */

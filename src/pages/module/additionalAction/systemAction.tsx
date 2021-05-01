@@ -7,7 +7,11 @@ import request, { API_HEAD } from '@/utils/request';
 import { apply, download } from '@/utils/utils';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import { ModuleModal, ModuleState, AdditionFunctionModal } from '../data';
-import { queryCreatePersonnelUser, queryResetUserPassword } from './systemActionService';
+import {
+  queryCreatePersonnelUser,
+  queryResetUserPassword,
+  updateToModuleFunction,
+} from './systemActionService';
 import { DisplayUserLimits, SetUserLimits, SetRoleLimits } from './userLimit';
 import { activitiModeler } from '../approve/ProcessManage/activitiModeler';
 import { businessActions } from './businessAction';
@@ -109,6 +113,30 @@ const createPersonnelUser = (params: ActionParamsModal) => {
       });
   });
 };
+
+/**
+ * 将所有的附加功能更新到公司的模块功能里,在设置角色权限时可进行设置。
+ * @param params
+ */
+const updateToCompanyModuleFunction = (params: ActionParamsModal) => {
+  const {
+    record,
+    moduleInfo: { primarykey, namefield },
+  } = params;
+  const mess = `将『${record[namefield]}』更新到公司的模块功能里`;
+  Modal.confirm({
+    title: `确定要${mess}吗?`,
+    icon: <ExclamationCircleOutlined />,
+    onOk() {
+      updateToModuleFunction({ functionid: record[primarykey] }).then((response: any) => {
+        if (response.success)
+          message.success(`${((response.msg || '') as string).replaceAll('<br/>', '')}更新成功！`);
+        else message.error(`更新失败：${response.msg}`);
+      });
+    },
+  });
+};
+
 /**
  * 根据选中的字段生成模块的excel模板，再加工一下就可以上传
  * @param params
@@ -338,6 +366,8 @@ export const systemActions: ActionStore = apply(
     breakDataSource,
     importSchema,
     importSchemaTable: dataSourceImportTableAndView,
+    // 更新模块附加功能
+    updatetocompanymodulefunction: updateToCompanyModuleFunction,
   },
   businessActions,
 ) as ActionStore;

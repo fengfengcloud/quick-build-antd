@@ -5,7 +5,7 @@ import { ModuleModal, ModuleState, TextValue } from '../data';
 import FilterInfoButton from './FilterInfoButton';
 import ExportButton from './export/ExportButton';
 import BatchOperateButton, { getToolbarButton } from './BatchOperateButton';
-import { getGridBatchImport, hasInsert } from '../modules';
+import { getGridBatchImport, hasInsert, hasInsertImport } from '../modules';
 import BatchImportButton from '../grid/batchImport';
 
 const ModuleToolbar = ({
@@ -64,7 +64,7 @@ const ModuleToolbar = ({
           </Button>
         ) : null}
 
-        {hasInsert(moduleInfo) && getGridBatchImport(moduleInfo) && !readOnly ? (
+        {hasInsertImport(moduleInfo) && getGridBatchImport(moduleInfo) && !readOnly ? (
           <BatchImportButton moduleState={moduleState} dispatch={dispatch} />
         ) : null}
 

@@ -91,7 +91,7 @@ export const generateModuleInfo = (module: any): ModuleModal => {
       new: basefunction.new,
       edit: basefunction.edit,
       delete: basefunction.delete,
-      newnavigate: basefunction.newnavigate,
+      newnavigate: !!basefunction.newnavigate,
       approve: {
         start: basefunction.approvestart,
         pause: basefunction.approvepause,
@@ -333,6 +333,16 @@ export const getSortSchemes = (moduleInfo: ModuleModal): any[] => {
  */
 export const hasInsert = (moduleInfo: ModuleModal): boolean => {
   return moduleInfo.moduleLimit.hasinsert && moduleInfo.userLimit.new;
+};
+
+/**
+ * 判断模块数据是否有新建导入数据的权限
+ * @param moduleInfo
+ */
+export const hasInsertImport = (moduleInfo: ModuleModal): boolean => {
+  return (
+    moduleInfo.moduleLimit.hasinsert && moduleInfo.userLimit.new && moduleInfo.userLimit.newnavigate
+  );
 };
 
 /**

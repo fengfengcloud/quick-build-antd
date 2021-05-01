@@ -99,7 +99,7 @@ export interface UserLimit {
   new: boolean; // 可新建
   edit: boolean; // 可修改
   delete: boolean; // 可删除
-  newnavigate?: boolean; // 新建时可用新建向导
+  newnavigate: boolean; // 新建时可用新建向导
   approve?: ApproveLimit; // 审批操作权限
   attachment?: AttachmentLimit; // 附件权限
 }
