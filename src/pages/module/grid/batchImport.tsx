@@ -18,11 +18,12 @@ import {
 } from 'antd';
 import moment from 'moment';
 import { API_HEAD } from '@/utils/request';
-import { ModuleFieldType, ModuleState, ParentFilterModal } from '../data';
+import { ModuleFieldType, ModuleState, ParentFilterModal, TextValue } from '../data';
 import { getFieldDefine, getGridBatchImport, getModuleInfo } from '../modules';
 import { integerRender } from './columnRender';
 import { getAjaxNewDefault, saveOrUpdateRecord } from '../service';
 import { DateTimeFormat } from '../moduleUtils';
+import { getDictionaryData } from '../dictionary/dictionarys';
 
 interface BatchImportParams {
   moduleState: ModuleState;
@@ -36,6 +37,9 @@ enum Steps {
   Import, // 已经导入过了
 }
 
+// style={{ whiteSpace: "nowrap" }}
+const getTitle = (title: string) => <span>{title}</span>;
+const DICTNAME = '_dictname';
 /**
  * 模块数据导入
  *
@@ -67,10 +71,16 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
   const getColumns = (): any[] => {
     return getGridBatchImport(moduleInfo).details.map((col: any) => {
       const field: ModuleFieldType = getFieldDefine(col.fieldid, moduleInfo);
-      return {
+      const column: any = {
         dataIndex: field.fieldname,
         title: field.fieldtitle,
       };
+      if (field.fDictionaryid) {
+        column.render = (value: any, record: any) => {
+          return record[field.fieldname + DICTNAME];
+        };
+      }
+      return column;
     });
   };
   const [columns] = useState<any[]>(getColumns());
@@ -80,14 +90,57 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
     const separator = dataText.indexOf('\t') === -1 ? ',' : '\t';
     const records: any[] = dataText.split(/\r?\n/);
     setDataSource(
-      records.map((record, index) => {
-        const arecord = { keyOfImportRecord: `${index + 1}` };
-        const datas = record.split(separator);
-        for (let i = 0; i < columns.length; i += 1) {
-          arecord[columns[i].dataIndex] = datas[i];
-        }
-        return arecord;
-      }),
+      records
+        .filter((line) => line)
+        .map((record, index) => {
+          const arecord: any = { keyOfImportRecord: `${index + 1}` };
+          const datas = record.split(separator);
+          for (let i = 0; i < columns.length; i += 1) {
+            const s: string = datas[i];
+            arecord[columns[i].dataIndex] = s;
+            const objectField: ModuleFieldType = getFieldDefine(columns[i].dataIndex, moduleInfo);
+            if (objectField && s) {
+              if (objectField.isDateField) {
+                // 日期字符串如果是21/5/7,改为 2021-05-07
+                if (s.indexOf('/') !== -1) {
+                  const parts: string[] = s.split('/');
+                  if (parts.length === 3) {
+                    if (parts[0].length === 2) parts[0] = `20${parts[0]}`;
+                    if (parts[1].length === 1) parts[1] = `0${parts[1]}`;
+                    if (parts[2].length === 1) parts[2] = `0${parts[2]}`;
+                  }
+                  arecord[columns[i].dataIndex] = parts.join('-');
+                }
+              } else if (objectField.fieldtype.toLowerCase() === 'boolean') {
+                let v = s;
+                if (s === '是' || s.toLowerCase() === 'yes' || s.toLowerCase() === 'true')
+                  v = 'true';
+                if (s === '否' || s.toLowerCase() === 'no' || s.toLowerCase() === 'false')
+                  v = 'false';
+                if (['1', '0', 'true', 'false'].includes(v)) {
+                  arecord[columns[i].dataIndex] = v;
+                } else {
+                  arecord.statusOfImportRecord = `${
+                    arecord.statusOfImportRecord ? '' : 'validerror:'
+                  }${objectField.fieldtitle}的值不是一个布尔值;`;
+                }
+              } else if (objectField.fDictionaryid) {
+                // {text: "软件开发", value: "01"}
+                const ds: TextValue[] = getDictionaryData(objectField.fDictionaryid);
+                const dict = ds.find((rec) => rec.text === s);
+                if (dict) {
+                  arecord[columns[i].dataIndex + DICTNAME] = dict.text;
+                  arecord[columns[i].dataIndex] = dict.value;
+                } else {
+                  arecord.statusOfImportRecord = `${
+                    arecord.statusOfImportRecord ? '' : 'validerror:'
+                  }${objectField.fieldtitle} 未在数据字典中找到;`;
+                }
+              }
+            }
+          }
+          return arecord;
+        }),
     );
   };
 
@@ -98,6 +151,9 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
     }
     if (value.startsWith('error')) {
       return <Badge status="error" text={value.substring(6)} />;
+    }
+    if (value.startsWith('validerror')) {
+      return <Badge status="warning" text={value.substring(11)} />;
     }
     return value;
   };
@@ -140,7 +196,6 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
     const data = { ...record };
     delete data.keyOfImportRecord;
     delete data.statusOfImportRecord;
-
     if (addDefaultValue) {
       applyIf(data, fieldDefaultValue);
     }
@@ -157,12 +212,16 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
         applyIf(data, ajaxDefault);
       }
     }
-
     // 加入父模块的限定条件值
     if (addParentFilter && parentfilter) {
       data[`${parentfilter.fieldahead}.${parentfilter.fieldName}`] = parentfilter.fieldvalue;
     }
-
+    // 删除数据字典的名称字段
+    Object.keys(data).forEach((key) => {
+      if (key.indexOf(DICTNAME) !== -1) {
+        delete data[key];
+      }
+    });
     return saveOrUpdateRecord({
       moduleName,
       opertype: 'insert',
@@ -192,9 +251,9 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
   };
 
   const executeImport = async () => {
-    const needSaves: any[] = dataSource.filter((rec) => rec.statusOfImportRecord !== 'success');
+    const needSaves: any[] = dataSource.filter((rec) => !rec.statusOfImportRecord);
     if (needSaves.length === 0) {
-      message.info('列表中的记录都上传成功了！');
+      message.info('列表中所有无错误的记录都上传成功了！');
       return;
     }
     for (let i = 0; i < needSaves.length; i += 1) {
@@ -216,8 +275,10 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
     setDataSource([]);
     setDataText(
       dataSource
-        .filter((rec) => rec.statusOfImportRecord && rec.statusOfImportRecord.startsWith('error'))
-        .map((rec) => columns.map((col) => rec[col.dataIndex]).join('\t'))
+        .filter((rec) => rec.statusOfImportRecord !== 'success')
+        .map((rec) =>
+          columns.map((col) => rec[col.dataIndex + DICTNAME] || rec[col.dataIndex]).join('\t'),
+        )
         .join('\r'),
     );
     setStep(Steps.Init);
@@ -228,19 +289,24 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
   const ImportGrid = () => {
     return (
       <Table
+        title={() => '导入数据列表'}
         size="small"
         bordered
         rowSelection={{ type: 'checkbox' }}
         dataSource={dataSource}
         rowKey="keyOfImportRecord"
-        pagination={{ pageSize: 20 }}
+        pagination={{
+          pageSize: 100,
+          position: ['topRight', 'bottomRight'],
+          hideOnSinglePage: true,
+        }}
         columns={[
           {
             dataIndex: 'keyOfImportRecord',
             title: '序号',
             width: 48,
             align: 'right',
-            render: (value) => integerRender(value),
+            render: (value: any) => integerRender(value),
           },
           {
             dataIndex: 'statusOfImportRecord',
@@ -249,15 +315,22 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
             // width: 96,
           },
           ...columns,
-        ]}
+        ].map((column) => ({ ...column, title: getTitle(column.title) }))}
         scroll={{ x: true, y: '100%' }}
       />
     );
   };
-  const errorCount = dataSource.filter(
-    (rec) => rec.statusOfImportRecord && rec.statusOfImportRecord.startsWith('error'),
-  ).length;
-  const successCount = dataSource.filter((rec) => rec.statusOfImportRecord === 'success').length;
+  let errorCount = 0;
+  let successCount = 0;
+  let validerrorCount = 0;
+
+  dataSource.forEach((rec) => {
+    if (rec.statusOfImportRecord && rec.statusOfImportRecord.startsWith('error')) errorCount += 1;
+    else if (rec.statusOfImportRecord && rec.statusOfImportRecord.startsWith('validerror'))
+      validerrorCount += 1;
+    else if (rec.statusOfImportRecord === 'success') successCount += 1;
+  });
+
   const initState = () => {
     setStep(Steps.Init);
     setDataText('');
@@ -324,7 +397,7 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
                 </Button>
                 {dataSource.length ? (
                   <>
-                    {successCount === 0 && errorCount === 0 ? (
+                    {successCount + errorCount + validerrorCount === 0 ? (
                       <Button
                         onClick={() => {
                           setStep(Steps.CopyCliboard);
@@ -340,9 +413,9 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
                         开始新的导入
                       </Button>
                     ) : null}
-                    {errorCount && !executeCount ? (
+                    {errorCount + validerrorCount && !executeCount ? (
                       <Button onClick={editErrorRecords} type="link">
-                        错误的记录重新编辑
+                        未导入和错误的记录重新编辑
                       </Button>
                     ) : null}{' '}
                   </>
@@ -396,6 +469,7 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
                 <Space style={{ paddingBottom: 16 }} size="large">
                   <Badge status="default" text={`共有 ${dataSource.length} 条记录`} />
                   <Badge status="success" text={`已导入 ${successCount} 条记录`} />
+                  <Badge status="warning" text={`校验错误 ${validerrorCount} 条记录`} />
                   <Badge status="error" text={`导入失败 ${errorCount} 条记录`} />
                 </Space>
               ) : null}
@@ -432,7 +506,6 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
               ) : null}
               {step === Steps.FirstValidate ? (
                 <span>
-                  数据校验:
                   <ImportGrid />
                 </span>
               ) : null}

@@ -193,6 +193,7 @@ export const activitiModeler = ({ record, dispatch }: { record: any; dispatch: D
 
   setGlobalModalProps({
     onCancel: () => setGlobalModalProps(() => ({ visible: false })),
+    zIndex: 120,
     destroyOnClose: true,
     visible: true,
     centered: true,

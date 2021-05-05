@@ -286,7 +286,7 @@ export const getFormSchemePanel: React.FC<FormSchemePanelProps> = (params): any 
         delete cardParams.title;
         field = cols ? (
           // <Card {...cardParams}>
-          <Row style={item.style} gutter={16}>
+          <Row style={item.style} gutter={16} key={item.detailid}>
             {children}
           </Row>
         ) : (
