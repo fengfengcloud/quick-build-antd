@@ -21,7 +21,7 @@ import { API_HEAD } from '@/utils/request';
 import { ModuleFieldType, ModuleState, ParentFilterModal, TextValue } from '../data';
 import { getFieldDefine, getGridBatchImport, getModuleInfo } from '../modules';
 import { integerRender } from './columnRender';
-import { getAjaxNewDefault, saveOrUpdateRecord } from '../service';
+import { fetchObjectComboData, getAjaxNewDefault, saveOrUpdateRecord } from '../service';
 import { DateTimeFormat } from '../moduleUtils';
 import { getDictionaryData } from '../dictionary/dictionarys';
 
@@ -40,6 +40,18 @@ enum Steps {
 // style={{ whiteSpace: "nowrap" }}
 const getTitle = (title: string) => <span>{title}</span>;
 const DICTNAME = '_dictname';
+const MANYTOONENAME = '_manytoonename';
+
+const moduleComboDataSource: Record<string, TextValue[]> = {};
+const getModuleComboDataSource = (moduleName: string): TextValue[] => {
+  if (!moduleComboDataSource[moduleName]) {
+    moduleComboDataSource[moduleName] = fetchObjectComboData({
+      moduleName,
+      mainlinkage: false, // 如果该模块有主链接，则加入，例如人员，则会在前面加上 部门 / 人员
+    }) as TextValue[];
+  }
+  return moduleComboDataSource[moduleName];
+};
 /**
  * 模块数据导入
  *
@@ -77,7 +89,11 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
       };
       if (field.fDictionaryid) {
         column.render = (value: any, record: any) => {
-          return record[field.fieldname + DICTNAME];
+          return record[field.fieldname + DICTNAME] || record[field.fieldname];
+        };
+      } else if (field.isManyToOne) {
+        column.render = (value: any, record: any) => {
+          return record[field.fieldname + MANYTOONENAME] || record[field.fieldname];
         };
       }
       return column;
@@ -99,43 +115,60 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
             const s: string = datas[i];
             arecord[columns[i].dataIndex] = s;
             const objectField: ModuleFieldType = getFieldDefine(columns[i].dataIndex, moduleInfo);
-            if (objectField && s) {
-              if (objectField.isDateField) {
-                // 日期字符串如果是21/5/7,改为 2021-05-07
-                if (s.indexOf('/') !== -1) {
-                  const parts: string[] = s.split('/');
-                  if (parts.length === 3) {
-                    if (parts[0].length === 2) parts[0] = `20${parts[0]}`;
-                    if (parts[1].length === 1) parts[1] = `0${parts[1]}`;
-                    if (parts[2].length === 1) parts[2] = `0${parts[2]}`;
+            if (objectField) {
+              if (s) {
+                if (objectField.isDateField) {
+                  // 日期字符串如果是21/5/7,改为 2021-05-07
+                  if (s.indexOf('/') !== -1) {
+                    const parts: string[] = s.split('/');
+                    if (parts.length === 3) {
+                      if (parts[0].length === 2) parts[0] = `20${parts[0]}`;
+                      if (parts[1].length === 1) parts[1] = `0${parts[1]}`;
+                      if (parts[2].length === 1) parts[2] = `0${parts[2]}`;
+                    }
+                    arecord[columns[i].dataIndex] = parts.join('-');
                   }
-                  arecord[columns[i].dataIndex] = parts.join('-');
+                } else if (objectField.fieldtype.toLowerCase() === 'boolean') {
+                  let v = s;
+                  if (s === '是' || s.toLowerCase() === 'yes' || s.toLowerCase() === 'true')
+                    v = 'true';
+                  if (s === '否' || s.toLowerCase() === 'no' || s.toLowerCase() === 'false')
+                    v = 'false';
+                  if (['1', '0', 'true', 'false'].includes(v)) {
+                    arecord[columns[i].dataIndex] = v;
+                  } else {
+                    arecord.statusOfImportRecord = `${
+                      arecord.statusOfImportRecord || 'validerror:'
+                    }${objectField.fieldtitle}的值不是一个布尔值；`;
+                  }
+                } else if (objectField.fDictionaryid) {
+                  // {text: "软件开发", value: "01"}
+                  const ds: TextValue[] = getDictionaryData(objectField.fDictionaryid);
+                  const dict = ds.find((rec) => rec.text === s);
+                  if (dict) {
+                    arecord[columns[i].dataIndex + DICTNAME] = dict.text;
+                    arecord[columns[i].dataIndex] = dict.value;
+                  } else {
+                    arecord.statusOfImportRecord = `${
+                      arecord.statusOfImportRecord || 'validerror:'
+                    }${objectField.fieldtitle}未在数据字典中找到；`;
+                  }
+                } else if (objectField.isManyToOne) {
+                  const comboValues = getModuleComboDataSource(objectField.fieldtype);
+                  const manytoone = comboValues.find((rec) => rec.text === s);
+                  if (manytoone) {
+                    arecord[columns[i].dataIndex + MANYTOONENAME] = manytoone.text;
+                    arecord[columns[i].dataIndex] = manytoone.value;
+                  } else {
+                    arecord.statusOfImportRecord = `${
+                      arecord.statusOfImportRecord || 'validerror:'
+                    }${objectField.fieldtitle}未找到；`;
+                  }
                 }
-              } else if (objectField.fieldtype.toLowerCase() === 'boolean') {
-                let v = s;
-                if (s === '是' || s.toLowerCase() === 'yes' || s.toLowerCase() === 'true')
-                  v = 'true';
-                if (s === '否' || s.toLowerCase() === 'no' || s.toLowerCase() === 'false')
-                  v = 'false';
-                if (['1', '0', 'true', 'false'].includes(v)) {
-                  arecord[columns[i].dataIndex] = v;
-                } else {
-                  arecord.statusOfImportRecord = `${
-                    arecord.statusOfImportRecord ? '' : 'validerror:'
-                  }${objectField.fieldtitle}的值不是一个布尔值;`;
-                }
-              } else if (objectField.fDictionaryid) {
-                // {text: "软件开发", value: "01"}
-                const ds: TextValue[] = getDictionaryData(objectField.fDictionaryid);
-                const dict = ds.find((rec) => rec.text === s);
-                if (dict) {
-                  arecord[columns[i].dataIndex + DICTNAME] = dict.text;
-                  arecord[columns[i].dataIndex] = dict.value;
-                } else {
-                  arecord.statusOfImportRecord = `${
-                    arecord.statusOfImportRecord ? '' : 'validerror:'
-                  }${objectField.fieldtitle} 未在数据字典中找到;`;
-                }
+              } else if (objectField.isrequired) {
+                arecord.statusOfImportRecord = `${arecord.statusOfImportRecord || 'validerror:'}${
+                  objectField.fieldtitle
+                }是必添字段；`;
               }
             }
           }
@@ -222,6 +255,17 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
         delete data[key];
       }
     });
+    // 修正manytoone的提交字段
+    Object.keys(data).forEach((key) => {
+      if (key.indexOf(MANYTOONENAME) !== -1) {
+        delete data[key];
+        const fn = key.replace(MANYTOONENAME, '');
+        const fieldDefine = getFieldDefine(fn, moduleInfo);
+        const pmodule = getModuleInfo(fieldDefine.fieldtype);
+        data[`${fn}.${pmodule.primarykey}`] = data[fn];
+        delete data[fn];
+      }
+    });
     return saveOrUpdateRecord({
       moduleName,
       opertype: 'insert',
@@ -277,7 +321,14 @@ const BatchImportButton: React.FC<BatchImportParams> = ({ moduleState, dispatch 
       dataSource
         .filter((rec) => rec.statusOfImportRecord !== 'success')
         .map((rec) =>
-          columns.map((col) => rec[col.dataIndex + DICTNAME] || rec[col.dataIndex]).join('\t'),
+          columns
+            .map(
+              (col) =>
+                rec[col.dataIndex + DICTNAME] ||
+                rec[col.dataIndex + MANYTOONENAME] ||
+                rec[col.dataIndex],
+            )
+            .join('\t'),
         )
         .join('\r'),
     );
