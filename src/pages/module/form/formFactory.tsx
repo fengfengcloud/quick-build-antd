@@ -867,8 +867,9 @@ const getFieldInput: React.FC<FormFieldProps> = (props) => {
       );
       break;
     case 'string': {
-      const len =
-        fieldname === 'creater' || fieldname === 'lastmodifier' ? 10 : fieldDefine.fieldlen;
+      const len = ['creater', 'lastmodifier'].includes(fieldname.toLowerCase())
+        ? 10
+        : fieldDefine.fieldlen;
       if (len > 0 && len <= 100)
         // allowClear={!fieldDefine.isrequired}
         formField = (
