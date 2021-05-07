@@ -327,7 +327,7 @@ const FormComponent = () => {
   const toolbar = (
     <div>
       <Card bodyStyle={{ padding: 0, margin: 0 }} style={{ marginBottom: '16px' }}>
-        <Form form={form} style={{ padding: '16px' }}>
+        <Form form={form} style={{ padding: '16px' }} autoComplete="off">
           <Space size="large" style={{ margin: 0 }}>
             <Form.Item label="选择数据库：" name="schema" style={{ marginBottom: 0 }}>
               <Select
@@ -353,7 +353,52 @@ const FormComponent = () => {
               </Button>
             </Form.Item>
           </Space>
-          <span style={{ float: 'right' }}>
+          <Space style={{ float: 'right' }}>
+            <Tooltip title="在当前数据库中执行SQL语句">
+              <Button
+                onClick={() => {
+                  let sql = '';
+                  Modal.confirm({
+                    width: '50%',
+                    title: '请输入SQL语句',
+                    icon: null,
+                    okText: '执行',
+                    cancelText: '关闭',
+                    content: (
+                      <Form autoComplete="off" style={{ height: '200px' }}>
+                        <Input.TextArea
+                          style={{ height: '100%' }}
+                          name="sql"
+                          onChange={(e) => {
+                            sql = e.target.value.trim();
+                          }}
+                        />
+                      </Form>
+                    ),
+                    onOk: () => {
+                      if (sql)
+                        request(`${API_HEAD}/platform/systemcommon/executesql.do`, {
+                          params: {
+                            sql,
+                          },
+                        }).then((response) => {
+                          if (response.success) {
+                            message.success('SQL语句执行成功！');
+                          } else {
+                            Modal.error({
+                              title: `SQL语句执行失败!`,
+                              width: 500,
+                              content: response.msg,
+                            });
+                          }
+                        });
+                    },
+                  });
+                }}
+              >
+                执行SQL语句
+              </Button>
+            </Tooltip>
             <Tooltip title="打包下载当前选中数据库的Java Bean文件。">
               <Button
                 onClick={() => {
@@ -365,7 +410,7 @@ const FormComponent = () => {
                 下载JavaBean文件
               </Button>
             </Tooltip>
-          </span>
+          </Space>
         </Form>
       </Card>
       <Row gutter={16}>
