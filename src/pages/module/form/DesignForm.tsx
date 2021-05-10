@@ -1,12 +1,13 @@
+import React, { useEffect, useRef, useState } from 'react';
 import {
   getAllhasChildrenRowids,
   getAllLeafRecords,
   getAllleafRowids,
 } from '@/pages/datamining/utils';
 import { apply, uuid } from '@/utils/utils';
+import { DownOutlined, FileOutlined } from '@ant-design/icons';
 import { Card, Col, message, Row, Tree } from 'antd';
 import type { Key } from 'antd/es/table/interface';
-import React, { useEffect, useState } from 'react';
 import { fetchFormDetails, fetchModuleFields } from '../service';
 import { ModuleHierarchyChart } from '../widget/ModuleHierarchyChart';
 
@@ -14,11 +15,16 @@ interface DesignFormProps {
   formScheme: any;
 }
 
+const getTitle = (node: any, text?: string) => {
+  if (node.cls) return <span className={node.cls}>{text || node.text}</span>;
+  return text || node.text;
+};
+
 const changeTextToTitle = (object: any) => {
   if (Array.isArray(object)) {
     object.forEach((o: any) => changeTextToTitle(o));
   } else if (Object.prototype.toString.call(object) === '[object Object]') {
-    if (!object.title) apply(object, { title: object.text });
+    if (!object.title) apply(object, { title: getTitle(object) });
     if (object.children) {
       object.children.forEach((child: any) => {
         apply(child, {
@@ -41,6 +47,7 @@ const syncCanSelected = (canSelectTree: any[], details: any[]): string[] => {
 
 export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
   const { formschemeid } = formScheme;
+  const hRef: any = useRef();
   const [canSelectTree, setCanSelectTree] = useState<any[]>([]);
   const [canSelectTreeCheckedkey, setCanSelectTreeCheckedkey] = useState<string[]>([]);
   const [canSelectTreeExpandKey, setCanSelectTreeExpandKey] = useState<string[]>([]);
@@ -49,7 +56,12 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
   const [detailsExpandKey, setDetailsExpandKey] = useState<string[]>([]);
   const [detailsSelectedKey, setDetailsSelectedKey] = useState<string[]>([]);
   const [currModule, setCurrModule] = useState<any>({});
-  const fetchSelectedModuleFields = (node: any) => {
+  const fetchSelectedModuleFields = (node: any, selectedKeys?: string[]) => {
+    if (node === currModule) {
+      setCanSelectTreeSelectedKey(selectedKeys || []);
+      return;
+    }
+
     setCurrModule(node);
     if (node.moduleName)
       fetchModuleFields({
@@ -61,7 +73,7 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
         response.forEach((rec) => {
           apply(rec, {
             key: rec.text,
-            title: rec.text,
+            title: getTitle(rec),
           });
           ekeys.push(rec.key);
           // delete rec.text;
@@ -69,7 +81,7 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
             (rec.children as any[]).forEach((crec) => {
               apply(crec, {
                 key: crec.itemId,
-                title: crec.text,
+                title: getTitle(crec),
                 parent: rec,
               });
               // delete crec.text;
@@ -79,7 +91,7 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
                 (crec.children as any[]).forEach((ccrec) => {
                   apply(ccrec, {
                     key: ccrec.itemId,
-                    title: ccrec.text,
+                    title: getTitle(ccrec),
                     parent: crec,
                   });
                   // delete ccrec.text;
@@ -90,6 +102,7 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
         });
         setCanSelectTreeExpandKey(ekeys);
         setCanSelectTree(response);
+        setCanSelectTreeSelectedKey(selectedKeys || detailsSelectedKey);
       });
     const { children, ...other } = node;
     message.info(JSON.stringify(other));
@@ -114,7 +127,7 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
             key: node.itemId,
             itemId: node.itemId,
             text,
-            title: text,
+            title: getTitle(node, text),
             iconCls: node.iconCls,
             cls: node.cls,
             icon: node.icon,
@@ -185,19 +198,25 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
 
   return (
     <Row gutter={16} style={{ height: 'calc(100% )' }}>
-      <Col span={14}>
+      <Col span={12}>
         <ModuleHierarchyChart
           moduleName={formScheme['FDataobject.objectid']}
           onClick={(node: any) => {
             fetchSelectedModuleFields(node);
           }}
+          ref={hRef}
         />
       </Col>
       <Col span={5}>
         <Card title="可供选择的字段" size="small">
           <Tree
             style={{ height: 'calc(100vh - 149px)', overflow: 'auto' }}
+            switcherIcon={<DownOutlined />}
             checkable
+            showIcon
+            icon={(props: any) =>
+              props.iconCls ? <span className={props.iconCls}></span> : <FileOutlined />
+            }
             treeData={canSelectTree}
             checkedKeys={canSelectTreeCheckedkey}
             onCheck={(checked, info) => {
@@ -216,20 +235,32 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
           ></Tree>
         </Card>
       </Col>
-      <Col span={5}>
+      <Col span={7}>
         <Card title="已经设置的分组和字段" size="small">
           <Tree
             style={{ height: 'calc(100vh - 149px)', overflow: 'auto' }}
+            switcherIcon={<DownOutlined />}
             checkable={false}
-            showLine
+            showLine={false}
             showIcon
+            icon={(props: any) =>
+              props.iconCls ? <span className={props.iconCls}></span> : <FileOutlined />
+            }
             draggable
             treeData={details}
             expandedKeys={detailsExpandKey}
             onExpand={(expandKeys) => setDetailsExpandKey(expandKeys as string[])}
             selectedKeys={detailsSelectedKey}
-            onSelect={(selectedKeys) => {
+            onSelect={(selectedKeys, info) => {
               setDetailsSelectedKey(selectedKeys as string[]);
+              const { itemId } = info.node as any;
+              if (info.selected && itemId) {
+                const path = itemId.substring(0, itemId.indexOf('|'));
+                fetchSelectedModuleFields(
+                  hRef.current.getNodeFromItemId(path),
+                  selectedKeys as string[],
+                );
+              }
             }}
           ></Tree>
         </Card>
