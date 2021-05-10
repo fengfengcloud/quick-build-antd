@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { Card, Dropdown, Empty, Layout, Menu, message, Space, Tabs } from 'antd';
-import { Resizable, ResizableProps } from 're-resizable';
-import { DataminingContext, DataminingStateContext } from '..';
+import type { ResizableProps } from 're-resizable';
+import { Resizable } from 're-resizable';
+import type { DataminingStateContext } from '..';
+import { DataminingContext } from '..';
 import groupMenu from '../toolbar/groupMenu';
 import { NavigateTreeDiv } from './navigateTree';
 import {

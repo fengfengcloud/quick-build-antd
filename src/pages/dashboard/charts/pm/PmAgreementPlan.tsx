@@ -2,9 +2,9 @@ import { getColumnDataIndex, getColumnsDataIndex } from '@/pages/datamining/util
 import request, { API_HEAD } from '@/utils/request';
 import { stringifyObjectField } from '@/utils/utils';
 import { Column } from '@ant-design/charts';
-import { ColumnConfig } from '@ant-design/charts/es/column';
+import type { ColumnConfig } from '@ant-design/charts/es/column';
 import { Card, Col, Row } from 'antd';
-import { CardProps } from 'antd/lib/card';
+import type { CardProps } from 'antd/lib/card';
 import moment from 'moment';
 import { serialize } from 'object-to-formdata';
 import React, { useEffect, useState } from 'react';
@@ -24,25 +24,6 @@ const columnStyle = {
 const cardParams: CardProps = {
   size: 'default',
   bodyStyle: { height: '360px', paddingTop: 12, paddingBottom: 12 },
-};
-
-export default () => {
-  return (
-    <Row gutter={[12, 12]}>
-      <Col span={24}>
-        <PmLiabilityYearColumn />
-      </Col>
-      <Col span={24}>
-        <PmAgreementPlanYearStackColumn />
-      </Col>
-      <Col span={24}>
-        <PmAgreementPlanYearColumn />
-      </Col>
-      <Col span={24}>
-        <PmAgreementPlanYearMonthColumn />
-      </Col>
-    </Row>
-  );
 };
 
 const PmLiabilityYearColumn: React.FC = () => {
@@ -391,5 +372,24 @@ const PmAgreementPlanYearMonthColumn: React.FC = () => {
     <Card title="项目合同月度付款计划柱状图" {...cardParams}>
       <Column {...config} />
     </Card>
+  );
+};
+
+export default () => {
+  return (
+    <Row gutter={[12, 12]}>
+      <Col span={24}>
+        <PmLiabilityYearColumn />
+      </Col>
+      <Col span={24}>
+        <PmAgreementPlanYearStackColumn />
+      </Col>
+      <Col span={24}>
+        <PmAgreementPlanYearColumn />
+      </Col>
+      <Col span={24}>
+        <PmAgreementPlanYearMonthColumn />
+      </Col>
+    </Row>
   );
 };

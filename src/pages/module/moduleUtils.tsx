@@ -10,7 +10,7 @@ import { isAdmin, isAdministrator } from '@/utils/Authorized';
 import { CHILDREN } from '../datamining/constants';
 import styles from './index.less';
 import { getModuleInfo } from './modules';
-import { ModuleState, ParentFilterModal, ModuleModal } from './data';
+import type { ModuleState, ParentFilterModal, ModuleModal } from './data';
 import { PARENT_RECORD } from './constants';
 
 export const DateFormat = 'YYYY-MM-DD';

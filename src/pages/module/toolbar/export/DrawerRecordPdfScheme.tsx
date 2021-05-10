@@ -3,7 +3,7 @@ import { getPdfjsUrl, isSafari, onOpenInNewWindow, urlEncode } from '@/utils/uti
 import { FilePdfOutlined, SelectOutlined } from '@ant-design/icons';
 import { Drawer, Tooltip } from 'antd';
 import React, { useState } from 'react';
-import { ExcelSchemeState, ModuleModal } from '../../data';
+import type { ExcelSchemeState, ModuleModal } from '../../data';
 
 interface DrawerRecordPdfSchemeParam {
   moduleInfo: ModuleModal;

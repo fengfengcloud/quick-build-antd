@@ -1,12 +1,12 @@
 import React from 'react';
 import { message, Modal } from 'antd';
-import { Dispatch } from 'redux';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { DrawerProps } from 'antd/lib/drawer';
+import type { Dispatch } from 'redux';
+import { EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import type { DrawerProps } from 'antd/lib/drawer';
 import request, { API_HEAD } from '@/utils/request';
 import { apply, download } from '@/utils/utils';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
-import { ModuleModal, ModuleState, AdditionFunctionModal } from '../data';
+import type { ModuleModal, ModuleState, AdditionFunctionModal } from '../data';
 import {
   queryCreatePersonnelUser,
   queryResetUserPassword,
@@ -18,6 +18,7 @@ import { businessActions } from './businessAction';
 import { importTableAndView, refreshFields } from './importTableAndView';
 import { breakDataSource, testDataSource, importSchema } from './dataSource';
 import { dataSourceImportTableAndView } from './dataSourceImportTableAndView';
+import { DesignForm } from '../form/DesignForm';
 
 export interface ActionParamsModal {
   moduleInfo: ModuleModal;
@@ -316,6 +317,29 @@ const deployWorkFlow = (params: ActionParamsModal) => {
   });
 };
 
+const designForm = (params: ActionParamsModal) => {
+  const { record } = params;
+  setGlobalDrawerProps({
+    onClose: () => setGlobalDrawerProps(() => ({ visible: false })),
+    zIndex: 120,
+    destroyOnClose: true,
+    visible: true,
+    centered: true,
+    okText: '保存',
+    // onOk: handleSave,
+    width: '100%',
+    style: { height: '100%' },
+    title: (
+      <>
+        <EditOutlined />
+        {` 设计${record['FDataobject.title']}的『${record.schemename}』表单方案`}
+      </>
+    ),
+    bodyStyle: { padding: '16px 16px 16px 16px', backgroundColor: '#EEEEEE' },
+    children: <DesignForm formScheme={record} />,
+  });
+};
+
 /**
  * 在iframe中可以进行界面和表单列表配置的extjs的程序
  * @param params
@@ -339,9 +363,7 @@ const extjsSetting = (params: ActionParamsModal) => {
   setGlobalDrawerProps(props);
 };
 
-interface ActionStore {
-  [actionName: string]: Function;
-}
+type ActionStore = Record<string, Function>;
 
 /**
  * 所有的系统附加操作的函数的定义区域
@@ -368,6 +390,7 @@ export const systemActions: ActionStore = apply(
     importSchemaTable: dataSourceImportTableAndView,
     // 更新模块附加功能
     updatetocompanymodulefunction: updateToCompanyModuleFunction,
+    designform: designForm,
   },
   businessActions,
 ) as ActionStore;

@@ -1,10 +1,10 @@
 import React from 'react';
-import { Dispatch } from 'redux';
-import { UserModelState } from '@/models/connect';
+import type { Dispatch } from 'redux';
+import type { UserModelState } from '@/models/connect';
 import { ApiOutlined } from '@ant-design/icons';
 import { connect } from 'dva';
 import classNames from 'classnames';
-import { CanSelectDataRole } from 'umi';
+import type { CanSelectDataRole } from 'umi';
 import { Badge, Dropdown, Menu, message, Switch } from 'antd';
 import request, { API_HEAD } from '@/utils/request';
 import actionstyles from './index.less';
@@ -16,7 +16,7 @@ interface CanSelectRoleProps {
 }
 
 const CanSelectRoleIconView: React.FC<CanSelectRoleProps> = ({ dataRole, dispatch }) => {
-  const refreshModuleData = (moduleName: String) => {
+  const refreshModuleData = (moduleName: string) => {
     dispatch({
       type: 'modules/fetchData',
       payload: {

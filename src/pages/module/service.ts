@@ -2,7 +2,7 @@ import request, { API_HEAD, syncRequest } from '@/utils/request';
 import { applyIf, apply } from '@/utils/utils';
 import { isMoment } from 'moment';
 import { serialize } from 'object-to-formdata';
-import { ModuleState, FetchObjectResponse } from './data';
+import type { ModuleState, FetchObjectResponse } from './data';
 import { getAllFilterAjaxParam } from './grid/filterUtils';
 import { getModuleInfo } from './modules';
 import { DateTimeFormat, generateTreeParent } from './moduleUtils';
@@ -234,6 +234,39 @@ export const fetchObjectComboTreeData = (params: any) => {
  */
 export const fetchObjectComboTreePathData = (params: any) => {
   return syncRequest(`${API_HEAD}/platform/dataobject/fetchtreeselectpathdata.do`, {
+    params,
+  });
+};
+
+/**
+ * 读取一个模块的的所有关联模块的结构图，包括父模块和子模块
+ * @param params
+ * @returns
+ */
+export const fetchModuleHierarchyData = async (params: any) => {
+  return request(`${API_HEAD}/platform/module/getModuleHierarchyTree.do`, {
+    params,
+  });
+};
+
+/**
+ * 获取一个模块的字段，结构是字段分组--字段
+ * @param params
+ * @returns
+ */
+export const fetchModuleFields = async (params: any) => {
+  return request(`${API_HEAD}/platform/module/getModuleFields.do`, {
+    params,
+  });
+};
+
+/**
+ * 读取一个form方案的所有字段定义，是树形结构
+ * @param params
+ * @returns
+ */
+export const fetchFormDetails = async (params: any) => {
+  return request(`${API_HEAD}/platform/scheme/form/getdetails.do`, {
     params,
   });
 };

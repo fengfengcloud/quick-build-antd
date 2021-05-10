@@ -8,7 +8,8 @@ import {
   QuestionCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { DataminingContext, DataminingStateContext } from '..';
+import type { DataminingStateContext } from '..';
+import { DataminingContext } from '..';
 import { ACT_DATAMINING_CHANGE_SCHEME } from '../constants';
 import { deleteCurrentScheme, saveEditScheme, saveNewScheme } from '../schemeUtils';
 

@@ -3,7 +3,7 @@ import { Select } from 'antd';
 import { API_HEAD } from '@/utils/request';
 import querystring from 'querystring';
 import { request } from 'umi';
-import { FormFieldProps } from '../formFactory';
+import type { FormFieldProps } from '../formFactory';
 
 const { Option } = Select;
 /**

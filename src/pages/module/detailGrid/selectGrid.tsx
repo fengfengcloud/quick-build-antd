@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { Card, Divider, Layout, Space } from 'antd';
-import { ModuleState } from '../data';
+import type { ModuleState } from '../data';
 import { DetailModelContext } from './model';
 import ModuleGrid from '../grid';
 import { getModuleInfo, getDefaultModuleState, getFilterScheme } from '../modules';
@@ -15,14 +15,6 @@ export interface SelectGridPrpos {
   moduleName: string; // 选择模块的模块名称
   manyToOneInfo: any;
 }
-
-const SelectGrid: React.FC<SelectGridPrpos> = ({ moduleName, manyToOneInfo }) => {
-  return (
-    <SelectModelProvider moduleName={moduleName}>
-      <SelectTable manyToOneInfo={manyToOneInfo} />
-    </SelectModelProvider>
-  );
-};
 
 const SelectTable = ({ manyToOneInfo }: { manyToOneInfo: any }) => {
   const context = useContext(DetailModelContext);
@@ -98,6 +90,14 @@ const SelectTable = ({ manyToOneInfo }: { manyToOneInfo: any }) => {
       </Layout>
       <ModuleForm moduleInfo={moduleInfo} moduleState={moduleState} dispatch={dispatch} />
     </div>
+  );
+};
+
+const SelectGrid: React.FC<SelectGridPrpos> = ({ moduleName, manyToOneInfo }) => {
+  return (
+    <SelectModelProvider moduleName={moduleName}>
+      <SelectTable manyToOneInfo={manyToOneInfo} />
+    </SelectModelProvider>
   );
 };
 

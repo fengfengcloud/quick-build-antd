@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 import { Card, Table } from 'antd';
-import { Key, SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface';
+import type { Key, SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface';
 import { getModuleInfo } from '@/pages/module/modules';
-import { DataminingModal } from '../data';
+import type { DataminingModal } from '../data';
 import {
   ACT_DATAMINING_EXPAND_CHANGED,
   ACT_DATAMINING_FETCHDATA,

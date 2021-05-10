@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Pie, Column } from '@ant-design/charts';
-import { PieConfig } from '@ant-design/charts/es/pie';
+import type { PieConfig } from '@ant-design/charts/es/pie';
 import request, { API_HEAD } from '@/utils/request';
-import { ColumnConfig } from '@ant-design/charts/es/column';
+import type { ColumnConfig } from '@ant-design/charts/es/column';
 import { Card, Col, Radio, Row } from 'antd';
-import { CardProps } from 'antd/lib/card';
+import type { CardProps } from 'antd/lib/card';
 import { serialize } from 'object-to-formdata';
 import moment from 'moment';
 import { stringifyObjectField } from '@/utils/utils';
-import { TextValue } from '@/pages/module/data';
+import type { TextValue } from '@/pages/module/data';
 import { getColumnDataIndex } from '@/pages/datamining/utils';
 import { DateFormat } from '@/pages/module/moduleUtils';
 import DataTable from './components/DataTable';
@@ -31,22 +31,6 @@ const columnStyle = {
 const cardParams: CardProps = {
   size: 'default',
   bodyStyle: { height: '360px', paddingTop: 12, paddingBottom: 12 },
-};
-
-export default () => {
-  return (
-    <Row gutter={[12, 12]}>
-      <Col {...chartsColSpan}>
-        <OrganizationPmAgreementPayoutPie />
-      </Col>
-      <Col {...chartsColSpan}>
-        <PlatformPmAgreementPayoutPie />
-      </Col>
-      <Col span={24}>
-        <PmAgreementPayoutYearMonthColumn {...cardParams} />
-      </Col>
-    </Row>
-  );
 };
 
 // const COUNTX = getColumnDataIndex('count.*');
@@ -389,5 +373,21 @@ const PmAgreementPayoutYearMonthColumn: React.FC = (params) => {
     >
       <Column {...config} />
     </Card>
+  );
+};
+
+export default () => {
+  return (
+    <Row gutter={[12, 12]}>
+      <Col {...chartsColSpan}>
+        <OrganizationPmAgreementPayoutPie />
+      </Col>
+      <Col {...chartsColSpan}>
+        <PlatformPmAgreementPayoutPie />
+      </Col>
+      <Col span={24}>
+        <PmAgreementPayoutYearMonthColumn {...cardParams} />
+      </Col>
+    </Row>
   );
 };

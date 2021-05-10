@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 
 import { Dropdown, Button, Menu, Tooltip } from 'antd';
 import { FileExcelOutlined, FilePdfOutlined, DownloadOutlined } from '@ant-design/icons';
-import { Dispatch } from 'redux';
-import { ModuleState } from '../../data';
+import type { Dispatch } from 'redux';
+import type { ModuleState } from '../../data';
 
 import SettingForm from './exportSetting';
 import ExportRecordScheme from './ExportRecordScheme';

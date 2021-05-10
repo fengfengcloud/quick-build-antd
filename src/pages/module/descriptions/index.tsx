@@ -1,4 +1,5 @@
-import React, { useEffect, useState, CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Descriptions, Card, Popover, Tag, Space, Tooltip, Tabs, Typography, Rate } from 'antd';
 import {
   CheckOutlined,
@@ -13,9 +14,9 @@ import {
 } from '@ant-design/icons';
 // https://github.com/Caldis/react-zmage
 import Zmage from 'react-zmage';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { apply, getLastLevelLabel, getNumberDigitsFormat } from '@/utils/utils';
-import { ModuleModal, ModuleFieldType } from '../data';
+import type { ModuleModal, ModuleFieldType } from '../data';
 import { fetchObjectRecord, downloadRecordExcel, fetchObjectRecordSync } from '../service';
 import { getModuleInfo, addParentAdditionField, getFieldDefine } from '../modules';
 import { AttachemntRenderer } from '../attachment/utils';
@@ -103,89 +104,6 @@ const getOneToManyValue = (value: number) => {
   return <span style={numberStyle}>{value} 条</span>;
 };
 
-const maxTagCount = 5;
-const getManyToManyValue = (value: any[], field: ModuleFieldType, dispatch: Dispatch) => {
-  // manyToMany 另一端的模块名称，模块的字段名为Set<modulename>,或
-  // List<module>,利用正则表达式，取得<>之间的内容。
-  if (!value) return null;
-  const manyToManyModuleName = getModuleNameFromOneToMany(field.fieldtype);
-  const moduleInfo = getModuleInfo(manyToManyModuleName);
-  const records: any[] = value;
-  const getTag = (record: any) => (
-    <PopoverDescriptionWithId id={record.key} moduleInfo={moduleInfo} dispatch={dispatch}>
-      <Tag style={{ marginBottom: 4, marginTop: 4 }}>{record.title}</Tag>
-    </PopoverDescriptionWithId>
-  );
-  let result: any[] = [];
-  if (records.length <= maxTagCount)
-    result = records.map((record: any) => {
-      return getTag(record);
-    });
-  else {
-    result = records
-      .filter((_, index) => index < maxTagCount)
-      .map((record: any) => {
-        return getTag(record);
-      });
-    result.push(
-      <Popover
-        title={`其他${records.length - maxTagCount}个${moduleInfo.title}`}
-        trigger="click"
-        content={
-          <div style={{ maxWidth: '600px' }}>
-            {records
-              .filter((_, index) => index >= maxTagCount)
-              .map((record: any) => {
-                return getTag(record);
-              })}
-          </div>
-        }
-      >
-        <Tag style={{ marginBottom: 4, marginTop: 4 }} color="warning">
-          更多...
-        </Tag>
-      </Popover>,
-    );
-  }
-  return <div>{result}</div>;
-};
-
-const getImageItem = (value: string, field: any, formFieldDefine: any) => {
-  const imageStyle = {
-    width: formFieldDefine.imageWidth || 96,
-    height: formFieldDefine.imageHeight || 96,
-    style: formFieldDefine.imageStyle || { borderRadius: '8px' },
-  };
-  return value ? (
-    <div style={{ textAlign: 'center' }}>
-      <Zmage
-        zIndex={19260817}
-        {...imageStyle}
-        controller={{
-          close: true, // 关闭按钮
-          zoom: true, // 缩放按钮
-          download: true, // 下载按钮
-          rotate: true, // 旋转按钮
-          flip: true, // 翻页按钮
-          pagination: true, // 多页指示
-        }}
-        animate={{ flip: 'fade' }}
-        src={value ? `data:image/jpeg;base64,${value}` : NOIMAGE_PNG}
-        alt={field.fieldtitle}
-      />
-    </div>
-  ) : (
-    <div style={{ textAlign: 'center' }}>
-      <img alt="" {...imageStyle} width={32} height={32} src={NOIMAGE_PNG} />
-    </div>
-  );
-};
-
-export const getBooleanText = (value: boolean) => {
-  if (value === null || value === undefined) return booleannull;
-  return value ? yes : no;
-};
-
 /**
  * 取得显示记录信息右上角的附件按钮
  *
@@ -216,6 +134,155 @@ const getAttachmentButton = ({
     );
   }
   return null;
+};
+
+let descVisible = {}; // 存放所有可折叠面版的折叠属性
+
+interface DescriptionFormProps {
+  moduleInfo: ModuleModal;
+  record: object;
+  dispatch: Dispatch;
+}
+
+const DescriptionForm: React.FC<DescriptionFormProps> = ({ moduleInfo, record, dispatch }) => {
+  const scheme = moduleInfo.formschemes[0];
+  const [, setV] = useState({});
+  const genarateDetails = (details: any) => {
+    details.forEach((panel: any) => {
+      // 如果初始是折叠的，置为false
+      if (descVisible[panel.detailid] === undefined && panel.collapsible) {
+        descVisible[panel.detailid] = !panel.collapsed;
+      }
+    });
+    return details.map((panel: any) => {
+      const onCollsped = () => {
+        descVisible = {
+          ...descVisible,
+          [panel.detailid]: !descVisible[panel.detailid],
+        };
+        setV({}); // 强制刷新当前组件
+      };
+      const collspaed = panel.collapsible && !descVisible[panel.detailid];
+      let dpanel: any;
+      let { title } = panel;
+      if (panel.xtype === 'approvepanel') {
+        // if (canApprove(record)) {
+        //     const getCardProps = (title: string, defaultIcon: any = null) => {
+        //         return {
+        //             key: panel.detailid,
+        //             size: 'small',      //'middle','large'
+        //             bordered: true,
+        //             title: <Space>{defaultIcon}<span >{`${title}`}</span></Space>,
+        //         }
+        //     }
+        //     const cardParams: any = getCardProps(title || '流程任务审批', <AuditOutlined />);
+        //     return <Card {...cardParams} >
+        //         <span>
+        //             <ApproveForm moduleInfo={moduleInfo} dispatch={dispatch} record={record} />
+        //         </span>
+        //     </Card >
+        // } else
+        return null;
+      }
+      if (panel.xtype === 'tabpanel') {
+        panel.details.forEach((tab: any) => {
+          apply(tab, { tabTitle: tab.title });
+        });
+        const children: any = genarateDetails(panel.details);
+        const tabs: any = [];
+        for (let index = 0; index < panel.details.length; index += 1) {
+          const detail = panel.details[index];
+          tabs.push(
+            <TabPane
+              key={detail.detailid}
+              tab={
+                detail.iconCls ? (
+                  <span className={detail.iconCls}> {detail.tabTitle} </span>
+                ) : (
+                  detail.tabTitle
+                )
+              }
+            >
+              {children[index]}
+            </TabPane>,
+          );
+        }
+        return (
+          <Tabs key={panel.detailid} tabPosition={panel.tabPosition || 'top'} centered={false}>
+            {tabs}
+          </Tabs>
+        );
+      }
+      if (panel.xtype === 'approvehistory') {
+        if (!title) title = '流程审批记录';
+        if (moduleInfo.moduleLimit.hasapprove && isStartProcess(record))
+          dpanel = (
+            <div style={{ padding: '12px' }}>
+              {getApproveSteps({ record, dispatch, direction: 'horizontal' })}
+            </div>
+          );
+        else return null;
+      } else if (panel.subobjectid) {
+        // 子模块
+        const { subobjectid, fieldahead } = panel;
+        const config = {
+          moduleName: subobjectid,
+          parentOperateType: 'display', // 父模块的form当前操作类型
+          readOnly: true,
+          parentFilter: {
+            moduleName: moduleInfo.objectname, // 父模块的名称
+            fieldahead: fieldahead.split('.with.')[1],
+            fieldName: moduleInfo.primarykey, // 父模块的限定字段,父模块主键
+            fieldtitle: moduleInfo.title, // 父模块的标题
+            operator: '=',
+            text: record[moduleInfo.namefield],
+            fieldvalue: record[moduleInfo.primarykey], // 父模块的记录id
+          },
+        };
+        const subModuleInfo = getModuleInfo(config.moduleName);
+        title = subModuleInfo.title;
+        dpanel = (
+          <div style={{ paddingTop: '12px' }}>
+            <DetailGrid {...config} />
+          </div>
+        );
+      } else if (panel.xtype === 'panel') {
+        return genarateDetails(panel.details);
+      } else if (panel.xtype === 'fieldset')
+        /* eslint-disable */
+        dpanel = generatePanel({ panel, moduleInfo, record, dispatch });
+      const icon = panel.collapsible ? (
+        descVisible[panel.detailid] ? (
+          <DownOutlined onClick={onCollsped} />
+        ) : (
+          <RightOutlined onClick={onCollsped} />
+        )
+      ) : (
+        <BlockOutlined />
+      );
+      /* eslint-enable */
+      return (
+        <Card
+          size="small"
+          key={panel.detailid}
+          bordered
+          bodyStyle={collspaed ? { padding: 0 } : { margin: '-1px -1px -1px -1px', padding: 0 }}
+          className="desc_card_border_top"
+          title={
+            !panel.tabTitle && title && !panel.hiddenTitle ? (
+              <Space>
+                {icon}
+                <span>{`${title}`}</span>
+              </Space>
+            ) : null
+          }
+        >
+          <div style={collspaed ? { display: 'none' } : {}}>{dpanel}</div>
+        </Card>
+      );
+    });
+  };
+  return <>{genarateDetails(scheme.details)}</>;
 };
 
 const Description = ({
@@ -344,6 +411,129 @@ const Description = ({
       <DescriptionForm moduleInfo={moduleInfo} record={record} dispatch={dispatch} />
     </Card>
   );
+};
+
+/**
+ * 气泡显示一个模块的记录信息，如果有children那么链接值就是children
+ * 同步显示，先读取记录再显示，就不会有闪动的效果了
+ * @param param0
+ */
+export const PopoverDescriptionWithId = ({
+  moduleInfo,
+  id,
+  dispatch,
+  children,
+}: {
+  moduleInfo: ModuleModal;
+  id: string;
+  dispatch: Dispatch | any;
+  children?: any;
+}) => {
+  const [visible, setVisible] = useState(false);
+  const [record, setRecord] = useState(null);
+  return id ? (
+    <Popover
+      trigger="click"
+      key={moduleInfo.modulename + id}
+      destroyTooltipOnHide
+      visible={visible}
+      onVisibleChange={(v) => {
+        if (v && !record)
+          setRecord(fetchObjectRecordSync({ objectname: moduleInfo.modulename, id }).data);
+        setVisible(v);
+      }}
+      content={Description({ moduleInfo, record, dispatch, setVisible })}
+    >
+      {children || (
+        <span className={styles.manytooneinfo}>
+          <InfoCircleOutlined style={{ paddingLeft: '2px' }} />
+        </span>
+      )}
+    </Popover>
+  ) : null;
+};
+
+const maxTagCount = 5;
+const getManyToManyValue = (value: any[], field: ModuleFieldType, dispatch: Dispatch) => {
+  // manyToMany 另一端的模块名称，模块的字段名为Set<modulename>,或
+  // List<module>,利用正则表达式，取得<>之间的内容。
+  if (!value) return null;
+  const manyToManyModuleName = getModuleNameFromOneToMany(field.fieldtype);
+  const moduleInfo = getModuleInfo(manyToManyModuleName);
+  const records: any[] = value;
+  const getTag = (record: any) => (
+    <PopoverDescriptionWithId id={record.key} moduleInfo={moduleInfo} dispatch={dispatch}>
+      <Tag style={{ marginBottom: 4, marginTop: 4 }}>{record.title}</Tag>
+    </PopoverDescriptionWithId>
+  );
+  let result: any[] = [];
+  if (records.length <= maxTagCount)
+    result = records.map((record: any) => {
+      return getTag(record);
+    });
+  else {
+    result = records
+      .filter((_, index) => index < maxTagCount)
+      .map((record: any) => {
+        return getTag(record);
+      });
+    result.push(
+      <Popover
+        title={`其他${records.length - maxTagCount}个${moduleInfo.title}`}
+        trigger="click"
+        content={
+          <div style={{ maxWidth: '600px' }}>
+            {records
+              .filter((_, index) => index >= maxTagCount)
+              .map((record: any) => {
+                return getTag(record);
+              })}
+          </div>
+        }
+      >
+        <Tag style={{ marginBottom: 4, marginTop: 4 }} color="warning">
+          更多...
+        </Tag>
+      </Popover>,
+    );
+  }
+  return <div>{result}</div>;
+};
+
+const getImageItem = (value: string, field: any, formFieldDefine: any) => {
+  const imageStyle = {
+    width: formFieldDefine.imageWidth || 96,
+    height: formFieldDefine.imageHeight || 96,
+    style: formFieldDefine.imageStyle || { borderRadius: '8px' },
+  };
+  return value ? (
+    <div style={{ textAlign: 'center' }}>
+      <Zmage
+        zIndex={19260817}
+        {...imageStyle}
+        controller={{
+          close: true, // 关闭按钮
+          zoom: true, // 缩放按钮
+          download: true, // 下载按钮
+          rotate: true, // 旋转按钮
+          flip: true, // 翻页按钮
+          pagination: true, // 多页指示
+        }}
+        animate={{ flip: 'fade' }}
+        src={value ? `data:image/jpeg;base64,${value}` : NOIMAGE_PNG}
+        alt={field.fieldtitle}
+      />
+    </div>
+  ) : (
+    <div style={{ textAlign: 'center' }}>
+      <img alt="" {...imageStyle} width={32} height={32} src={NOIMAGE_PNG} />
+    </div>
+  );
+};
+
+export const getBooleanText = (value: boolean) => {
+  if (value === null || value === undefined) return booleannull;
+  return value ? yes : no;
 };
 
 const itemStyles: CSSProperties = {
@@ -504,195 +694,6 @@ const generatePanel = ({
   ) : null;
 };
 
-let descVisible = {}; // 存放所有可折叠面版的折叠属性
-
-interface DescriptionFormProps {
-  moduleInfo: ModuleModal;
-  record: object;
-  dispatch: Dispatch;
-}
-
-const DescriptionForm: React.FC<DescriptionFormProps> = ({ moduleInfo, record, dispatch }) => {
-  const scheme = moduleInfo.formschemes[0];
-  const [, setV] = useState({});
-  const genarateDetails = (details: any) => {
-    details.forEach((panel: any) => {
-      // 如果初始是折叠的，置为false
-      if (descVisible[panel.detailid] === undefined && panel.collapsible) {
-        descVisible[panel.detailid] = !panel.collapsed;
-      }
-    });
-    return details.map((panel: any) => {
-      const onCollsped = () => {
-        descVisible = {
-          ...descVisible,
-          [panel.detailid]: !descVisible[panel.detailid],
-        };
-        setV({}); // 强制刷新当前组件
-      };
-      const collspaed = panel.collapsible && !descVisible[panel.detailid];
-      let dpanel: any;
-      let { title } = panel;
-      if (panel.xtype === 'approvepanel') {
-        // if (canApprove(record)) {
-        //     const getCardProps = (title: string, defaultIcon: any = null) => {
-        //         return {
-        //             key: panel.detailid,
-        //             size: 'small',      //'middle','large'
-        //             bordered: true,
-        //             title: <Space>{defaultIcon}<span >{`${title}`}</span></Space>,
-        //         }
-        //     }
-        //     const cardParams: any = getCardProps(title || '流程任务审批', <AuditOutlined />);
-        //     return <Card {...cardParams} >
-        //         <span>
-        //             <ApproveForm moduleInfo={moduleInfo} dispatch={dispatch} record={record} />
-        //         </span>
-        //     </Card >
-        // } else
-        return null;
-      }
-      if (panel.xtype === 'tabpanel') {
-        panel.details.forEach((tab: any) => {
-          apply(tab, { tabTitle: tab.title });
-        });
-        const children: any = genarateDetails(panel.details);
-        const tabs: any = [];
-        for (let index = 0; index < panel.details.length; index += 1) {
-          const detail = panel.details[index];
-          tabs.push(
-            <TabPane
-              key={detail.detailid}
-              tab={
-                detail.iconCls ? (
-                  <span className={detail.iconCls}> {detail.tabTitle} </span>
-                ) : (
-                  detail.tabTitle
-                )
-              }
-            >
-              {children[index]}
-            </TabPane>,
-          );
-        }
-        return (
-          <Tabs key={panel.detailid} tabPosition={panel.tabPosition || 'top'} centered={false}>
-            {tabs}
-          </Tabs>
-        );
-      }
-      if (panel.xtype === 'approvehistory') {
-        if (!title) title = '流程审批记录';
-        if (moduleInfo.moduleLimit.hasapprove && isStartProcess(record))
-          dpanel = (
-            <div style={{ padding: '12px' }}>
-              {getApproveSteps({ record, dispatch, direction: 'horizontal' })}
-            </div>
-          );
-        else return null;
-      } else if (panel.subobjectid) {
-        // 子模块
-        const { subobjectid, fieldahead } = panel;
-        const config = {
-          moduleName: subobjectid,
-          parentOperateType: 'display', // 父模块的form当前操作类型
-          readOnly: true,
-          parentFilter: {
-            moduleName: moduleInfo.objectname, // 父模块的名称
-            fieldahead: fieldahead.split('.with.')[1],
-            fieldName: moduleInfo.primarykey, // 父模块的限定字段,父模块主键
-            fieldtitle: moduleInfo.title, // 父模块的标题
-            operator: '=',
-            text: record[moduleInfo.namefield],
-            fieldvalue: record[moduleInfo.primarykey], // 父模块的记录id
-          },
-        };
-        const subModuleInfo = getModuleInfo(config.moduleName);
-        title = subModuleInfo.title;
-        dpanel = (
-          <div style={{ paddingTop: '12px' }}>
-            <DetailGrid {...config} />
-          </div>
-        );
-      } else if (panel.xtype === 'panel') {
-        return genarateDetails(panel.details);
-      } else if (panel.xtype === 'fieldset')
-        dpanel = generatePanel({ panel, moduleInfo, record, dispatch });
-      /* eslint-disable */
-      const icon = panel.collapsible ? (
-        descVisible[panel.detailid] ? (
-          <DownOutlined onClick={onCollsped} />
-        ) : (
-          <RightOutlined onClick={onCollsped} />
-        )
-      ) : (
-        <BlockOutlined />
-      );
-      /* eslint-enable */
-      return (
-        <Card
-          size="small"
-          key={panel.detailid}
-          bordered
-          bodyStyle={collspaed ? { padding: 0 } : { margin: '-1px -1px -1px -1px', padding: 0 }}
-          className="desc_card_border_top"
-          title={
-            !panel.tabTitle && title && !panel.hiddenTitle ? (
-              <Space>
-                {icon}
-                <span>{`${title}`}</span>
-              </Space>
-            ) : null
-          }
-        >
-          <div style={collspaed ? { display: 'none' } : {}}>{dpanel}</div>
-        </Card>
-      );
-    });
-  };
-  return <>{genarateDetails(scheme.details)}</>;
-};
-
-/**
- * 气泡显示一个模块的记录信息，如果有children那么链接值就是children
- * 同步显示，先读取记录再显示，就不会有闪动的效果了
- * @param param0
- */
-export const PopoverDescriptionWithId = ({
-  moduleInfo,
-  id,
-  dispatch,
-  children,
-}: {
-  moduleInfo: ModuleModal;
-  id: string;
-  dispatch: Dispatch | any;
-  children?: any;
-}) => {
-  const [visible, setVisible] = useState(false);
-  const [record, setRecord] = useState(null);
-  return id ? (
-    <Popover
-      trigger="click"
-      key={moduleInfo.modulename + id}
-      destroyTooltipOnHide
-      visible={visible}
-      onVisibleChange={(v) => {
-        if (v && !record)
-          setRecord(fetchObjectRecordSync({ objectname: moduleInfo.modulename, id }).data);
-        setVisible(v);
-      }}
-      content={Description({ moduleInfo, record, dispatch, setVisible })}
-    >
-      {children || (
-        <span className={styles.manytooneinfo}>
-          <InfoCircleOutlined style={{ paddingLeft: '2px' }} />
-        </span>
-      )}
-    </Popover>
-  ) : null;
-};
-
 /**
  * 气泡显示一个模块的记录信息，如果有children那么链接值就是children
  * 异步显示，会有一个闪烁的效果，看的有点头晕
@@ -716,6 +717,7 @@ export const PopoverDescriptionWithIdAsync = ({
       key={moduleInfo.modulename + id}
       visible={visible}
       onVisibleChange={(v) => setVisible(v)}
+      /* eslint-disable */
       content={
         <DescriptionWithId
           moduleInfo={moduleInfo}
@@ -724,6 +726,7 @@ export const PopoverDescriptionWithIdAsync = ({
           setVisible={setVisible}
         />
       }
+      /* eslint-enable */
     >
       {children || (
         <span className={styles.manytooneinfo}>

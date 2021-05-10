@@ -1,6 +1,6 @@
 import React from 'react';
 import { notification, message, Modal } from 'antd';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { setGlobalModalProps } from '@/layouts/BasicLayout';
 import BpmnModeler from './BpmnEditor/Modeler';
 import 'bpmn-js/dist/assets/diagram-js.css'; // 左边工具栏以及编辑节点的样式

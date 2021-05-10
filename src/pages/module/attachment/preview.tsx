@@ -2,7 +2,7 @@ import { API_HEAD } from '@/utils/request';
 import { getPdfjsUrl, isSafari } from '@/utils/utils';
 import { Button, Card, Result } from 'antd';
 import React from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { connect, history } from 'umi';
 
 interface AttachmentPreviewProps {

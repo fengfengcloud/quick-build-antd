@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from 'antd';
-import { CardProps } from 'antd/lib/card';
+import type { CardProps } from 'antd/lib/card';
 import { systemInfo } from '@/models/systeminfo';
 import Monitor from '../monitor';
 import { PmCharts } from './pm';

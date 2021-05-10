@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Switch, Row, Col, Radio, InputNumber, Card, Divider } from 'antd';
-import { Dispatch } from 'redux';
-import { ModuleState } from '../../data';
+import type { Dispatch } from 'redux';
+import type { ModuleState } from '../../data';
 
 const SettingForm = ({
   moduleState,

@@ -1,8 +1,6 @@
-import { ParentFilterModal } from '../data';
+import type { ParentFilterModal } from '../data';
 
-export interface ModuleNavigates {
-  [moduleName: string]: NavigateStateModal[]; // 所有模块的导航信息
-}
+export type ModuleNavigates = Record<string, NavigateStateModal[]>;
 
 export interface NavigateStateModal {
   navigateschemeid: string; // 导航方案id

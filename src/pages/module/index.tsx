@@ -1,12 +1,12 @@
 import React, { createContext, useEffect } from 'react';
 import { PageHeaderWrapper, GridContent, WaterMark } from '@ant-design/pro-layout';
 import { Spin, Card, Skeleton, Space, Layout } from 'antd';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { getTitleFromSysMenu } from '@/layouts/BasicLayout';
 import HOCDndProvider from '@/utils/HOCDndProvider';
 import ModuleGrid from './grid';
-import { ModuleModal, ModuleState, ParentFilterModal } from './data';
+import type { ModuleModal, ModuleState, ParentFilterModal } from './data';
 import ModuleToolbar from './toolbar';
 import PageHeaderToolbar from './PageHeaderToolbar';
 import UserDefineFilter from './UserDefineFilter';
@@ -236,7 +236,7 @@ export default connect(
     loading,
   }: {
     modules: ModuleState[];
-    loading: { effects: { [key: string]: boolean } };
+    loading: { effects: Record<string, boolean> };
   }) => ({
     modules,
     fetchLoading: loading.effects['modules/fetchData'] || loading.effects['modules/filterChanged'],

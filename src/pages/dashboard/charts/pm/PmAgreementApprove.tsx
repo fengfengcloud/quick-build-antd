@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Pie, Bar, Column, Rose } from '@ant-design/charts';
-import { PieConfig } from '@ant-design/charts/es/pie';
+import type { PieConfig } from '@ant-design/charts/es/pie';
 import request, { API_HEAD } from '@/utils/request';
-import { ColumnConfig } from '@ant-design/charts/es/column';
-import { RoseConfig } from '@ant-design/charts/es/rose';
+import type { ColumnConfig } from '@ant-design/charts/es/column';
+import type { RoseConfig } from '@ant-design/charts/es/rose';
 import { Card, Col, Radio, Row } from 'antd';
-import { CardProps } from 'antd/lib/card';
-import { BarConfig } from '@ant-design/charts/es/bar';
+import type { CardProps } from 'antd/lib/card';
+import type { BarConfig } from '@ant-design/charts/es/bar';
 import { serialize } from 'object-to-formdata';
 import moment from 'moment';
 import { stringifyObjectField } from '@/utils/utils';
@@ -22,27 +22,6 @@ const numeral = require('numeral');
 const cardParams: CardProps = {
   size: 'default',
   bodyStyle: { height: '360px', paddingTop: 12, paddingBottom: 12 },
-};
-
-export default () => {
-  return (
-    <Row gutter={[12, 12]}>
-      <Col {...chartsColSpan}>
-        <OrganizationPmAgreementApprovePie />
-      </Col>
-      <Col {...chartsColSpan}>
-        <YearPmAgreementApprovePie />
-      </Col>
-      <Col span={24}>
-        <OrgYearPmAgreementApproveColumn {...cardParams} />
-      </Col>
-      <Col span={24}>
-        <Card title="合同文件审批表月度审批" {...cardParams}>
-          <PmAgreementApproveYearMonthColumn />
-        </Card>
-      </Col>
-    </Row>
-  );
 };
 
 const COUNTX = getColumnDataIndex('count.*');
@@ -407,4 +386,25 @@ export const PmAgreementApproveYearMonthColumn: React.FC = () => {
     }, 800);
   }, []);
   return <Column {...config} />;
+};
+
+export default () => {
+  return (
+    <Row gutter={[12, 12]}>
+      <Col {...chartsColSpan}>
+        <OrganizationPmAgreementApprovePie />
+      </Col>
+      <Col {...chartsColSpan}>
+        <YearPmAgreementApprovePie />
+      </Col>
+      <Col span={24}>
+        <OrgYearPmAgreementApproveColumn {...cardParams} />
+      </Col>
+      <Col span={24}>
+        <Card title="合同文件审批表月度审批" {...cardParams}>
+          <PmAgreementApproveYearMonthColumn />
+        </Card>
+      </Col>
+    </Row>
+  );
 };

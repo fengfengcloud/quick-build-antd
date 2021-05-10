@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { apply } from '@/utils/utils';
-import { ModuleState, TextValue } from '../data';
+import type { ModuleState, TextValue } from '../data';
 import {
   getFilterScheme,
   getModuleInfo,

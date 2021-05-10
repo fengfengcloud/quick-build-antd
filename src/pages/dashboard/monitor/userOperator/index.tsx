@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardProps, Col, Radio, Row } from 'antd';
+import type { CardProps } from 'antd';
+import { Card, Col, Radio, Row } from 'antd';
 import { currentUser } from 'umi';
 import { serialize } from 'object-to-formdata';
 import request, { API_HEAD } from '@/utils/request';
 import moment from 'moment';
 import { stringifyObjectField } from '@/utils/utils';
-import { PieConfig } from '@ant-design/charts/es/pie';
+import type { PieConfig } from '@ant-design/charts/es/pie';
 import { getColumnDataIndex } from '@/pages/datamining/utils';
 import { Column, Pie } from '@ant-design/charts';
-import { TextValue } from '@/pages/module/data';
-import { ColumnConfig } from '@ant-design/charts/es/column';
+import type { TextValue } from '@/pages/module/data';
+import type { ColumnConfig } from '@ant-design/charts/es/column';
 import { DateFormat } from '@/pages/module/moduleUtils';
 import { DateSectionSelect } from '../../utils/DateSectionSelect';
 import { chartsColSpan } from '../../charts';
@@ -19,22 +20,6 @@ const numeral = require('numeral');
 const cardParams: CardProps = {
   size: 'default',
   bodyStyle: { height: '360px', paddingTop: 12, paddingBottom: 12 },
-};
-
-export const UserOperator: React.FC = () => {
-  return (
-    <Row gutter={[12, 12]}>
-      <Col {...chartsColSpan}>
-        <UserOperatorPie title="用户操作类型分析" groupfieldid={{ fieldname: 'dotype' }} />
-      </Col>
-      <Col {...chartsColSpan}>
-        <UserOperatorPie title="用户操作模块分析" groupfieldid={{ fieldahead: 'FDataobject' }} />
-      </Col>
-      <Col span={24}>
-        <UserOperatorYearMonthColumn {...cardParams} />
-      </Col>
-    </Row>
-  );
 };
 
 const COUNT = getColumnDataIndex('count.*');
@@ -282,5 +267,21 @@ const UserOperatorYearMonthColumn: React.FC = (params) => {
     >
       <Column {...config} />
     </Card>
+  );
+};
+
+export const UserOperator: React.FC = () => {
+  return (
+    <Row gutter={[12, 12]}>
+      <Col {...chartsColSpan}>
+        <UserOperatorPie title="用户操作类型分析" groupfieldid={{ fieldname: 'dotype' }} />
+      </Col>
+      <Col {...chartsColSpan}>
+        <UserOperatorPie title="用户操作模块分析" groupfieldid={{ fieldahead: 'FDataobject' }} />
+      </Col>
+      <Col span={24}>
+        <UserOperatorYearMonthColumn {...cardParams} />
+      </Col>
+    </Row>
   );
 };

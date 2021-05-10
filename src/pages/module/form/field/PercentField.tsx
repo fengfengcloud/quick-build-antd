@@ -1,5 +1,6 @@
 import React from 'react';
-import { InputNumber, InputNumberProps } from 'antd';
+import type { InputNumberProps } from 'antd';
+import { InputNumber } from 'antd';
 import { getNumberDigitsFormat } from '@/utils/utils';
 
 const numeral = require('numeral');

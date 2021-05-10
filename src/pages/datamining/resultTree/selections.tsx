@@ -2,7 +2,7 @@ import React from 'react';
 import { Table } from 'antd';
 import { BorderOutlined, CheckSquareOutlined, SwapOutlined } from '@ant-design/icons';
 import { EMPTY_MENU_ICON } from '@/utils/utils';
-import { DataminingModal } from '../data';
+import type { DataminingModal } from '../data';
 import { ACT_SELECTED_ROWKEYS_CHANGED } from '../constants';
 import { getAllChildRowids, getAllhasChildrenRowids, getAllleafRowids } from '../utils';
 

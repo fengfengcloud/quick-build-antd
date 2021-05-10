@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { API_HEAD } from '@/utils/request';
 import { getLocalMonetaryPosition, getLocalMonetaryType, MD5 } from '@/utils/utils';
-import { DataminingModal, SchemeSettingModal } from './data';
+import type { DataminingModal, SchemeSettingModal } from './data';
 import { getMonetary } from '../module/grid/monetary';
 import {
   getFilterRestHidden,
@@ -241,12 +241,12 @@ export const getAllChildRowids = (record: any): string[] => {
 };
 
 // 返回所有的非叶节点的rowid数组
-export const getAllhasChildrenRowids = (datasource: any[]): string[] => {
+export const getAllhasChildrenRowids = (datasource: any[], key: string = ROWID): string[] => {
   const result: string[] = [];
   const getRowids = (recs: any[]) => {
     recs.forEach((rec) => {
       if (rec.children) {
-        result.push(rec[ROWID]);
+        result.push(rec[key]);
         getRowids(rec.children);
       }
     });
@@ -256,12 +256,12 @@ export const getAllhasChildrenRowids = (datasource: any[]): string[] => {
 };
 
 // 返回所有的叶节点的rowid数组
-export const getAllleafRowids = (datasource: any[]): string[] => {
+export const getAllleafRowids = (datasource: any[], key: string = ROWID): string[] => {
   const result: string[] = [];
   const getRowids = (recs: any[]) => {
     recs.forEach((rec) => {
       if (rec.children) getRowids(rec.children);
-      else result.push(rec[ROWID]);
+      else result.push(rec[key]);
     });
   };
   getRowids(datasource);

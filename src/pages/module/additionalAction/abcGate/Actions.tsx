@@ -1,7 +1,7 @@
 import React from 'react';
 import request, { API_HEAD } from '@/utils/request';
 import { Alert, message, Modal, Space } from 'antd';
-import { ActionParamsModal } from '../systemAction';
+import type { ActionParamsModal } from '../systemAction';
 
 /**
  * 更新设备的状态

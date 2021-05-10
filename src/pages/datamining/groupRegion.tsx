@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { Rnd } from 'react-rnd';
 import { ACT_NAVIGATE_ADD_GROUP, ACT_TOGGLE_GROUP_REGION, DRAG_ITEM_GROUPFIELD } from './constants';
-import { DataminingModal } from './data';
+import type { DataminingModal } from './data';
 import styles from './index.less';
 
 interface GroupRegionProps {

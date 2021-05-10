@@ -1,5 +1,5 @@
-import { Effect } from 'dva';
-import { Reducer } from 'redux';
+import type { Effect } from 'dva';
+import type { Reducer } from 'redux';
 
 import { query as querySystemInfo } from '@/services/systeminfo';
 import { apply } from '@/utils/utils';

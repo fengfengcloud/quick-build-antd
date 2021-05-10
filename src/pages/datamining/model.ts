@@ -1,6 +1,6 @@
 import update from 'immutability-helper';
 import { getMonetary } from '../module/grid/monetary';
-import { ActionProps, DataminingModal, FieldModal } from './data';
+import type { ActionProps, DataminingModal, FieldModal } from './data';
 import { getInitDataminingState, getTreeRecordByKey, sortTree } from './utils';
 // https://github.com/kolodny/immutability-helper
 import {
@@ -52,7 +52,7 @@ import {
   ACT_DATAMINING_EXPORT_SETTING_CHANGE,
   ACT_SQLPARAM_CHANGE,
 } from './constants';
-import { DataminingNavigateModal } from './navigate/data';
+import type { DataminingNavigateModal } from './navigate/data';
 import { getNaviagtesCondition } from './navigate/navigateUtils';
 import { getFilterDataSource } from './condition/conditionUtils';
 import { fetchDataminingSchemes } from './schemeUtils';

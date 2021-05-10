@@ -1,10 +1,10 @@
-import { AnyAction, Reducer } from 'redux';
-import { EffectsCommandMap } from 'dva';
+import type { AnyAction, Reducer } from 'redux';
+import type { EffectsCommandMap } from 'dva';
 import { apply } from '@/utils/utils';
 import { queryModuleInfo, fetchObjectRecord, fetchObjectDataWithState } from './service';
 import { getGridColumnSorts } from './grid/sortUtils';
 import { getGridColumnFilters, getColumnFiltersInfo } from './grid/filterUtils';
-import {
+import type {
   ModuleState,
   TextValue,
   ModuleModal,
@@ -28,9 +28,7 @@ export type Effect = (
   effects: EffectsCommandMap & { select: <T>(func: (state: ModalState) => T) => T },
 ) => void;
 
-export interface ModalState {
-  [moduleid: string]: ModuleState;
-}
+export type ModalState = Record<string, ModuleState>;
 
 export interface ModuleModelType {
   namespace: string;

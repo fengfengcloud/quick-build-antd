@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Dispatch } from 'redux';
-import { RouteChildrenProps } from 'react-router';
+import type { Dispatch } from 'redux';
+import type { RouteChildrenProps } from 'react-router';
 import { GridContent } from '@ant-design/pro-layout';
 import { Card, Tabs } from 'antd';
-import { TabsPosition } from 'antd/lib/tabs';
-import { connect, ModalState } from 'umi';
-import { DefaultSettings as SettingModelState } from '../../../../config/defaultSettings';
-import { CurrentUser } from '../center/data';
+import type { TabsPosition } from 'antd/lib/tabs';
+import type { ModalState } from 'umi';
+import { connect } from 'umi';
+import type { DefaultSettings as SettingModelState } from '../../../../config/defaultSettings';
+import type { CurrentUser } from '../center/data';
 import BaseView from './components/baseView';
 import SecurityView from './components/security';
 import NotificationView from './components/notification';
@@ -102,7 +103,7 @@ export default connect(
     user,
     settings,
   }: {
-    loading: { effects: { [key: string]: boolean } };
+    loading: { effects: Record<string, boolean> };
     accountCenter: ModalState;
     user: any;
     settings: SettingModelState;

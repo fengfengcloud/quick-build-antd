@@ -3,12 +3,12 @@ import { Button, message, Modal } from 'antd';
 import request, { API_HEAD } from '@/utils/request';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { getMenuAwesomeIcon, showResultInfo } from '@/utils/utils';
-import { ModuleModal, ModuleState, ParentFormModal, ParentFilterModal } from '../data';
+import type { ModuleModal, ModuleState, ParentFormModal, ParentFilterModal } from '../data';
 import { getModuleInfo } from '../modules';
 import { DetailModelProvider } from '../detailGrid/provider';
 import ModuleForm from '../form';
 import { DetailModelContext } from '../detailGrid/model';
-import { ActionParamsModal } from './systemAction';
+import type { ActionParamsModal } from './systemAction';
 import { NAME } from '../constants';
 import { deviceCheckOnline, dispatchEmployeePhoto } from './abcGate/Actions';
 
@@ -443,13 +443,9 @@ export const paymentCreatePaymentDetailButton = (params: ActionParamsModal) => {
   );
 };
 
-interface BusinessActionStore {
-  [actionName: string]: Function;
-}
+type BusinessActionStore = Record<string, Function>;
 
-interface BusinessActionButtonStore {
-  [actionName: string]: Function;
-}
+type BusinessActionButtonStore = Record<string, Function>;
 
 /**
  * 所有的业务系统模块附加操作的函数的定义区域

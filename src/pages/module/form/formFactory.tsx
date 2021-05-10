@@ -18,7 +18,7 @@ import {
   AutoComplete,
   Switch,
 } from 'antd';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import {
   BlockOutlined,
   DownOutlined,
@@ -28,9 +28,15 @@ import {
   FileDoneOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { FormInstance, Rule } from 'antd/lib/form';
+import type { FormInstance, Rule } from 'antd/lib/form';
 import { apply, getLastLevelLabel, getNumberDigitsFormat } from '@/utils/utils';
-import { ModuleModal, ModuleFieldType, FormOperateType, FormShowType, TextValue } from '../data';
+import type {
+  ModuleModal,
+  ModuleFieldType,
+  FormOperateType,
+  FormShowType,
+  TextValue,
+} from '../data';
 import { getDictionary, getPropertys } from '../dictionary/dictionarys';
 
 import {
@@ -80,243 +86,53 @@ interface FormSchemePanelProps {
   requiredMark: boolean;
 }
 
-// 生成一个Card->Fields
-export const getFormSchemePanel: React.FC<FormSchemePanelProps> = (params): any => {
-  const {
-    details,
-    moduleInfo,
-    form,
-    fieldsValidate,
-    readOnly,
-    dispatch,
-    showType,
-    parentCols,
-    setV,
-    formType,
-    currRecord,
-    requiredMark,
-  } = params;
-  const items: any[] = [];
-  let firstFieldSet: boolean = true;
-  details.forEach((item: any) => {
-    let field = null;
-    const { fieldid, xtype, layout, detailid, title, subobjectid, fieldahead } = item;
-    const collapsed = item.collapsible && !fieldsetVisible[detailid];
-    const onCollsped = () => {
-      fieldsetVisible = { ...fieldsetVisible, [detailid]: !fieldsetVisible[detailid] };
-      setV({}); // 强制刷新当前组件
-    };
-    const getCardProps = (cardtitle: string, defaultIcon: any = null) => {
-      if (fieldsetVisible[detailid] === undefined && item.collapsible)
-        fieldsetVisible[detailid] = !item.collapsed;
-      /* eslint-disable */
-      const icon = item.collapsible ? (
-        fieldsetVisible[detailid] ? (
-          <DownOutlined onClick={onCollsped} />
-        ) : (
-          <RightOutlined onClick={onCollsped} />
-        )
-      ) : (
-        defaultIcon
-      );
-      const className = `${item.collapsible && !fieldsetVisible[detailid] ? 'collapsed' : ''} ${
-        firstFieldSet || item.tabTitle || xtype === 'panel'
-          ? 'card_border_top_first'
-          : 'card_border_top'
-      }`;
-      /* eslint-enable */
-      return {
-        key: detailid,
-        size: 'small', // 'middle','large'
-        bordered: false,
-        className,
-        icon,
-        title: (
-          <Space>
-            {icon}
-            <span>{`${cardtitle}`}</span>
-          </Space>
-        ),
-      };
-    };
-    // 子模块
-    if (subobjectid) {
-      const config = {
-        moduleName: subobjectid,
-        parentOperateType: formType, // 父模块的form当前操作类型
-        parentFilter: {
-          moduleName: moduleInfo.objectname, // 父模块的名称
-          fieldahead: fieldahead.split('.with.')[1],
-          fieldName: moduleInfo.primarykey, // 父模块的限定字段,父模块主键
-          fieldtitle: moduleInfo.title, // 父模块的标题
-          operator: '=',
-          text: currRecord[moduleInfo.namefield],
-          fieldvalue: currRecord[moduleInfo.primarykey], // 父模块的记录id
-        },
-        // 把form信息也加入state中，以后可以使用，看看影响不影响速度
-        parentForm: {
-          moduleName: moduleInfo.objectname,
-          dispatch,
-          currRecord,
-        },
-      };
-      const subModuleInfo = getModuleInfo(config.moduleName);
-      const cardParams: any = getCardProps(subModuleInfo.title, <ProfileOutlined />);
-      if (item.tabTitle) delete cardParams.title;
-      field = (
-        <Card {...cardParams}>
-          <span style={collapsed ? { display: 'none' } : {}}>
-            <DetailGrid {...config} />
-          </span>
-        </Card>
-      );
-    } else if (xtype === 'approvehistory') {
-      if (currRecord && isStartProcess(currRecord)) {
-        const cardParams: any = getCardProps(title || '流程审批记录', <FileDoneOutlined />);
-        if (item.tabTitle) delete cardParams.title;
-        // 此流程信息只读
-        field = (
-          <Card {...cardParams}>
-            <span style={collapsed ? { display: 'none' } : {}}>
-              {getApproveSteps({ record: currRecord, direction: item.direction })}
-            </span>
-          </Card>
-        );
-      }
-    } else if (xtype === 'approvepanel') {
-      // 只要可审批，不管在什么状态下都可以进行
-      if (canApprove(currRecord)) {
-        // formType === 'approve' &&
-        const cardParams: any = getCardProps(title || '流程任务审批', <AuditOutlined />);
-        if (item.tabTitle) delete cardParams.title;
-        field = (
-          <Card {...cardParams}>
-            <span style={collapsed ? { display: 'none' } : {}}>
-              <ApproveForm moduleInfo={moduleInfo} dispatch={dispatch} record={currRecord} />
-            </span>
-          </Card>
-        );
-      }
-    } else if (fieldid) {
-      // 有字段id的，说明是一个字段，不是
-      field = (
-        <FormField
-          formFieldDefine={item}
-          moduleInfo={moduleInfo}
-          dispatch={dispatch}
-          fieldsValidate={fieldsValidate}
-          form={form}
-          readOnly={readOnly}
-          formType={formType}
-          currRecord={currRecord}
-          requiredMark={requiredMark}
-        />
-      );
-    } else if (xtype === 'tabpanel') {
-      item.details.forEach((tab: any) => {
-        apply(tab, { tabTitle: tab.title });
-      });
-      const children: any = getFormSchemePanel({ ...params, details: item.details, parentCols: 0 });
-      const tabs: any = [];
-      for (let index = 0; index < item.details.length; index += 1) {
-        const detail = item.details[index];
-        tabs.push(
-          <TabPane
-            key={detail.detailid}
-            tab={
-              detail.iconCls ? (
-                <span className={detail.iconCls}> {detail.tabTitle} </span>
-              ) : (
-                detail.tabTitle
-              )
-            }
-          >
-            {children[index]}
-          </TabPane>,
-        );
-      }
-      field = (
-        <Card
-          key={item.detailid}
-          className={`${showType}-${xtype} card_border_top`}
-          bodyStyle={{
-            paddingTop: 0,
-            paddingBottom: 0,
+const getFieldName = (field: ModuleFieldType, readOnly: boolean | undefined = undefined) => {
+  if (field.isManyToOne || field.isOneToOne)
+    return readOnly ? field.manyToOneInfo.nameField : field.manyToOneInfo.keyField;
+  if (field.fDictionaryid && readOnly) return `${field.fieldname}_dictname`;
+  return field.fieldname;
+};
+
+const ManyToOneSelectPopover = ({
+  fieldDefine,
+  form,
+}: {
+  fieldDefine: ModuleFieldType;
+  form: any;
+}) => {
+  const [visible, setVisible] = useState(false);
+  return (
+    <Popover
+      trigger="click"
+      visible={visible}
+      onVisibleChange={(v) => setVisible(v)}
+      overlayClassName="manytoonepopover"
+      overlayStyle={{
+        width: '80%',
+        maxHeight: `${document.body.clientHeight - 200}px`,
+        overflow: 'auto',
+      }}
+      content={
+        <SelectGrid
+          manyToOneInfo={{
+            form,
+            setTextValue: (value: TextValue) => {
+              const changedfields = {
+                [getFieldName(fieldDefine)]: value.value,
+                [getFieldName(fieldDefine, true)]: value.text,
+              };
+              form.setFieldsValue(changedfields);
+              form.onValuesChange(changedfields, form.getFieldsValue());
+              setVisible(false);
+            },
           }}
-          size="small"
-          bordered={false}
-        >
-          <Tabs key={item.detailid} centered={false} tabPosition={item.tabPosition || 'top'}>
-            {tabs}
-          </Tabs>
-        </Card>
-      );
-    } else if (xtype === 'fieldset' || xtype === 'panel') {
-      // 如果这层没有定义layout则默认为table
-      const cols = !layout || layout === 'table' ? item.cols || 1 : 0; // 下层字段的列数
-      const children = getFormSchemePanel({ ...params, details: item.details, parentCols: cols });
-      const cardParams: any = getCardProps(title, <BlockOutlined />);
-      cardParams.bodyStyle = item.style;
-      cardParams.className = `${showType}-${xtype}${
-        cardParams.className ? ` ${cardParams.className}` : ''
-      }`;
-      if (!item.tabTitle && title) {
-        // 如果有tabTitle,说明是tab的组件，不需要这里有标题
-        // 有 title 才有当前panel的标题，才可以折叠
-        cardParams.title =
-          item.hiddenTitle === true && showType !== 'mainregion' ? null : (
-            <Space>
-              {cardParams.icon}
-              <span>{title}</span>
-            </Space>
-          );
-        field = cols ? (
-          <Card {...cardParams}>
-            <span style={collapsed ? { display: 'none' } : {}}>
-              <Row gutter={16}>{children}</Row>
-            </span>
-          </Card>
-        ) : (
-          <Card {...cardParams}>
-            <span style={collapsed ? { display: 'none' } : {}}>{children}</span>
-          </Card>
-        );
-      } else {
-        // 这里仅仅加入一个Row,里面是Col,style可以自己指定 style:{padding:'16px 0px}
-        delete cardParams.title;
-        field = cols ? (
-          // <Card {...cardParams}>
-          <Row style={item.style} gutter={16} key={item.detailid}>
-            {children}
-          </Row>
-        ) : (
-          // </Card>
-          <Card {...cardParams}>{children}</Card>
-        );
+          moduleName={fieldDefine.fieldtype}
+        />
       }
-      firstFieldSet = false;
-    } else if (xtype === 'container') {
-      // eslint-disable-next-line
-      field = <span style={{ padding: 12 }} dangerouslySetInnerHTML={{ __html: item.html }} />;
-    }
-    // 如果当前层是分栏的，则在此加入所有的分栏
-    if (field) {
-      if (parentCols) {
-        const colspan = item.colspan || 1;
-        items.push(
-          <Col
-            xs={24}
-            md={parentCols === 1 ? 24 : 12 * Math.min(colspan, 2)}
-            xl={parentCols === 1 ? 24 : (24 / parentCols) * Math.min(colspan, parentCols)}
-            key={item.detailid}
-          >
-            {field}
-          </Col>,
-        );
-      } else items.push(field);
-    }
-  });
-  return items;
+    >
+      <SearchOutlined />
+    </Popover>
+  );
 };
 
 // 生成formField时的属性
@@ -459,55 +275,6 @@ const getDictionaryInput: React.FC<FormFieldProps> = ({
         </Select.Option>
       ))}
     </Select>
-  );
-};
-
-const getFieldName = (field: ModuleFieldType, readOnly: boolean | undefined = undefined) => {
-  if (field.isManyToOne || field.isOneToOne)
-    return readOnly ? field.manyToOneInfo.nameField : field.manyToOneInfo.keyField;
-  if (field.fDictionaryid && readOnly) return `${field.fieldname}_dictname`;
-  return field.fieldname;
-};
-
-const ManyToOneSelectPopover = ({
-  fieldDefine,
-  form,
-}: {
-  fieldDefine: ModuleFieldType;
-  form: any;
-}) => {
-  const [visible, setVisible] = useState(false);
-  return (
-    <Popover
-      trigger="click"
-      visible={visible}
-      onVisibleChange={(v) => setVisible(v)}
-      overlayClassName="manytoonepopover"
-      overlayStyle={{
-        width: '80%',
-        maxHeight: `${document.body.clientHeight - 200}px`,
-        overflow: 'auto',
-      }}
-      content={
-        <SelectGrid
-          manyToOneInfo={{
-            form,
-            setTextValue: (value: TextValue) => {
-              const changedfields = {
-                [getFieldName(fieldDefine)]: value.value,
-                [getFieldName(fieldDefine, true)]: value.text,
-              };
-              form.setFieldsValue(changedfields);
-              form.onValuesChange(changedfields, form.getFieldsValue());
-              setVisible(false);
-            },
-          }}
-          moduleName={fieldDefine.fieldtype}
-        />
-      }
-    >
-      <SearchOutlined />
-    </Popover>
   );
 };
 
@@ -1093,4 +860,243 @@ const FormField = ({
     );
   }
   return fieldItem;
+};
+
+// 生成一个Card->Fields
+export const getFormSchemePanel: React.FC<FormSchemePanelProps> = (params): any => {
+  const {
+    details,
+    moduleInfo,
+    form,
+    fieldsValidate,
+    readOnly,
+    dispatch,
+    showType,
+    parentCols,
+    setV,
+    formType,
+    currRecord,
+    requiredMark,
+  } = params;
+  const items: any[] = [];
+  let firstFieldSet: boolean = true;
+  details.forEach((item: any) => {
+    let field = null;
+    const { fieldid, xtype, layout, detailid, title, subobjectid, fieldahead } = item;
+    const collapsed = item.collapsible && !fieldsetVisible[detailid];
+    const onCollsped = () => {
+      fieldsetVisible = { ...fieldsetVisible, [detailid]: !fieldsetVisible[detailid] };
+      setV({}); // 强制刷新当前组件
+    };
+    const getCardProps = (cardtitle: string, defaultIcon: any = null) => {
+      if (fieldsetVisible[detailid] === undefined && item.collapsible)
+        fieldsetVisible[detailid] = !item.collapsed;
+      /* eslint-disable */
+      const icon = item.collapsible ? (
+        fieldsetVisible[detailid] ? (
+          <DownOutlined onClick={onCollsped} />
+        ) : (
+          <RightOutlined onClick={onCollsped} />
+        )
+      ) : (
+        defaultIcon
+      );
+      const className = `${item.collapsible && !fieldsetVisible[detailid] ? 'collapsed' : ''} ${
+        firstFieldSet || item.tabTitle || xtype === 'panel'
+          ? 'card_border_top_first'
+          : 'card_border_top'
+      }`;
+      /* eslint-enable */
+      return {
+        key: detailid,
+        size: 'small', // 'middle','large'
+        bordered: false,
+        className,
+        icon,
+        title: (
+          <Space>
+            {icon}
+            <span>{`${cardtitle}`}</span>
+          </Space>
+        ),
+      };
+    };
+    // 子模块
+    if (subobjectid) {
+      const config = {
+        moduleName: subobjectid,
+        parentOperateType: formType, // 父模块的form当前操作类型
+        parentFilter: {
+          moduleName: moduleInfo.objectname, // 父模块的名称
+          fieldahead: fieldahead.split('.with.')[1],
+          fieldName: moduleInfo.primarykey, // 父模块的限定字段,父模块主键
+          fieldtitle: moduleInfo.title, // 父模块的标题
+          operator: '=',
+          text: currRecord[moduleInfo.namefield],
+          fieldvalue: currRecord[moduleInfo.primarykey], // 父模块的记录id
+        },
+        // 把form信息也加入state中，以后可以使用，看看影响不影响速度
+        parentForm: {
+          moduleName: moduleInfo.objectname,
+          dispatch,
+          currRecord,
+        },
+      };
+      const subModuleInfo = getModuleInfo(config.moduleName);
+      const cardParams: any = getCardProps(subModuleInfo.title, <ProfileOutlined />);
+      if (item.tabTitle) delete cardParams.title;
+      field = (
+        <Card {...cardParams}>
+          <span style={collapsed ? { display: 'none' } : {}}>
+            <DetailGrid {...config} />
+          </span>
+        </Card>
+      );
+    } else if (xtype === 'approvehistory') {
+      if (currRecord && isStartProcess(currRecord)) {
+        const cardParams: any = getCardProps(title || '流程审批记录', <FileDoneOutlined />);
+        if (item.tabTitle) delete cardParams.title;
+        // 此流程信息只读
+        field = (
+          <Card {...cardParams}>
+            <span style={collapsed ? { display: 'none' } : {}}>
+              {getApproveSteps({ record: currRecord, direction: item.direction })}
+            </span>
+          </Card>
+        );
+      }
+    } else if (xtype === 'approvepanel') {
+      // 只要可审批，不管在什么状态下都可以进行
+      if (canApprove(currRecord)) {
+        // formType === 'approve' &&
+        const cardParams: any = getCardProps(title || '流程任务审批', <AuditOutlined />);
+        if (item.tabTitle) delete cardParams.title;
+        field = (
+          <Card {...cardParams}>
+            <span style={collapsed ? { display: 'none' } : {}}>
+              <ApproveForm moduleInfo={moduleInfo} dispatch={dispatch} record={currRecord} />
+            </span>
+          </Card>
+        );
+      }
+    } else if (fieldid) {
+      // 有字段id的，说明是一个字段，不是
+      field = (
+        <FormField
+          formFieldDefine={item}
+          moduleInfo={moduleInfo}
+          dispatch={dispatch}
+          fieldsValidate={fieldsValidate}
+          form={form}
+          readOnly={readOnly}
+          formType={formType}
+          currRecord={currRecord}
+          requiredMark={requiredMark}
+        />
+      );
+    } else if (xtype === 'tabpanel') {
+      item.details.forEach((tab: any) => {
+        apply(tab, { tabTitle: tab.title });
+      });
+      const children: any = getFormSchemePanel({ ...params, details: item.details, parentCols: 0 });
+      const tabs: any = [];
+      for (let index = 0; index < item.details.length; index += 1) {
+        const detail = item.details[index];
+        tabs.push(
+          <TabPane
+            key={detail.detailid}
+            tab={
+              detail.iconCls ? (
+                <span className={detail.iconCls}> {detail.tabTitle} </span>
+              ) : (
+                detail.tabTitle
+              )
+            }
+          >
+            {children[index]}
+          </TabPane>,
+        );
+      }
+      field = (
+        <Card
+          key={item.detailid}
+          className={`${showType}-${xtype} card_border_top`}
+          bodyStyle={{
+            paddingTop: 0,
+            paddingBottom: 0,
+          }}
+          size="small"
+          bordered={false}
+        >
+          <Tabs key={item.detailid} centered={false} tabPosition={item.tabPosition || 'top'}>
+            {tabs}
+          </Tabs>
+        </Card>
+      );
+    } else if (xtype === 'fieldset' || xtype === 'panel') {
+      // 如果这层没有定义layout则默认为table
+      const cols = !layout || layout === 'table' ? item.cols || 1 : 0; // 下层字段的列数
+      const children = getFormSchemePanel({ ...params, details: item.details, parentCols: cols });
+      const cardParams: any = getCardProps(title, <BlockOutlined />);
+      cardParams.bodyStyle = item.style;
+      cardParams.className = `${showType}-${xtype}${
+        cardParams.className ? ` ${cardParams.className}` : ''
+      }`;
+      if (!item.tabTitle && title) {
+        // 如果有tabTitle,说明是tab的组件，不需要这里有标题
+        // 有 title 才有当前panel的标题，才可以折叠
+        cardParams.title =
+          item.hiddenTitle === true && showType !== 'mainregion' ? null : (
+            <Space>
+              {cardParams.icon}
+              <span>{title}</span>
+            </Space>
+          );
+        field = cols ? (
+          <Card {...cardParams}>
+            <span style={collapsed ? { display: 'none' } : {}}>
+              <Row gutter={16}>{children}</Row>
+            </span>
+          </Card>
+        ) : (
+          <Card {...cardParams}>
+            <span style={collapsed ? { display: 'none' } : {}}>{children}</span>
+          </Card>
+        );
+      } else {
+        // 这里仅仅加入一个Row,里面是Col,style可以自己指定 style:{padding:'16px 0px}
+        delete cardParams.title;
+        field = cols ? (
+          // <Card {...cardParams}>
+          <Row style={item.style} gutter={16} key={item.detailid}>
+            {children}
+          </Row>
+        ) : (
+          // </Card>
+          <Card {...cardParams}>{children}</Card>
+        );
+      }
+      firstFieldSet = false;
+    } else if (xtype === 'container') {
+      // eslint-disable-next-line
+      field = <span style={{ padding: 12 }} dangerouslySetInnerHTML={{ __html: item.html }} />;
+    }
+    // 如果当前层是分栏的，则在此加入所有的分栏
+    if (field) {
+      if (parentCols) {
+        const colspan = item.colspan || 1;
+        items.push(
+          <Col
+            xs={24}
+            md={parentCols === 1 ? 24 : 12 * Math.min(colspan, 2)}
+            xl={parentCols === 1 ? 24 : (24 / parentCols) * Math.min(colspan, parentCols)}
+            key={item.detailid}
+          >
+            {field}
+          </Col>,
+        );
+      } else items.push(field);
+    }
+  });
+  return items;
 };

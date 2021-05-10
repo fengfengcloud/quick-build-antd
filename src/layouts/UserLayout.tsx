@@ -1,17 +1,17 @@
-import { MenuDataItem, getMenuData, getPageTitle } from '@ant-design/pro-layout';
+import type { MenuDataItem } from '@ant-design/pro-layout';
+import { getMenuData, getPageTitle } from '@ant-design/pro-layout';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { useIntl, ConnectProps, connect } from 'umi';
+import type { ConnectProps } from 'umi';
+import { useIntl, connect } from 'umi';
 import React, { useEffect } from 'react';
-import { ConnectState } from '@/models/connect';
-import { SystemInfo } from '@/models/systeminfo';
+import type { ConnectState } from '@/models/connect';
+import type { SystemInfo } from '@/models/systeminfo';
 import { API_HEAD } from '@/utils/request';
 import { footerRender } from './BasicLayout';
 import styles from './UserLayout.less';
 
 export interface UserLayoutProps extends Partial<ConnectProps> {
-  breadcrumbNameMap: {
-    [path: string]: MenuDataItem;
-  };
+  breadcrumbNameMap: Record<string, MenuDataItem>;
   systemInfo?: SystemInfo;
 }
 

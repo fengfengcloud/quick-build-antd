@@ -7,17 +7,18 @@ import {
 } from '@ant-design/icons';
 import { Card, Col, Divider, Input, Row, Tag, Tabs } from 'antd';
 import React, { Component } from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { GridContent } from '@ant-design/pro-layout';
-import { RouteChildrenProps } from 'react-router';
+import type { RouteChildrenProps } from 'react-router';
 import { connect } from 'dva';
-import { ModalState } from '@/models/accountCenter';
+import type { ModalState } from '@/models/accountCenter';
 import { DisplayUserLimits } from '@/pages/module/additionalAction/userLimit';
-import DetailGrid, { DetailGridPrpos } from '@/pages/module/detailGrid';
+import type { DetailGridPrpos } from '@/pages/module/detailGrid';
+import DetailGrid from '@/pages/module/detailGrid';
 import { API_HEAD } from '@/utils/request';
 import { currentUser } from 'umi';
 import styles from './Center.less';
-import { CurrentUser } from './data.d';
+import type { CurrentUser } from './data.d';
 import { getCityText, getProvinceText } from '../settings/components/baseView';
 
 const operationTabList = [
@@ -314,7 +315,7 @@ export default connect(
     accountCenter,
     user,
   }: {
-    loading: { effects: { [key: string]: boolean } };
+    loading: { effects: Record<string, boolean> };
     accountCenter: ModalState;
     user: any;
   }) => ({

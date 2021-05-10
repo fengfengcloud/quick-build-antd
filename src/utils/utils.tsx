@@ -1,7 +1,7 @@
 import React from 'react';
 import { parse } from 'querystring';
 import pathRegexp from 'path-to-regexp';
-import { Route } from '@/models/connect';
+import type { Route } from '@/models/connect';
 import { message } from 'antd';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */

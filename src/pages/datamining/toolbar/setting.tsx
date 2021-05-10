@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { TextValue } from '@/pages/module/data';
+import type { TextValue } from '@/pages/module/data';
 import { getMonetarysValueText } from '@/pages/module/grid/monetary';
 import { SettingOutlined } from '@ant-design/icons';
 import { Button, Dropdown, InputNumber, Menu, Radio, Switch } from 'antd';
-import { DataminingContext, DataminingStateContext } from '..';
+import type { DataminingStateContext } from '..';
+import { DataminingContext } from '..';
 import { ACT_MONETARY_CHANGED, ACT_SETTING_CHANGE } from '../constants';
 
 const DataminingSetting: React.FC = () => {

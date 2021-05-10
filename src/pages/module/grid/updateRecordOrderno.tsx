@@ -15,7 +15,7 @@ import {
 import request, { API_HEAD } from '@/utils/request';
 import { apply } from '@/utils/utils';
 import { getTreeRecordByKey } from '@/pages/datamining/utils';
-import { ModuleState } from '../data';
+import type { ModuleState } from '../data';
 import { getModuleInfo } from '../modules';
 import { PARENT_RECORD } from '../constants';
 

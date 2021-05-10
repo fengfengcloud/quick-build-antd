@@ -1,7 +1,7 @@
 import { getLocalMonetaryPosition, getLocalMonetaryType } from '@/utils/utils';
 import React from 'react';
 
-import { TextValue } from '../data';
+import type { TextValue } from '../data';
 
 export interface MonetaryType {
   type: string;

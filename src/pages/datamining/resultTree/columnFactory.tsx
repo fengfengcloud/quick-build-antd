@@ -10,7 +10,7 @@ import {
 import { getSortOrder } from '@/pages/module/grid/sortUtils';
 import { fieldTitleTransform, getColumnDataIndex } from '../utils';
 import styles from '../index.less';
-import { ColumnGroupModal, DataminingModal, FieldModal } from '../data';
+import type { ColumnGroupModal, DataminingModal, FieldModal } from '../data';
 import { categoryFieldRender } from './categoryFieldRender';
 import CategoryActionButton from './categoryActionButton';
 import { PARENT_ROWID, ROWID, TEXTUNDERLINE } from '../constants';

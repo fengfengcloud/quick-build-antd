@@ -10,11 +10,11 @@ import {
 } from '@ant-design/icons';
 // https://github.com/Caldis/react-zmage
 import Zmage from 'react-zmage';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { getModuleUrlFormSysMenu } from '@/layouts/BasicLayout';
 import { getNumberDigitsFormat } from '@/utils/utils';
 import { getBooleanText, PopoverDescription, PopoverDescriptionWithId } from '../descriptions';
-import { ModuleModal, ModuleState, ParentFilterModal } from '../data';
+import type { ModuleModal, ModuleState, ParentFilterModal } from '../data';
 import { getFormSchemeFormType, getModuleInfo } from '../modules';
 import OneTowManyTooltip from '../widget/oneTwoManyTooltip';
 import styles from './columnFactory.less';

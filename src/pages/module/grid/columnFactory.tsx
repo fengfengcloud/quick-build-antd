@@ -1,4 +1,5 @@
-import React, { Key } from 'react';
+import type { Key } from 'react';
+import React from 'react';
 import moment from 'moment';
 import { Tooltip, Button, Input, Popover, Select, Divider, Radio, DatePicker, message } from 'antd';
 import {
@@ -9,8 +10,8 @@ import {
   CheckCircleOutlined,
 } from '@ant-design/icons';
 import { apply, applyIf, applyOtherSetting } from '@/utils/utils';
-import { Dispatch } from 'redux';
-import {
+import type { Dispatch } from 'redux';
+import type {
   ModuleModal,
   ModuleFieldType,
   ColumnFilterInfoType,

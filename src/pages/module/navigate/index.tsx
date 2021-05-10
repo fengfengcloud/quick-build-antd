@@ -12,12 +12,12 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import PinyinMatch from 'pinyin-match';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { apply } from '@/utils/utils';
 import { useDrop } from 'react-dnd';
-import { ModuleFieldType, ModuleModal, ModuleState } from '../data';
+import type { ModuleFieldType, ModuleModal, ModuleState } from '../data';
 import { fetchNavigateTreeData, saveOrUpdateRecord } from '../service';
-import { ModuleNavigates, NavigateStateModal } from './data';
+import type { ModuleNavigates, NavigateStateModal } from './data';
 import { canEdit, getFieldDefine, getModuleInfo, hasEdit } from '../modules';
 import { getSqlparamFilter } from '../grid/filterUtils';
 import { DATA } from '../constants';

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardProps, Col, Radio, Row } from 'antd';
+import type { CardProps } from 'antd';
+import { Card, Col, Radio, Row } from 'antd';
 import { getColumnDataIndex } from '@/pages/datamining/utils';
 import { currentUser } from 'umi';
 import request, { API_HEAD } from '@/utils/request';
 import moment from 'moment';
 import { serialize } from 'object-to-formdata';
 import { stringifyObjectField } from '@/utils/utils';
-import { PieConfig } from '@ant-design/charts/es/pie';
+import type { PieConfig } from '@ant-design/charts/es/pie';
 import { Column, Pie } from '@ant-design/charts';
-import { TextValue } from '@/pages/module/data';
-import { ColumnConfig } from '@ant-design/charts/es/column';
+import type { TextValue } from '@/pages/module/data';
+import type { ColumnConfig } from '@ant-design/charts/es/column';
 import { DateFormat } from '@/pages/module/moduleUtils';
 import { DateSectionSelect } from '../../utils/DateSectionSelect';
 import { chartsColSpan } from '../../charts';
@@ -19,22 +20,6 @@ const numeral = require('numeral');
 const cardParams: CardProps = {
   size: 'default',
   bodyStyle: { height: '360px', paddingTop: 12, paddingBottom: 12 },
-};
-
-export const UserApprove: React.FC = () => {
-  return (
-    <Row gutter={[12, 12]}>
-      <Col {...chartsColSpan}>
-        <UserApprovePie title="用户审批模块分析" groupfieldid={{ fieldname: 'objecttitle' }} />
-      </Col>
-      <Col {...chartsColSpan}>
-        <UserApprovePie title="用户审批结果分析" groupfieldid={{ fieldname: 'actEndActName' }} />
-      </Col>
-      <Col span={24}>
-        <UserApproveYearMonthColumn {...cardParams} />
-      </Col>
-    </Row>
-  );
 };
 
 const COUNT = getColumnDataIndex('count.*');
@@ -285,5 +270,21 @@ const UserApproveYearMonthColumn: React.FC = (params) => {
     >
       <Column {...config} />
     </Card>
+  );
+};
+
+export const UserApprove: React.FC = () => {
+  return (
+    <Row gutter={[12, 12]}>
+      <Col {...chartsColSpan}>
+        <UserApprovePie title="用户审批模块分析" groupfieldid={{ fieldname: 'objecttitle' }} />
+      </Col>
+      <Col {...chartsColSpan}>
+        <UserApprovePie title="用户审批结果分析" groupfieldid={{ fieldname: 'actEndActName' }} />
+      </Col>
+      <Col span={24}>
+        <UserApproveYearMonthColumn {...cardParams} />
+      </Col>
+    </Row>
   );
 };

@@ -4,7 +4,7 @@ import HOCDndProvider from '@/utils/HOCDndProvider';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { getFilterScheme, getModuleInfo } from '../module/modules';
 import UserDefineFilter from '../module/UserDefineFilter';
-import { DataminingModal } from './data';
+import type { DataminingModal } from './data';
 import GroupRegion from './groupRegion';
 import { DataminingReducer, getDataminingModal } from './model';
 import ResultTree from './resultTree/index';
@@ -50,18 +50,6 @@ export const DataminingContext = createContext<DataminingStateContext>({
   state: getInitDataminingState('undefined'),
   dispatch: () => {},
 });
-
-export const Datamining: React.FC<DataminingParams> = ({ moduleName, inTab }) => {
-  // console.log("初始化DataminingModelProvider");
-  const [state, dispatch] = useReducer(DataminingReducer, getDataminingModal(moduleName));
-  return (
-    <HOCDndProvider>
-      <DataminingContext.Provider value={{ state, dispatch }}>
-        <DataminingModule inTab={inTab} />
-      </DataminingContext.Provider>
-    </HOCDndProvider>
-  );
-};
 
 const DataminingModule: React.FC<any> = ({ inTab }: { inTab?: boolean }) => {
   const context = useContext<DataminingStateContext>(DataminingContext);
@@ -189,6 +177,18 @@ interface DataminingProps {
   route: any;
   match: any;
 }
+
+export const Datamining: React.FC<DataminingParams> = ({ moduleName, inTab }) => {
+  // console.log("初始化DataminingModelProvider");
+  const [state, dispatch] = useReducer(DataminingReducer, getDataminingModal(moduleName));
+  return (
+    <HOCDndProvider>
+      <DataminingContext.Provider value={{ state, dispatch }}>
+        <DataminingModule inTab={inTab} />
+      </DataminingContext.Provider>
+    </HOCDndProvider>
+  );
+};
 
 const DataminingUrlEntry: React.FC<DataminingProps> = (params) => {
   const { route, match } = params;

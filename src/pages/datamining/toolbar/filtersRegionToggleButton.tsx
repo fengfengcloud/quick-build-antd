@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip, Button, Badge } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
-import { DataminingModal } from '../data';
+import type { DataminingModal } from '../data';
 import { ACT_TOGGLE_FILTER_REGION } from '../constants';
 
 const FiltersRegionToggleButton = ({

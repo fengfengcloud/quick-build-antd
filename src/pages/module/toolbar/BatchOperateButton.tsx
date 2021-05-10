@@ -6,14 +6,15 @@ import {
   FileExcelOutlined,
   FilePdfOutlined,
 } from '@ant-design/icons';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { getMenuAwesomeIcon } from '@/utils/utils';
-import { ModuleState, ModuleModal, AdditionFunctionModal } from '../data';
+import type { ModuleState, ModuleModal, AdditionFunctionModal } from '../data';
 import { getModuleInfo, hasDelete, canDelete } from '../modules';
 import { deleteModuleRecords } from '../service';
 import ExportRecordScheme from './export/ExportRecordScheme';
 import ExportGridScheme, { downloadGridSchemeFile } from './export/ExportGridScheme';
-import { systemActions, ActionParamsModal } from '../additionalAction/systemAction';
+import type { ActionParamsModal } from '../additionalAction/systemAction';
+import { systemActions } from '../additionalAction/systemAction';
 import { getSelectedRecord, getSelectedRecords } from '../moduleUtils';
 import { businessActionButtons } from '../additionalAction/businessAction';
 import PrintRecordScheme from './export/PrintRecordScheme';

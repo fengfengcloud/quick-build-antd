@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Dropdown, Menu, Radio, Switch } from 'antd';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { CheckOutlined, SettingOutlined } from '@ant-design/icons';
-import { RadioChangeEvent } from 'antd/lib/radio';
-import { GridOperateType, ModuleState, TextValue } from '../data';
+import type { RadioChangeEvent } from 'antd/lib/radio';
+import type { GridOperateType, ModuleState, TextValue } from '../data';
 import { getMonetarysValueText } from './monetary';
 import { getAllGridSchemes, getModuleInfo, hasEdit, hasMonetaryField } from '../modules';
 

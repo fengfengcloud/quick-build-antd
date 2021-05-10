@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Badge, Tooltip, Descriptions, Popover, Space } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
-import { ColumnFilter, ModuleState, UserFilter } from '../data';
+import type { ColumnFilter, ModuleState, UserFilter } from '../data';
 import {
   getGridColumnFiltersDescription,
   getColumnFiltersInfo,

@@ -1,17 +1,17 @@
-import { AnyAction } from 'redux';
-import { MenuDataItem } from '@ant-design/pro-layout';
-import { RouterTypes } from 'umi';
+import type { AnyAction } from 'redux';
+import type { MenuDataItem } from '@ant-design/pro-layout';
+import type { RouterTypes } from 'umi';
 import { GlobalModelState } from './global';
 import { DefaultSettings as SettingModelState } from '../../config/defaultSettings';
 import { UserModelState } from './user';
-import { StateType } from './login';
-import { SystemInfoState } from './systeminfo';
+import type { StateType } from './login';
+import type { SystemInfoState } from './systeminfo';
 
 export { GlobalModelState, SettingModelState, UserModelState };
 
 export interface Loading {
   global: boolean;
-  effects: { [key: string]: boolean | undefined };
+  effects: Record<string, boolean | undefined>;
   models: {
     global?: boolean;
     menu?: boolean;

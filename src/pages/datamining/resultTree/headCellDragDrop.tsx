@@ -1,5 +1,6 @@
 import { Dropdown, Form, Input, Menu, Modal } from 'antd';
-import React, { ReactChild, useContext } from 'react';
+import type { ReactChild } from 'react';
+import React, { useContext } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import {
   ApartmentOutlined,
@@ -13,7 +14,8 @@ import {
   ToTopOutlined,
 } from '@ant-design/icons';
 import { EMPTY_MENU_ICON } from '@/utils/utils';
-import { DataminingContext, DataminingStateContext } from '..';
+import type { DataminingStateContext } from '..';
+import { DataminingContext } from '..';
 import {
   ACT_COLUMN_GROUP_EDIT_TEXT,
   ACT_COLUMN_GROPU_DESELECTEDALL,
@@ -42,7 +44,7 @@ import {
   expandHeadCellWithNavigate,
 } from './columnUtils';
 import groupMenu from '../toolbar/groupMenu';
-import { FieldModal, HeaderCellType } from '../data';
+import type { FieldModal, HeaderCellType } from '../data';
 import { getAggregateFieldMenu } from './fieldUtils';
 import { getNavigateSelectedRecords } from '../navigate/navigateUtils';
 

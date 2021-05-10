@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, DatePicker } from 'antd';
 import { DateSectionQuickSelect } from './dateSectionQuickSelect';
 import { DateFormat } from '../moduleUtils';
-import { UserFilterProps } from '.';
+import type { UserFilterProps } from '.';
 
 const { RangePicker } = DatePicker;
 

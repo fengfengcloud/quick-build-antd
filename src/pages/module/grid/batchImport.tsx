@@ -18,7 +18,7 @@ import {
 } from 'antd';
 import moment from 'moment';
 import { API_HEAD } from '@/utils/request';
-import { ModuleFieldType, ModuleState, ParentFilterModal, TextValue } from '../data';
+import type { ModuleFieldType, ModuleState, ParentFilterModal, TextValue } from '../data';
 import { getFieldDefine, getGridBatchImport, getModuleInfo } from '../modules';
 import { integerRender } from './columnRender';
 import { fetchObjectComboData, getAjaxNewDefault, saveOrUpdateRecord } from '../service';

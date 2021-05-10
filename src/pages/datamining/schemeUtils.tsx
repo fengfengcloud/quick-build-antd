@@ -16,7 +16,7 @@ import {
   TEXT,
   TEXTUNDERLINE,
 } from './constants';
-import { CurrentSchemeModal, DataminingModal, ColumnGroupModal, FieldModal } from './data';
+import type { CurrentSchemeModal, DataminingModal, ColumnGroupModal, FieldModal } from './data';
 import { getLeafColumns } from './resultTree/columnFactory';
 import { expandRowWithNavigateRecords, refreshRowData } from './rowActionUtils';
 import {

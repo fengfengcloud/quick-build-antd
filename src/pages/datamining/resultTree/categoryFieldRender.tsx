@@ -13,7 +13,8 @@ import {
 import { apply, EMPTY_MENU_ICON } from '@/utils/utils';
 import { PopoverDescriptionWithId } from '../../module/descriptions';
 import { getModuleInfo } from '../../module/modules';
-import { DataminingContext, DataminingStateContext } from '..';
+import type { DataminingStateContext } from '..';
+import { DataminingContext } from '..';
 import { getTreeRecordByKey, getAllLeafRecords } from '../utils';
 import {
   combineSelectedRows,
@@ -34,20 +35,6 @@ import {
 } from '../constants';
 import columnStyles from '../../module/grid/columnFactory.less';
 import { rowOperTypes } from '../rowActionHistory';
-/**
- * 分组项目字段的render
- * 如果是模块数据，在最后加一个可以显示模块的info按钮
- *
- * 可以对当前列进行操作的按钮
- *
- * @param value
- * @param record
- * @param recno_
- * @param param3
- */
-export const categoryFieldRender = (value: any, record: any) => {
-  return <CategoryField value={value} record={record} key={record[ROWID]} />;
-};
 
 const CategoryField = ({ value, record }: { value: any; record: any }) => {
   const context = useContext<DataminingStateContext>(DataminingContext);
@@ -269,4 +256,19 @@ const CategoryField = ({ value, record }: { value: any; record: any }) => {
       ) : null}{' '}
     </>
   );
+};
+
+/**
+ * 分组项目字段的render
+ * 如果是模块数据，在最后加一个可以显示模块的info按钮
+ *
+ * 可以对当前列进行操作的按钮
+ *
+ * @param value
+ * @param record
+ * @param recno_
+ * @param param3
+ */
+export const categoryFieldRender = (value: any, record: any) => {
+  return <CategoryField value={value} record={record} key={record[ROWID]} />;
 };

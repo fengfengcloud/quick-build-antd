@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModuleModal, ModuleState } from '../data';
+import type { ModuleModal, ModuleState } from '../data';
 import NavigateButton from './NavigateButton';
 import ViewSchemeButton from './ViewSchemeButton';
 import UserDefineFilterButton from './UserDefineFilterButton';

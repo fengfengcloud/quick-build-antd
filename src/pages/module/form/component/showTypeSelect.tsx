@@ -1,8 +1,8 @@
 import React from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { Dropdown, Menu, message } from 'antd';
 import { SettingOutlined, CheckOutlined } from '@ant-design/icons';
-import { FormState, ModuleState } from '../../data';
+import type { FormState, ModuleState } from '../../data';
 
 const FormShowTypes = ['modal', 'drawer', 'mainregion'];
 const FormShowTypeTexts = {

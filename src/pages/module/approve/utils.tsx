@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { Steps, Popover, message, Popconfirm, Modal, Card, Tooltip, Space } from 'antd';
 import { currentUser } from 'umi';
 import request, { API_HEAD, syncRequest } from '@/utils/request';
@@ -18,7 +18,7 @@ import {
 import { refreshNotices } from '@/components/GlobalHeader/NoticeIconView';
 import { deleteSecond } from '@/utils/utils';
 import { getModuleInfo } from '../modules';
-import { ModuleModal, ModuleState } from '../data';
+import type { ModuleModal, ModuleState } from '../data';
 import { DetailModelProvider } from '../detailGrid/provider';
 import { DetailModelContext } from '../detailGrid/model';
 import ModuleForm from '../form';

@@ -1,11 +1,12 @@
 import { Button, Col, Input, Row, Form, message } from 'antd';
 import React, { useState, useCallback, useEffect } from 'react';
 import omit from 'omit.js';
-import { FormItemProps } from 'antd/es/form/FormItem';
+import type { FormItemProps } from 'antd/es/form/FormItem';
 import { getFakeCaptcha } from '@/services/login';
 
 import ItemMap from './map';
-import LoginContext, { LoginContextProps } from './LoginContext';
+import type { LoginContextProps } from './LoginContext';
+import LoginContext from './LoginContext';
 import styles from './index.less';
 
 export type WrappedLoginItemProps = LoginItemProps;
@@ -29,7 +30,7 @@ export interface LoginItemProps extends Partial<FormItemProps> {
   updateActive?: LoginContextProps['updateActive'];
   type?: string;
   defaultValue?: string;
-  customProps?: { [key: string]: unknown };
+  customProps?: Record<string, unknown>;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   tabUtil?: LoginContextProps['tabUtil'];
 }

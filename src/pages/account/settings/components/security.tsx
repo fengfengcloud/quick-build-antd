@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { Card, Form, List, message, Modal } from 'antd';
 import Password from 'antd/lib/input/Password';
-import { ValidateStatus } from 'antd/lib/form/FormItem';
+import type { ValidateStatus } from 'antd/lib/form/FormItem';
 import request, { API_HEAD } from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 

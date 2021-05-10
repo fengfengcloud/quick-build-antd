@@ -1,10 +1,6 @@
 import { abcEmployeeTodayState } from '../grid/columnBusinessRender';
 
-interface BusinessDescriptionItemRender {
-  [name: string]: Function;
-}
-
-const BusinessDescriptionItemRender: BusinessDescriptionItemRender = {
+const BusinessDescriptionItemRender: Record<string, Function> = {
   // abcgate
   'AbcEmployee--todayState': abcEmployeeTodayState,
   'AbcInoutEmployeeRecord--state': abcEmployeeTodayState,

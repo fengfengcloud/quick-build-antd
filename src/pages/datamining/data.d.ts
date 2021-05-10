@@ -2,9 +2,9 @@
  * 商业数据分析使用的Modal
  */
 
-import { SortModal, ViewSchemeType } from '../module/data';
-import { MonetaryType } from '../module/grid/monetary';
-import { DataminingNavigateModal, NavigateConditionModal } from './navigate/data';
+import type { SortModal, ViewSchemeType } from '../module/data';
+import type { MonetaryType } from '../module/grid/monetary';
+import type { DataminingNavigateModal, NavigateConditionModal } from './navigate/data';
 
 declare const HeaderCellTypes: ['sumfield' | 'subfield' | 'group' | 'fieldingroup'];
 export declare type HeaderCellType = typeof HeaderCellTypes[number];

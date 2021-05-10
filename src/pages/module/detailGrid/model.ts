@@ -2,7 +2,7 @@ import { createContext } from 'react';
 import { apply } from '@/utils/utils';
 import { message } from 'antd';
 import update from 'immutability-helper';
-import { ModuleState, TextValue, SortModal, ModuleFilters } from '../data';
+import type { ModuleState, TextValue, SortModal, ModuleFilters } from '../data';
 import { getModuleInfo } from '../modules';
 import { fetchObjectDataSync, fetchObjectRecordSync, fetchObjectData } from '../service';
 import {

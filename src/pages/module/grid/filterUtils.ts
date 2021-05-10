@@ -1,6 +1,12 @@
-import { Key } from 'react';
+import type { Key } from 'react';
 import { isMoment } from 'moment';
-import { ColumnFilter, ColumnFilterType, ModuleState, TextValue, ModuleFilters } from '../data';
+import type {
+  ColumnFilter,
+  ColumnFilterType,
+  ModuleState,
+  TextValue,
+  ModuleFilters,
+} from '../data';
 import {
   getUserFilterCount,
   stringFieldOperator,

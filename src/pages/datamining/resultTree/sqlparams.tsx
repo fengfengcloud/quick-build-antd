@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Form, Input, DatePicker, Card, Button } from 'antd';
 import { isMoment } from 'moment';
 import { DateSectionQuickSelect } from '@/pages/module/UserDefineFilter/dateSectionQuickSelect';
-import { DataminingModal } from '../data';
+import type { DataminingModal } from '../data';
 import { ACT_SQLPARAM_CHANGE } from '../constants';
 
 const { RangePicker } = DatePicker;

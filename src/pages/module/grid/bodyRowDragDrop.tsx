@@ -1,9 +1,10 @@
 import { message } from 'antd';
 import React, { useContext } from 'react';
 import { DragPreviewImage, useDrag, useDrop } from 'react-dnd';
-import { ModuleContext, ModuleStateContext } from '..';
+import type { ModuleStateContext } from '..';
+import { ModuleContext } from '..';
 import { PARENT_RECORD } from '../constants';
-import { ModuleState } from '../data';
+import type { ModuleState } from '../data';
 import { DetailModelContext } from '../detailGrid/model';
 import { canMoveRowToChangeRecno, getModuleInfo } from '../modules';
 

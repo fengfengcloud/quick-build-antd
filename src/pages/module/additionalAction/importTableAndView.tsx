@@ -1,5 +1,6 @@
-import React, { Key, useEffect, useState } from 'react';
-import { DrawerProps } from 'antd/lib/drawer';
+import type { Key } from 'react';
+import React, { useEffect, useState } from 'react';
+import type { DrawerProps } from 'antd/lib/drawer';
 import {
   Button,
   Card,
@@ -21,10 +22,10 @@ import {
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import { EditOutlined, ImportOutlined } from '@ant-design/icons';
 import request, { API_HEAD } from '@/utils/request';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { serialize } from 'object-to-formdata';
 import { download } from '@/utils/utils';
-import { ActionParamsModal } from './systemAction';
+import type { ActionParamsModal } from './systemAction';
 import { getParentOrNavigateIdAndText } from '../modules';
 
 interface ImportDrawerProps extends DrawerProps {
@@ -62,34 +63,6 @@ const context = (
     </Collapse.Panel>
   </Collapse>
 );
-
-/**
- *
- * 导入表和字段
- * @param params
- *
- */
-export const importTableAndView = () => {
-  const props: ImportDrawerProps = {
-    visible: true,
-    title: (
-      <>
-        <ImportOutlined /> 表和视图相关信息导入管理
-      </>
-    ),
-    width: '100%',
-    zIndex: undefined,
-    children: (
-      <span>
-        {context}
-        <FormComponent />
-      </span>
-    ),
-    onClose: () => setGlobalDrawerProps(() => ({ visible: false })),
-    bodyStyle: { backgroundColor: '#f0f2f5', padding: 16 },
-  };
-  setGlobalDrawerProps(props);
-};
 
 const FormComponent = () => {
   const [schemes, setSchemes] = useState<LabelValue[]>([]);
@@ -470,6 +443,34 @@ const FormComponent = () => {
   }, []);
 
   return toolbar;
+};
+
+/**
+ *
+ * 导入表和字段
+ * @param params
+ *
+ */
+export const importTableAndView = () => {
+  const props: ImportDrawerProps = {
+    visible: true,
+    title: (
+      <>
+        <ImportOutlined /> 表和视图相关信息导入管理
+      </>
+    ),
+    width: '100%',
+    zIndex: undefined,
+    children: (
+      <span>
+        {context}
+        <FormComponent />
+      </span>
+    ),
+    onClose: () => setGlobalDrawerProps(() => ({ visible: false })),
+    bodyStyle: { backgroundColor: '#f0f2f5', padding: 16 },
+  };
+  setGlobalDrawerProps(props);
 };
 
 /**

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Tabs } from 'antd';
-import { ModuleModal } from '../data';
+import type { ModuleModal } from '../data';
 import { getAssociatesSouth, getModuleInfo } from '../modules';
 import DetailGrid from '../detailGrid';
 

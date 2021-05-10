@@ -4,7 +4,7 @@ import { CloseCircleFilled } from '@ant-design/icons';
 import moment from 'moment';
 import { apply } from '@/utils/utils';
 import { DateRelativeSetting } from './dateRelativeSetting';
-import { TextValue } from '../data';
+import type { TextValue } from '../data';
 import { DateFormat } from '../moduleUtils';
 
 const { RangePicker } = DatePicker;

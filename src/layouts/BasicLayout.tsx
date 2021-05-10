@@ -4,12 +4,14 @@
  * https://github.com/ant-design/ant-design-pro-layout
  */
 import React, { useEffect, useState } from 'react';
-import ProLayout, {
+import type {
   MenuDataItem,
   BasicLayoutProps as ProLayoutProps,
   Settings,
 } from '@ant-design/pro-layout';
-import { Link, useIntl, connect, Dispatch } from 'umi';
+import ProLayout from '@ant-design/pro-layout';
+import type { Dispatch } from 'umi';
+import { Link, useIntl, connect } from 'umi';
 import {
   BankOutlined,
   PhoneOutlined,
@@ -23,9 +25,9 @@ import '../../node_modules/font-awesome/css/font-awesome.min.css';
 import { Result, Button, Popover, Drawer, Modal } from 'antd';
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
-import { ConnectState } from '@/models/connect';
+import type { ConnectState } from '@/models/connect';
 import { EMPTY_MENU_ICON, getAuthorityFromRouter, getMenuAwesomeIcon } from '@/utils/utils';
-import { SystemInfo } from '@/models/systeminfo';
+import type { SystemInfo } from '@/models/systeminfo';
 import { getSystemMenu } from '@/services/systeminfo';
 import { dataminingList } from '@/pages/dashboard/analysis';
 import { PopoverDescriptionWithId } from '@/pages/module/descriptions';
@@ -47,9 +49,7 @@ const noMatch = (
 );
 
 export interface BasicLayoutProps extends ProLayoutProps {
-  breadcrumbNameMap: {
-    [path: string]: MenuDataItem;
-  };
+  breadcrumbNameMap: Record<string, MenuDataItem>;
   route: ProLayoutProps['route'] & {
     authority: string[];
   };
@@ -59,9 +59,7 @@ export interface BasicLayoutProps extends ProLayoutProps {
 }
 
 export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
-  breadcrumbNameMap: {
-    [path: string]: MenuDataItem;
-  };
+  breadcrumbNameMap: Record<string, MenuDataItem>;
 };
 
 /**

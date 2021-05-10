@@ -2,8 +2,8 @@
  * 自定义模块的参数定义
  */
 
-import { ReactNode } from 'react';
-import { MonetaryType } from './grid/monetary';
+import type { ReactNode } from 'react';
+import type { MonetaryType } from './grid/monetary';
 
 // 模块字段类型
 export interface ModuleFieldType {
@@ -113,7 +113,7 @@ export interface SortModal {
 
 export interface ColumnFilter {
   property: Key;
-  value: string | Array;
+  value: string | any[];
   operator: string;
   dataIndex?: string;
 }
@@ -375,9 +375,7 @@ export interface ColumnFilterInfoType {
   type: 'dictionary' | 'combobox' | 'string' | 'boolean' | 'number' | 'date';
 }
 
-export interface ColumnFilterType {
-  [index: string]: ColumnFilterInfoType;
-}
+export type ColumnFilterType = Record<string, ColumnFilterInfoType>;
 
 /**
  * fetchobjectdata返回的数据结构

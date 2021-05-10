@@ -4,8 +4,8 @@ import request, { API_HEAD } from '@/utils/request';
 import { uuid } from '@/utils/utils';
 import { serialize } from 'object-to-formdata';
 import { ACT_FILTER_DATASOURCE_UPDATE } from '../constants';
-import { DataminingModal, FilterDataSourceModal, FiltersModal } from '../data';
-import { NavigateConditionModal } from '../navigate/data';
+import type { DataminingModal, FilterDataSourceModal, FiltersModal } from '../data';
+import type { NavigateConditionModal } from '../navigate/data';
 import { navigateCheckedChange } from '../navigate/navigateTree';
 import { getWholeConditionText } from '../navigate/navigateUtils';
 

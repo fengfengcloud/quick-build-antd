@@ -1,4 +1,4 @@
-import { ExpandGroupFieldModal } from '../data';
+import type { ExpandGroupFieldModal } from '../data';
 
 // 大批量的数据，不可以进行全选，不能反选
 

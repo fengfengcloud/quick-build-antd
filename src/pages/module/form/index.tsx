@@ -19,10 +19,10 @@ import {
   UndoOutlined,
   PrinterOutlined,
 } from '@ant-design/icons';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { apply, showResultInfo } from '@/utils/utils';
 import { PageHeaderWrapper, GridContent } from '@ant-design/pro-layout';
-import {
+import type {
   ModuleModal,
   ModuleFieldType,
   ModuleState,
@@ -47,7 +47,8 @@ import {
   insertToModuleComboDataSource,
 } from '../modules';
 import { ShowTypeSelect } from './component/showTypeSelect';
-import { ActionParamsModal, systemActions } from '../additionalAction/systemAction';
+import type { ActionParamsModal } from '../additionalAction/systemAction';
+import { systemActions } from '../additionalAction/systemAction';
 import {
   canStartProcess,
   startProcess,

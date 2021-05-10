@@ -1,8 +1,8 @@
-import { FormInstance } from 'antd/lib/form';
-import { Store } from 'antd/es/form/interface';
+import type { FormInstance } from 'antd/lib/form';
+import type { Store } from 'antd/es/form/interface';
 import moment, { isMoment } from 'moment';
 import { getNextId, apply, showResultInfo } from '@/utils/utils';
-import { ModuleModal, ModuleFieldType, ModuleState } from '../data';
+import type { ModuleModal, ModuleFieldType, ModuleState } from '../data';
 import { getModuleInfo, getFieldDefine } from '../modules';
 import { getMaxPrimaryKeyFromKey, DateTimeFormat } from '../moduleUtils';
 import { getAjaxNewDefault } from '../service';

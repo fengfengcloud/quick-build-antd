@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import request, { API_HEAD } from '@/utils/request';
 import { Card } from 'antd';
 import marked from 'marked';
-import { ModuleModal } from '../data';
+import type { ModuleModal } from '../data';
 import styles from './RemoteExpandBody.less';
 
 interface ExpandBodyParams {

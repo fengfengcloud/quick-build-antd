@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Space, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { ModuleModal, ModuleState, TextValue } from '../data';
+import type { ModuleModal, ModuleState, TextValue } from '../data';
 import FilterInfoButton from './FilterInfoButton';
 import ExportButton from './export/ExportButton';
 import BatchOperateButton, { getToolbarButton } from './BatchOperateButton';

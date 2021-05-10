@@ -1,5 +1,6 @@
-import React, { Key, useEffect, useState } from 'react';
-import { DrawerProps } from 'antd/lib/drawer';
+import type { Key } from 'react';
+import React, { useEffect, useState } from 'react';
+import type { DrawerProps } from 'antd/lib/drawer';
 import {
   Button,
   Card,
@@ -20,10 +21,10 @@ import {
 } from 'antd';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
 import request, { API_HEAD } from '@/utils/request';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { EditOutlined } from '@ant-design/icons';
 import { apply } from '@/utils/utils';
-import { ActionParamsModal } from './systemAction';
+import type { ActionParamsModal } from './systemAction';
 
 interface ImportDrawerProps extends DrawerProps {
   children: any;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Popover, Button, Form, InputNumber, Checkbox, Row, Col, Space, Alert } from 'antd';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { TextValue } from '../data';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import type { TextValue } from '../data';
 
 const getRelativeText = (number: number, text: string) => {
   if (!number) return `当${text}`;

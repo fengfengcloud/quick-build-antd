@@ -1,8 +1,7 @@
 import { getLocalMonetaryPosition, getLocalMonetaryType } from '@/utils/utils';
-import { Reducer } from 'umi';
-import defaultSettings, {
-  DefaultSettings as SettingModelState,
-} from '../../config/defaultSettings';
+import type { Reducer } from 'umi';
+import type { DefaultSettings as SettingModelState } from '../../config/defaultSettings';
+import defaultSettings from '../../config/defaultSettings';
 
 export interface SettingModelType {
   namespace: 'settings';

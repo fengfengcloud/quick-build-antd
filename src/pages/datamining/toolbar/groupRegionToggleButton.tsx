@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip, Button } from 'antd';
 import { NodeExpandOutlined } from '@ant-design/icons';
-import { DataminingModal } from '../data';
+import type { DataminingModal } from '../data';
 import { ACT_TOGGLE_GROUP_REGION } from '../constants';
 
 const GroupRegionToggleButton = ({
@@ -21,7 +21,7 @@ const GroupRegionToggleButton = ({
   return (
     <Tooltip title={visible ? '隐藏分组列表' : '显示分组列表'}>
       <Button type={visible ? 'link' : 'text'} size="small" onClick={changeVisible}>
-      <NodeExpandOutlined /> 分组
+        <NodeExpandOutlined /> 分组
       </Button>
     </Tooltip>
   );

@@ -1,6 +1,6 @@
 import { Menu } from 'antd';
 import React from 'react';
-import { DataminingModal } from '../data';
+import type { DataminingModal } from '../data';
 
 /**
  * 获取当前未选中的所有可聚合字段的菜单条

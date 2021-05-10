@@ -1,8 +1,9 @@
 import React from 'react';
 import { Layout } from 'antd';
-import { Dispatch } from 'redux';
-import { Resizable, ResizableProps } from 're-resizable';
-import { ModuleState } from '../data';
+import type { Dispatch } from 'redux';
+import type { ResizableProps } from 're-resizable';
+import { Resizable } from 're-resizable';
+import type { ModuleState } from '../data';
 import Navigate from '.';
 import { getModuleInfo } from '../modules';
 

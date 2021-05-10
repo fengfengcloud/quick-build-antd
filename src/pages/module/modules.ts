@@ -1,6 +1,6 @@
 import { applyAllOtherSetting, applyIf } from '@/utils/utils';
 import { currentUser } from 'umi';
-import {
+import type {
   ModuleModal,
   TextValue,
   ModuleState,

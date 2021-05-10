@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { DataminingContext, DataminingStateContext } from '..';
+import type { DataminingStateContext } from '..';
+import { DataminingContext } from '..';
 import { DRAGABLE_BODY_ROW, DRAG_ITEM_GROUPFIELD, DRAG_NAVIGATE_RECORD, ROWID } from '../constants';
 import { getNavigateSelectedRecords } from '../navigate/navigateUtils';
 import { expandRowsWithGroup, expandRowWithNavigateRecords } from '../rowActionUtils';

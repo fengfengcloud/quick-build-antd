@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardProps, Col, Radio, Row } from 'antd';
+import type { CardProps } from 'antd';
+import { Card, Col, Radio, Row } from 'antd';
 import request, { API_HEAD } from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 import { stringifyObjectField } from '@/utils/utils';
@@ -7,10 +8,10 @@ import { getColumnDataIndex } from '@/pages/datamining/utils';
 import { currentUser } from 'umi';
 import moment from 'moment';
 
-import { PieConfig } from '@ant-design/charts/es/pie';
+import type { PieConfig } from '@ant-design/charts/es/pie';
 import { Column, Pie } from '@ant-design/charts';
-import { TextValue } from '@/pages/module/data';
-import { ColumnConfig } from '@ant-design/charts/es/column';
+import type { TextValue } from '@/pages/module/data';
+import type { ColumnConfig } from '@ant-design/charts/es/column';
 import { DateFormat } from '@/pages/module/moduleUtils';
 import { DateSectionSelect } from '../../utils/DateSectionSelect';
 import { chartsColSpan } from '../../charts';
@@ -20,22 +21,6 @@ const numeral = require('numeral');
 const cardParams: CardProps = {
   size: 'default',
   bodyStyle: { height: '360px', paddingTop: 12, paddingBottom: 12 },
-};
-
-export const UserLogin: React.FC = () => {
-  return (
-    <Row gutter={[12, 12]}>
-      <Col {...chartsColSpan}>
-        <UserLogginPie title="用户登录地址分析" groupfieldid={{ fieldname: 'ipaddress' }} />
-      </Col>
-      <Col {...chartsColSpan}>
-        <UserLogginInOutColumn />
-      </Col>
-      <Col span={24}>
-        <UserLogginYearMonthColumn {...cardParams} />
-      </Col>
-    </Row>
-  );
 };
 
 const COUNT = getColumnDataIndex('count.*');
@@ -385,5 +370,21 @@ const UserLogginYearMonthColumn: React.FC = (params) => {
     >
       <Column {...config} />
     </Card>
+  );
+};
+
+export const UserLogin: React.FC = () => {
+  return (
+    <Row gutter={[12, 12]}>
+      <Col {...chartsColSpan}>
+        <UserLogginPie title="用户登录地址分析" groupfieldid={{ fieldname: 'ipaddress' }} />
+      </Col>
+      <Col {...chartsColSpan}>
+        <UserLogginInOutColumn />
+      </Col>
+      <Col span={24}>
+        <UserLogginYearMonthColumn {...cardParams} />
+      </Col>
+    </Row>
   );
 };

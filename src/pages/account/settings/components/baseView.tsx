@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { Button, Card, Col, Form, Input, message, Row, Select, Modal, Typography } from 'antd';
 import { apply, applyIf } from '@/utils/utils';
 import request, { API_HEAD } from '@/utils/request';

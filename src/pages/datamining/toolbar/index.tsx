@@ -2,7 +2,7 @@ import React from 'react';
 import { Space } from 'antd';
 import { getFilterScheme, getModuleInfo } from '@/pages/module/modules';
 import UserDefineFilterButton from '@/pages/module/PageHeaderToolbar/UserDefineFilterButton';
-import { DataminingModal } from '../data';
+import type { DataminingModal } from '../data';
 import SelectScheme from './selectScheme';
 import DataminingSetting from './setting';
 import ViewSchemeButton from './viewSchemeButton';

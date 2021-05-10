@@ -25,13 +25,14 @@ import {
   Menu,
   Dropdown,
 } from 'antd';
-import { UploadFile } from 'antd/es/upload/interface';
-import Zmage, { IStaticSetParams } from 'react-zmage';
-import { UploadListType } from 'antd/lib/upload/interface';
-import { Dispatch } from 'redux';
+import type { UploadFile } from 'antd/es/upload/interface';
+import type { IStaticSetParams } from 'react-zmage';
+import Zmage from 'react-zmage';
+import type { UploadListType } from 'antd/lib/upload/interface';
+import type { Dispatch } from 'redux';
 import { API_HEAD } from '@/utils/request';
 import { deleteModuleRecord } from '../service';
-import { AttachmentModal, ModuleModal } from '../data';
+import type { AttachmentModal, ModuleModal } from '../data';
 import styles from '../grid/columnFactory.less';
 import { canAttachmentInsert, canAttachmentDelete } from '../modules';
 import { attachmentPdfOpenPreview } from './preview';

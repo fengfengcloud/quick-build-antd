@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { Space } from 'antd';
-import { ParentFilterModal, ModuleState, ParentFormModal } from '../data';
+import type { ParentFilterModal, ModuleState, ParentFormModal } from '../data';
 import { DetailModelContext } from './model';
 import ModuleGrid from '../grid';
 import { getModuleInfo, getDefaultModuleState, getFilterScheme } from '../modules';
@@ -40,28 +40,6 @@ export interface DetailGridPrpos {
   enableUserFilter?: boolean; // 允许使用用户自定义条件
   parentForm?: ParentFormModal; // 父模块记录的信息
 }
-
-const DetailGrid: React.FC<DetailGridPrpos> = ({
-  moduleName,
-  parentFilter,
-  readOnly,
-  enableUserFilter = false,
-  parentForm,
-}) => {
-  return (
-    <DetailModelProvider
-      moduleName={moduleName}
-      parentFilter={parentFilter}
-      parentForm={parentForm}
-    >
-      <DetailTable
-        pFilter={parentFilter}
-        readOnly={readOnly || false}
-        enableUserFilter={enableUserFilter}
-      />
-    </DetailModelProvider>
-  );
-};
 
 const DetailTable = ({
   pFilter,
@@ -133,4 +111,25 @@ const DetailTable = ({
   );
 };
 
+const DetailGrid: React.FC<DetailGridPrpos> = ({
+  moduleName,
+  parentFilter,
+  readOnly,
+  enableUserFilter = false,
+  parentForm,
+}) => {
+  return (
+    <DetailModelProvider
+      moduleName={moduleName}
+      parentFilter={parentFilter}
+      parentForm={parentForm}
+    >
+      <DetailTable
+        pFilter={parentFilter}
+        readOnly={readOnly || false}
+        enableUserFilter={enableUserFilter}
+      />
+    </DetailModelProvider>
+  );
+};
 export default DetailGrid;

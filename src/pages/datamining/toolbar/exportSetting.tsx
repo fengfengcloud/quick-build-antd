@@ -13,30 +13,9 @@ import {
   Space,
 } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-import { DataminingModal } from '../data';
+import type { DataminingModal } from '../data';
 import { ACT_DATAMINING_EXPORT_SETTING_CHANGE } from '../constants';
 import { exportExcelOrPdf } from '../utils';
-
-export const DownLoadButton = ({
-  state,
-  dispatch,
-}: {
-  state: DataminingModal;
-  dispatch: Function;
-}) => {
-  return (
-    <Popover
-      content={<SettingForm state={state} dispatch={dispatch} />}
-      style={{ padding: 0, margin: 0 }}
-      placement="bottomRight"
-    >
-      <Button type="text" size="small">
-        <DownloadOutlined />
-        导出
-      </Button>
-    </Popover>
-  );
-};
 
 const SettingForm = ({ state, dispatch }: { state: DataminingModal; dispatch: Function }) => {
   const [form] = Form.useForm();
@@ -163,6 +142,27 @@ const SettingForm = ({ state, dispatch }: { state: DataminingModal; dispatch: Fu
         </Row>
       </Form>
     </Card>
+  );
+};
+
+export const DownLoadButton = ({
+  state,
+  dispatch,
+}: {
+  state: DataminingModal;
+  dispatch: Function;
+}) => {
+  return (
+    <Popover
+      content={<SettingForm state={state} dispatch={dispatch} />}
+      style={{ padding: 0, margin: 0 }}
+      placement="bottomRight"
+    >
+      <Button type="text" size="small">
+        <DownloadOutlined />
+        导出
+      </Button>
+    </Popover>
   );
 };
 

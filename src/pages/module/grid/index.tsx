@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { Table, Tooltip, Space, Empty } from 'antd';
-import { PaginationConfig } from 'antd/lib/pagination';
+import type { PaginationConfig } from 'antd/lib/pagination';
 import marked from 'marked';
 import { ReloadOutlined } from '@ant-design/icons';
-import {
+import type {
   Key,
   SorterResult,
   TableCurrentDataSource,
   TablePaginationConfig,
 } from 'antd/lib/table/interface';
 import { apply, templateReplace } from '@/utils/utils';
-import { ModuleModal, ModuleState, GridOperateType } from '../data';
+import type { ModuleModal, ModuleState, GridOperateType } from '../data';
 import { getAllFilterCount } from './filterUtils';
 import { getGridScheme, hasAssociatesSouth } from '../modules';
 import SortInfoButton from './sortInfoButton';
@@ -187,7 +187,7 @@ const ModuleGrid: React.FC<ModuleGridProps> = ({
           <StartEndDateSectionSelect moduleState={moduleState} dispatch={dispatch} inPagination />
         ) : null}
         {!readOnly ? (
-          // index.less 中加入了 .ant-pagination-total-text ：100% 的定义
+          // index.less 中加入了 .ant-pagination-total-text ：flex:1 的定义
           // 模块附加功能中菜单名称是toolbar的
           <Space size="middle">{getToolbarButton({ moduleState, dispatch })}</Space>
         ) : null}

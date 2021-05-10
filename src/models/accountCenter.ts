@@ -1,6 +1,6 @@
-import { Reducer } from 'redux';
-import { Effect } from 'dva';
-import { CurrentUser, ListItemDataType, TagType } from '../pages/account/center/data';
+import type { Reducer } from 'redux';
+import type { Effect } from 'dva';
+import type { CurrentUser, ListItemDataType, TagType } from '../pages/account/center/data';
 
 import { queryCurrent, addTag, removeTag, updateSignature } from '../pages/account/center/service';
 

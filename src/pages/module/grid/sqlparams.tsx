@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { Form, Input, DatePicker, Card, Button } from 'antd';
-import { ModuleState } from '../data';
+import type { ModuleState } from '../data';
 import { DateSectionQuickSelect } from '../UserDefineFilter/dateSectionQuickSelect';
 
 const { RangePicker } = DatePicker;

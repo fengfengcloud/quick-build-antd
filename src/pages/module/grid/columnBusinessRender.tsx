@@ -1,17 +1,13 @@
 import React from 'react';
 import { Badge, Popover, Tooltip } from 'antd';
-import { Dispatch } from 'redux';
-import { PresetStatusColorType } from 'antd/lib/_util/colors';
+import type { Dispatch } from 'redux';
+import type { PresetStatusColorType } from 'antd/lib/_util/colors';
 import { CheckOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import styles from './columnFactory.less';
-import { ModuleFieldType, ModuleState } from '../data';
+import type { ModuleFieldType, ModuleState } from '../data';
 import { getModuleInfo } from '../modules';
 import { paymentCreatePaymentDetailButton } from '../additionalAction/businessAction';
 import { PopoverDescriptionWithId } from '../descriptions';
-
-interface BusinessColumnRender {
-  [name: string]: Function;
-}
 
 interface BusinessRenderProps {
   value: any;
@@ -168,7 +164,7 @@ const VActRuTaskTitle: React.FC<BusinessRenderProps> = ({ value, record, dispatc
   );
 };
 
-const BusinessColumnRender: BusinessColumnRender = {
+const BusinessColumnRender: Record<string, Function> = {
   // system
   'VActRuTask--actBusinessName': VActRuTaskTitle,
   'VActFinishTask--actBusinessName': VActRuTaskTitle,

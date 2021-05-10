@@ -1,9 +1,9 @@
 import React from 'react';
 import { Form, TreeSelect } from 'antd';
-import { TextValue } from '@/pages/module/data';
+import type { TextValue } from '@/pages/module/data';
 import { getModulTreeDataSource } from '@/pages/module/modules';
 
-interface FOrganizationTreeSelect {
+interface FOrganizationTreeSelectPrpos {
   title?: string;
   callback?: Function;
 }
@@ -12,7 +12,10 @@ interface FOrganizationTreeSelect {
  * 组织机构或部门的树形选择，选择单个部门，使用startwith来做为判断条件
  * @param param0
  */
-const FOrganizationTreeSelect: React.FC<FOrganizationTreeSelect> = ({ title, callback }): any => {
+const FOrganizationTreeSelect: React.FC<FOrganizationTreeSelectPrpos> = ({
+  title,
+  callback,
+}): any => {
   const dictData: TextValue[] = getModulTreeDataSource('FOrganization', true, false);
   const arrageTreeNode = (array: any): TextValue[] => {
     return array.map((rec: TextValue) => ({

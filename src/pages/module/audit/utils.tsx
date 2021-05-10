@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { currentUser } from 'umi';
 import {
   Button,
@@ -24,7 +24,7 @@ import {
 import { deleteSecond, showResultInfo } from '@/utils/utils';
 import { isAdmin, isAdministrator } from '@/utils/Authorized';
 import request, { API_HEAD } from '@/utils/request';
-import { ModuleModal, ModuleState } from '../data';
+import type { ModuleModal, ModuleState } from '../data';
 import { getModuleInfo } from '../modules';
 
 const AUDITINGDATE = 'auditingDate';

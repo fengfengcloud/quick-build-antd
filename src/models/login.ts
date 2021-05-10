@@ -1,5 +1,5 @@
-import { Reducer } from 'redux';
-import { Effect } from 'dva';
+import type { Reducer } from 'redux';
+import type { Effect } from 'dva';
 import { history } from 'umi';
 // import { stringify } from 'querystring';
 import { fakeAccountLogin, fakeAccountLogout, getFakeCaptcha } from '@/services/login';

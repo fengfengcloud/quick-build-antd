@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { message, Modal, Space, Tooltip, Typography, Popconfirm } from 'antd';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import {
   QuestionCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   FileTextOutlined,
 } from '@ant-design/icons';
-import { ModuleModal, ModuleState, AdditionFunctionModal } from '../data';
+import type { ModuleModal, ModuleState, AdditionFunctionModal } from '../data';
 import { deleteModuleRecord } from '../service';
 import { hasEdit, hasDelete, canDelete, canEdit } from '../modules';
-import { systemActions, ActionParamsModal } from '../additionalAction/systemAction';
+import type { ActionParamsModal } from '../additionalAction/systemAction';
+import { systemActions } from '../additionalAction/systemAction';
 
 const { Text } = Typography;
 

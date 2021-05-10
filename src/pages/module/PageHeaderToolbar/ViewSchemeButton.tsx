@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu, Dropdown, Button } from 'antd';
 import { ApiOutlined, CheckOutlined } from '@ant-design/icons';
-import { ModuleModal, TextValue, ModuleState } from '../data';
+import type { ModuleModal, TextValue, ModuleState } from '../data';
 import { getViewSchemes } from '../modules';
 
 const spaceIcon = <ApiOutlined style={{ visibility: 'hidden' }} />;

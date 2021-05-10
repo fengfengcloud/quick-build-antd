@@ -1,7 +1,7 @@
 import React from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { Breadcrumb, Menu } from 'antd';
-import { ModuleState, ModuleModal } from '../data';
+import type { ModuleState, ModuleModal } from '../data';
 import { getModuleInfo } from '../modules';
 import { getAllFilterCount } from '../grid/filterUtils';
 import { getPinRecord } from '../moduleUtils';

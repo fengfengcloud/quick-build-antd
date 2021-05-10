@@ -2,8 +2,8 @@ import React, { useEffect, useMemo } from 'react';
 import { Button, Dropdown, Input, Menu, Tooltip, Tree } from 'antd';
 import { RetweetOutlined, SortAscendingOutlined } from '@ant-design/icons';
 import { EMPTY_MENU_ICON } from '@/utils/utils';
-import { DataminingModal } from '../data';
-import { DataminingNavigateModal } from './data';
+import type { DataminingModal } from '../data';
+import type { DataminingNavigateModal } from './data';
 import {
   fetchNavigateData,
   genAllTreeData,
@@ -20,24 +20,9 @@ import {
   ACT_NAVIGATE_SELECTED,
 } from '../constants';
 
-export const NavigateTreeDiv: React.FC<any> = ({
-  navigate,
-  state,
-  dispatch,
-}: {
-  navigate: DataminingNavigateModal;
-  state: DataminingModal;
-  dispatch: Function;
-}) => {
-  const navigateTree = useMemo(
-    () => <NavigateTree navigate={navigate} state={state} dispatch={dispatch} />,
-    [navigate.dataSource, navigate.expandedKeys, navigate.checkedKeys, navigate.selectedKeys],
-  );
-  return navigateTree;
-};
+const { Search } = Input;
 
 let changeCount: number = 1;
-const { Search } = Input;
 
 // 导航条件选中后延时刷新的执行过程
 const refreshTreeGridAndCondition = (count: number, dispatch: Function) => {
@@ -224,4 +209,20 @@ export const NavigateTree: React.FC<any> = ({
       />
     </>
   );
+};
+
+export const NavigateTreeDiv: React.FC<any> = ({
+  navigate,
+  state,
+  dispatch,
+}: {
+  navigate: DataminingNavigateModal;
+  state: DataminingModal;
+  dispatch: Function;
+}) => {
+  const navigateTree = useMemo(
+    () => <NavigateTree navigate={navigate} state={state} dispatch={dispatch} />,
+    [navigate.dataSource, navigate.expandedKeys, navigate.checkedKeys, navigate.selectedKeys],
+  );
+  return navigateTree;
 };

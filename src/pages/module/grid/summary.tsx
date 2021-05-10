@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, Typography } from 'antd';
-import { ModuleFieldType, ModuleState } from '../data';
+import type { ModuleFieldType, ModuleState } from '../data';
 import {
   floatRender,
   integerRender,

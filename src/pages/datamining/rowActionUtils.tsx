@@ -12,7 +12,7 @@ import {
   TEXT,
   TEXTUNDERLINE,
 } from './constants';
-import { DataminingModal } from './data';
+import type { DataminingModal } from './data';
 import {
   expandRowWithGroup,
   getAggregateFieldNames,

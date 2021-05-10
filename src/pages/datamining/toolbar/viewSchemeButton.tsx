@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
 import { Menu, Dropdown, Button } from 'antd';
 import { ApiOutlined, CheckOutlined } from '@ant-design/icons';
-import { DataminingContext, DataminingStateContext } from '..';
+import type { DataminingStateContext } from '..';
+import { DataminingContext } from '..';
 import { getModuleInfo, getViewSchemes } from '../../module/modules';
-import { TextValue } from '../../module/data';
+import type { TextValue } from '../../module/data';
 
 const spaceIcon = <ApiOutlined style={{ visibility: 'hidden' }} />;
 const selectIcon = <CheckOutlined />;

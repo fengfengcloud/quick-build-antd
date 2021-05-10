@@ -10,7 +10,7 @@ import {
   QuestionCircleFilled,
   WarningFilled,
 } from '@ant-design/icons';
-import { NoticeIconData } from './index';
+import type { NoticeIconData } from './index';
 import styles from './NoticeList.less';
 
 export interface NoticeIconTabProps {

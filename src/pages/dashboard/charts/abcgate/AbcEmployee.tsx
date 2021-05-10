@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardProps, Col, Row } from 'antd';
+import type { CardProps } from 'antd';
+import { Card, Col, Row } from 'antd';
 import { getColumnDataIndex } from '@/pages/datamining/utils';
 import request, { API_HEAD } from '@/utils/request';
 import { serialize } from 'object-to-formdata';
 import { stringifyObjectField } from '@/utils/utils';
-import { PieConfig } from '@ant-design/charts/es/pie';
+import type { PieConfig } from '@ant-design/charts/es/pie';
 import { Pie } from '@ant-design/charts';
 import { chartsColSpan } from '..';
 
@@ -13,33 +14,6 @@ const numeral = require('numeral');
 const cardParams: CardProps = {
   size: 'default',
   bodyStyle: { height: '360px', paddingTop: 12, paddingBottom: 12 },
-};
-
-export default () => {
-  const result = (
-    <Row gutter={[12, 12]}>
-      <Col {...chartsColSpan}>
-        <EmployeeTemperaturePie
-          title="人员当天体温状态图"
-          groupfieldid={{ fieldname: 'todayState' }}
-        />
-      </Col>
-      <Col {...chartsColSpan}>
-        <EmployeeTemperaturePie
-          title="人员当天体温值图"
-          groupfieldid={{ fieldname: 'todayTemperature' }}
-        />
-      </Col>
-      {/* <Col span={24}>
-                图表1
-            </Col>
-            <Col xs={24} sm={24} md={24} lg={12}>
-                图表1
-            </Col>
-            <Col xs={24} sm={24} md={24} lg={12} /> */}
-    </Row>
-  );
-  return result;
 };
 
 const COUNT = getColumnDataIndex('count.*');
@@ -134,4 +108,31 @@ const EmployeeTemperaturePie: React.FC<any> = ({
       <Pie {...config} />
     </Card>
   );
+};
+
+export default () => {
+  const result = (
+    <Row gutter={[12, 12]}>
+      <Col {...chartsColSpan}>
+        <EmployeeTemperaturePie
+          title="人员当天体温状态图"
+          groupfieldid={{ fieldname: 'todayState' }}
+        />
+      </Col>
+      <Col {...chartsColSpan}>
+        <EmployeeTemperaturePie
+          title="人员当天体温值图"
+          groupfieldid={{ fieldname: 'todayTemperature' }}
+        />
+      </Col>
+      {/* <Col span={24}>
+                图表1
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12}>
+                图表1
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12} /> */}
+    </Row>
+  );
+  return result;
 };

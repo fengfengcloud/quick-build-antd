@@ -1,11 +1,12 @@
-import React, { useState, useEffect, CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Tooltip } from 'antd';
 import { BarsOutlined } from '@ant-design/icons';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { apply } from '@/utils/utils';
 import { fetchChildModuleData } from '../service';
 import { getModuleInfo, getFormSchemeFormType, getFieldDefine } from '../modules';
-import { ModuleModal, ModuleFieldType } from '../data';
+import type { ModuleModal, ModuleFieldType } from '../data';
 import styles from '../grid/columnFactory.less';
 import {
   booleanRenderer,

@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+
 import React, { useContext } from 'react';
 import { message, Typography } from 'antd';
 import Highlighter from 'react-highlight-words';
@@ -22,10 +24,11 @@ import {
   DRAG_NAVIGATE_RECORD,
   LEVELUNDERLINE,
 } from '../constants';
-import { DataminingNavigateModal, NavigateConditionModal } from './data';
-import { DataminingModal, ExpandGroupFieldModal } from '../data';
+import type { DataminingNavigateModal, NavigateConditionModal } from './data';
+import type { DataminingModal, ExpandGroupFieldModal } from '../data';
 import styles from '../index.less';
-import { DataminingContext, DataminingStateContext } from '..';
+import type { DataminingStateContext } from '..';
+import { DataminingContext } from '..';
 import { navigateCheckedChange } from './navigateTree';
 import { getAllChildRowids, getTreeRecordByKey } from '../utils';
 
@@ -49,119 +52,6 @@ const combineCondition = (conditions: NavigateConditionModal[]): NavigateConditi
     }
   });
   return result;
-};
-
-/**
- * 返回所有节点，在总节点比较少的情况下就是这样
- * @param nodes
- */
-export const genAllTreeData = (
-  nodes: any[],
-  navigateGroup: ExpandGroupFieldModal,
-  parentNode: any,
-  groupFieldid: string,
-  groupTitle: string,
-  expandedKeys: string[],
-): any => {
-  const treeData: any[] = [];
-  const getNode = (node: any, search: string = '') => {
-    const result: any = {
-      ...node,
-      key: node.rowid,
-    };
-    // 全自动生级的，加入当前级数
-    if (node[LEVELUNDERLINE])
-      result.groupfieldid = groupFieldid.replace('-all', `-${node[LEVELUNDERLINE]}`);
-    else result.groupfieldid = groupFieldid;
-    result.grouptitle = groupTitle;
-    result.title = (
-      <NavigateRecordTitle navigateGroup={navigateGroup} node={result} search={search} />
-    );
-    return result;
-  };
-
-  treeData.push(
-    ...nodes.map((node: any) => {
-      const { children } = node;
-      const item: any = getNode(node, '');
-      item.parentNode = parentNode;
-      if (Array.isArray(children) && children.length) {
-        // 默认所有节点都展开
-        expandedKeys.push(node[ROWID]);
-        item.children = genAllTreeData(
-          children,
-          navigateGroup,
-          item,
-          groupFieldid,
-          groupTitle,
-          expandedKeys,
-        );
-      }
-      return item;
-    }),
-  );
-  return treeData;
-};
-
-// 按照某个分组展开导航数据时
-export const expandNavigateRowWithGroup = ({
-  state,
-  navigateGroup,
-  expandRecord,
-  groupFieldid,
-  groupTitle,
-  dispatch,
-}: {
-  state: DataminingModal;
-  navigateGroup: ExpandGroupFieldModal;
-  expandRecord: any;
-  groupFieldid: string;
-  groupTitle: string;
-  dispatch: Function;
-}) => {
-  const { moduleName, filters } = state;
-  // 从选中节点开始加入所有的父节点
-  const parentConditions: string[] = [];
-  let record = expandRecord;
-  do {
-    parentConditions.push(`${record.groupfieldid}=${record.value}`);
-    record = record.parentNode;
-  } while (record);
-  request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
-    method: 'POST',
-    params: {
-      moduleName_: moduleName,
-    },
-    data: serialize({
-      moduleName,
-      groupfieldid: groupFieldid,
-      title: groupTitle,
-      conditions: JSON.stringify([]),
-      fields: JSON.stringify(['count.*']),
-      parentconditions: JSON.stringify(parentConditions),
-      sqlparamstr: filters.sqlparam ? JSON.stringify(getSqlparamFilter(filters.sqlparam)) : null,
-    }),
-  }).then((childrens: any) => {
-    const expandedKeys: string[] = [];
-    const children = genAllTreeData(
-      childrens,
-      navigateGroup,
-      expandRecord,
-      groupFieldid,
-      groupTitle,
-      expandedKeys,
-    );
-    if (expandRecord.children) (expandRecord.children as any[]).push(...children);
-    else apply(expandRecord, { children });
-    dispatch({
-      type: ACT_NAVIGATE_ROW_EXPAND,
-      payload: {
-        navigateGroup,
-        key: expandRecord.key,
-        expandedKeys,
-      },
-    });
-  });
 };
 
 /**
@@ -251,71 +141,6 @@ export const getNaviagtesCondition = (
   return result;
 };
 
-export const NavigateRecordTitle = ({
-  navigateGroup,
-  node,
-  search,
-}: {
-  navigateGroup: ExpandGroupFieldModal;
-  node: any;
-  search?: string;
-}) => {
-  const context = useContext<DataminingStateContext>(DataminingContext);
-  const { state, dispatch } = context;
-  const ref: any = React.useRef();
-  const [{ isOver }, drop] = useDrop({
-    accept: DRAG_ITEM_GROUPFIELD,
-    canDrop: () => true,
-    /**
-     * 当用户拖动分组字段放到记录上时进行展开。
-     */
-    drop: (item: any) => {
-      expandNavigateRowWithGroup({
-        state,
-        dispatch,
-        navigateGroup,
-        expandRecord: node,
-        groupFieldid: item.fieldid,
-        groupTitle: item.title,
-      });
-    },
-    collect: (monitor) => {
-      return {
-        isOver: !!monitor.isOver(),
-        canDrop: monitor.canDrop(),
-      };
-    },
-  });
-  const [, drag, preview] = useDrag({
-    item: { type: DRAG_NAVIGATE_RECORD, navigateGroup, node },
-    options: {
-      dropEffect: 'copy', // 'copy' : 'move'
-    },
-    canDrag: true,
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
-  drop(drag(ref));
-  return (
-    <>
-      <DragPreviewImage connect={preview} src="/images/dragrecords.png" />
-      <div ref={ref} className={isOver ? styles.dragover : ''}>
-        {search ? (
-          <Highlighter
-            highlightClassName="ant-btn-link"
-            searchWords={[search]}
-            textToHighlight={node.text}
-          />
-        ) : (
-          node.text || '未定义'
-        )}
-        <Text type="secondary">({node[NAVIGATE_RECORD_COUNT_FIELD]})</Text>
-      </div>
-    </>
-  );
-};
-
 // 递归取得所有条件的说明
 export const getWholeConditionText = (conditions: NavigateConditionModal[]): string => {
   const result: string[] = [];
@@ -399,6 +224,134 @@ export const toggleNavigateSelected = (
     navigate.navigateGroup.fieldid,
     checked,
     NAVIGATE_CHECK_CHANGE_DELAY,
+  );
+};
+
+// 按照某个分组展开导航数据时
+export const expandNavigateRowWithGroup = ({
+  state,
+  navigateGroup,
+  expandRecord,
+  groupFieldid,
+  groupTitle,
+  dispatch,
+}: {
+  state: DataminingModal;
+  navigateGroup: ExpandGroupFieldModal;
+  expandRecord: any;
+  groupFieldid: string;
+  groupTitle: string;
+  dispatch: Function;
+}) => {
+  const { moduleName, filters } = state;
+  // 从选中节点开始加入所有的父节点
+  const parentConditions: string[] = [];
+  let record = expandRecord;
+  do {
+    parentConditions.push(`${record.groupfieldid}=${record.value}`);
+    record = record.parentNode;
+  } while (record);
+  request(`${API_HEAD}/platform/datamining/fetchdata.do`, {
+    method: 'POST',
+    params: {
+      moduleName_: moduleName,
+    },
+    data: serialize({
+      moduleName,
+      groupfieldid: groupFieldid,
+      title: groupTitle,
+      conditions: JSON.stringify([]),
+      fields: JSON.stringify(['count.*']),
+      parentconditions: JSON.stringify(parentConditions),
+      sqlparamstr: filters.sqlparam ? JSON.stringify(getSqlparamFilter(filters.sqlparam)) : null,
+    }),
+  }).then((childrens: any) => {
+    const expandedKeys: string[] = [];
+    /* eslint-disable */
+    const children = genAllTreeData(
+      childrens,
+      navigateGroup,
+      expandRecord,
+      groupFieldid,
+      groupTitle,
+      expandedKeys,
+    );
+    /* eslint-enable */
+    if (expandRecord.children) (expandRecord.children as any[]).push(...children);
+    else apply(expandRecord, { children });
+    dispatch({
+      type: ACT_NAVIGATE_ROW_EXPAND,
+      payload: {
+        navigateGroup,
+        key: expandRecord.key,
+        expandedKeys,
+      },
+    });
+  });
+};
+
+export const NavigateRecordTitle = ({
+  navigateGroup,
+  node,
+  search,
+}: {
+  navigateGroup: ExpandGroupFieldModal;
+  node: any;
+  search?: string;
+}) => {
+  const context = useContext<DataminingStateContext>(DataminingContext);
+  const { state, dispatch } = context;
+  const ref: any = React.useRef();
+  const [{ isOver }, drop] = useDrop({
+    accept: DRAG_ITEM_GROUPFIELD,
+    canDrop: () => true,
+    /**
+     * 当用户拖动分组字段放到记录上时进行展开。
+     */
+    drop: (item: any) => {
+      expandNavigateRowWithGroup({
+        state,
+        dispatch,
+        navigateGroup,
+        expandRecord: node,
+        groupFieldid: item.fieldid,
+        groupTitle: item.title,
+      });
+    },
+    collect: (monitor) => {
+      return {
+        isOver: !!monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      };
+    },
+  });
+  const [, drag, preview] = useDrag({
+    item: { type: DRAG_NAVIGATE_RECORD, navigateGroup, node },
+    options: {
+      dropEffect: 'copy', // 'copy' : 'move'
+    },
+    canDrag: true,
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+  drop(drag(ref));
+  return (
+    <>
+      <DragPreviewImage connect={preview} src="/images/dragrecords.png" />
+      <div ref={ref} className={isOver ? styles.dragover : ''}>
+        {search ? (
+          <Highlighter
+            highlightClassName="ant-btn-link"
+            searchWords={[search]}
+            textToHighlight={node.text}
+          />
+        ) : (
+          node.text || '未定义'
+        )}
+        <Text type="secondary">({node[NAVIGATE_RECORD_COUNT_FIELD]})</Text>
+      </div>
+    </>
   );
 };
 
@@ -512,3 +465,57 @@ export const getNavigateSelectedRecords = (
   }
   return [];
 };
+
+/**
+ * 返回所有节点，在总节点比较少的情况下就是这样
+ * @param nodes
+ */
+export const genAllTreeData = (
+  nodes: any[],
+  navigateGroup: ExpandGroupFieldModal,
+  parentNode: any,
+  groupFieldid: string,
+  groupTitle: string,
+  expandedKeys: string[],
+): any => {
+  const treeData: any[] = [];
+  const getNode = (node: any, search: string = '') => {
+    const result: any = {
+      ...node,
+      key: node.rowid,
+    };
+    // 全自动生级的，加入当前级数
+    if (node[LEVELUNDERLINE])
+      result.groupfieldid = groupFieldid.replace('-all', `-${node[LEVELUNDERLINE]}`);
+    else result.groupfieldid = groupFieldid;
+    result.grouptitle = groupTitle;
+    result.title = (
+      <NavigateRecordTitle navigateGroup={navigateGroup} node={result} search={search} />
+    );
+    return result;
+  };
+
+  treeData.push(
+    ...nodes.map((node: any) => {
+      const { children } = node;
+      const item: any = getNode(node, '');
+      item.parentNode = parentNode;
+      if (Array.isArray(children) && children.length) {
+        // 默认所有节点都展开
+        expandedKeys.push(node[ROWID]);
+        item.children = genAllTreeData(
+          children,
+          navigateGroup,
+          item,
+          groupFieldid,
+          groupTitle,
+          expandedKeys,
+        );
+      }
+      return item;
+    }),
+  );
+  return treeData;
+};
+
+/* eslint-enable no-use-before-define */

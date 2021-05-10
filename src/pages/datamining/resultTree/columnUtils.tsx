@@ -8,7 +8,7 @@ import { serialize } from 'object-to-formdata';
 import request, { API_HEAD } from '@/utils/request';
 import { getSqlparamFilter } from '@/pages/module/grid/filterUtils';
 import { findParentLastLevel, getAggregateFieldNames } from '../schemeUtils';
-import { DataminingModal, HeaderCellType } from '../data';
+import type { DataminingModal, HeaderCellType } from '../data';
 import { getRestTitles, getTreeRecordByKey } from '../utils';
 import styles from '../index.less';
 import {

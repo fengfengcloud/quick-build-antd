@@ -55,6 +55,7 @@
     "@ant-design/charts": "^1.0.16",
     "@ant-design/icons": "^4.3.0",
     "@ant-design/pro-layout": "^6.16.6",
+    "@dabeng/react-orgchart": "^1.0.0",
     "ajax-js": "^1.0.17",
     "antd": "^4.15.4",
     "bpmn-js": "^7.3.0",

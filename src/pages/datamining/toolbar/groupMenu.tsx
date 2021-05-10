@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu } from 'antd';
 import { getMenuAwesomeIcon } from '@/utils/utils';
-import { ExpandGroupTreeFieldModal } from '../data';
+import type { ExpandGroupTreeFieldModal } from '../data';
 
 const groupMenu = (expandGroupFieldsTree: ExpandGroupTreeFieldModal[], callback: Function) => {
   let keyCount = 1;

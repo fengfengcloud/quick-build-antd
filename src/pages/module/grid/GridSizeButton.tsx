@@ -1,8 +1,8 @@
 import React from 'react';
 import { Dropdown, Menu } from 'antd';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { CheckOutlined, ColumnHeightOutlined } from '@ant-design/icons';
-import { ModuleState } from '../data';
+import type { ModuleState } from '../data';
 
 const hiddenIcon = <CheckOutlined style={{ visibility: 'hidden' }} />;
 

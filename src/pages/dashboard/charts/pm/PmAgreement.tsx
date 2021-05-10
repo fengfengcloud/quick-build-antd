@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Column, DualAxes, Pie } from '@ant-design/charts';
 import request, { API_HEAD } from '@/utils/request';
-import { DualAxesConfig } from '@ant-design/charts/es/dualAxes';
-import { ColumnConfig } from '@ant-design/charts/es/column';
+import type { DualAxesConfig } from '@ant-design/charts/es/dualAxes';
+import type { ColumnConfig } from '@ant-design/charts/es/column';
 import { Card, Col, Form, Row, Select, Switch } from 'antd';
-import { CardProps } from 'antd/lib/card';
+import type { CardProps } from 'antd/lib/card';
 import { serialize } from 'object-to-formdata';
-import { PieConfig } from '@ant-design/charts/es/pie';
+import type { PieConfig } from '@ant-design/charts/es/pie';
 import { getColumnsDataIndex } from '@/pages/datamining/utils';
 import { stringifyObjectField } from '@/utils/utils';
 import FOrganizationTreeSelect from './components/OrganizationTreeSelect';
@@ -30,30 +30,6 @@ const columnStyle = {
 const cardParams: CardProps = {
   size: 'default',
   bodyStyle: { height: '360px', paddingTop: 12, paddingBottom: 12 },
-};
-
-export default () => {
-  const result = (
-    <Row gutter={[12, 12]}>
-      <Col {...chartsColSpan}>
-        <PmAgreementGlobal />
-      </Col>
-      <Col {...chartsColSpan}>
-        <PmAgreementCountPie />
-      </Col>
-      <Col span={24}>
-        <Card title="项目合同一年内签订个数、签订金额分析图" {...cardParams}>
-          <PmAgreementSignYearMonthColumn />
-        </Card>
-      </Col>
-      <Col {...chartsColSpan}>
-        <Card title="echarts图表" bodyStyle={{ paddingTop: 12, paddingBottom: 12 }}>
-          <EchartsDemo id="echarts1" />
-        </Card>
-      </Col>
-    </Row>
-  );
-  return result;
 };
 
 // 合同结算金额、可支付计划金额、已支付金额、
@@ -561,4 +537,28 @@ const PmAgreementSignYearMonthColumn: React.FC = () => {
     }, 400);
   }, []);
   return <DualAxes {...config} />;
+};
+
+export default () => {
+  const result = (
+    <Row gutter={[12, 12]}>
+      <Col {...chartsColSpan}>
+        <PmAgreementGlobal />
+      </Col>
+      <Col {...chartsColSpan}>
+        <PmAgreementCountPie />
+      </Col>
+      <Col span={24}>
+        <Card title="项目合同一年内签订个数、签订金额分析图" {...cardParams}>
+          <PmAgreementSignYearMonthColumn />
+        </Card>
+      </Col>
+      <Col {...chartsColSpan}>
+        <Card title="echarts图表" bodyStyle={{ paddingTop: 12, paddingBottom: 12 }}>
+          <EchartsDemo id="echarts1" />
+        </Card>
+      </Col>
+    </Row>
+  );
+  return result;
 };

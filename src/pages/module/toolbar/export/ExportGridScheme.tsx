@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, Menu, Tooltip } from 'antd';
 import { FileExcelOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { apply } from '@/utils/utils';
-import { ModuleState, ModuleFilters, TextValue } from '../../data';
+import type { ModuleState, ModuleFilters, TextValue } from '../../data';
 import { downloadGridExcel } from '../../service';
 import { getCurrentExportGridColumnDefine } from '../../grid/columnFactory';
 import { getAllFilterAjaxParam, getAllFilterAjaxText } from '../../grid/filterUtils';

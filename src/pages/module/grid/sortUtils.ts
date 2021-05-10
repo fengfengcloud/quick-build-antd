@@ -1,5 +1,5 @@
-import { SorterResult, SortOrder } from 'antd/lib/table/interface';
-import { SortModal } from '../data';
+import type { SorterResult, SortOrder } from 'antd/lib/table/interface';
+import type { SortModal } from '../data';
 
 /**
  * 根据用户点击列头的排序来生成ajax的排序的参数如下：

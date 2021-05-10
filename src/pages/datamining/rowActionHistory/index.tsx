@@ -3,9 +3,10 @@ import { uuid } from '@/utils/utils';
 import { BlockOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button, Drawer, Table, Tooltip } from 'antd';
 import React, { useContext, useState } from 'react';
-import { DataminingContext, DataminingStateContext } from '..';
+import type { DataminingStateContext } from '..';
+import { DataminingContext } from '..';
 import { ACT_DELETE_ROWGROUP_FROM_INDEX, ROWID } from '../constants';
-import { DataminingModal } from '../data';
+import type { DataminingModal } from '../data';
 import { getTreeRecordByKey } from '../utils';
 
 export const rowOperTypes = {
@@ -17,34 +18,6 @@ export const rowOperTypes = {
   combinerows: '合并记录',
   combinerowsadd: '合并后加入原记录',
   expandwithnavigaterecords: '记录展开导航值',
-};
-
-export const RowActionHistoryButton = () => {
-  const [visible, setVisible] = useState<boolean>(false);
-
-  return (
-    <>
-      <Button
-        type={visible ? 'link' : 'text'}
-        size="small"
-        onClick={() => {
-          setVisible((v) => !v);
-        }}
-      >
-        <BlockOutlined /> 操作记录
-      </Button>
-      <Drawer
-        title="数据分析方案的数据操作记录"
-        visible={visible}
-        width="50%"
-        onClose={() => {
-          setVisible(false);
-        }}
-      >
-        <RowActionHistory />
-      </Drawer>
-    </>
-  );
 };
 
 const deleteRowAction = (state: DataminingModal, dispatch: Function, recno: number) => {
@@ -71,8 +44,7 @@ export const RowActionHistory = () => {
     {
       title: '操作类型',
       dataIndex: 'type',
-      render: (value: string, record: any, recno: number) =>
-        stringRenderer(rowOperTypes[value], record, recno),
+      render: (value: string) => stringRenderer(rowOperTypes[value]),
     },
     {
       title: '展开的字段',
@@ -126,5 +98,32 @@ export const RowActionHistory = () => {
       size="small"
       pagination={false}
     />
+  );
+};
+
+export const RowActionHistoryButton = () => {
+  const [visible, setVisible] = useState<boolean>(false);
+  return (
+    <>
+      <Button
+        type={visible ? 'link' : 'text'}
+        size="small"
+        onClick={() => {
+          setVisible((v) => !v);
+        }}
+      >
+        <BlockOutlined /> 操作记录
+      </Button>
+      <Drawer
+        title="数据分析方案的数据操作记录"
+        visible={visible}
+        width="50%"
+        onClose={() => {
+          setVisible(false);
+        }}
+      >
+        <RowActionHistory />
+      </Drawer>
+    </>
   );
 };

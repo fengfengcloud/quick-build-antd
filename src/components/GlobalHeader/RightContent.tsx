@@ -1,8 +1,10 @@
-import { Tooltip, Tag, MenuTheme, message } from 'antd';
+import type { MenuTheme } from 'antd';
+import { Tooltip, Tag, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import React from 'react';
-import { connect, ConnectProps } from 'umi';
-import { ConnectState } from '@/models/connect';
+import type { ConnectProps } from 'umi';
+import { connect } from 'umi';
+import type { ConnectState } from '@/models/connect';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Tooltip, Radio } from 'antd';
-import { Dispatch } from 'redux';
-import { RadioChangeEvent } from 'antd/lib/radio';
-import { ModuleModal, ModuleState } from '../data';
+import type { Dispatch } from 'redux';
+import type { RadioChangeEvent } from 'antd/lib/radio';
+import type { ModuleModal, ModuleState } from '../data';
 import { getModuleInfo, getAllGridSchemes } from '../modules';
 
 const GridSchemeButton = ({

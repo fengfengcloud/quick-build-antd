@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import request, { API_HEAD, syncRequest } from '@/utils/request';
 import {
   Form,
@@ -17,7 +17,7 @@ import {
 import Button from 'antd/es/button';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { refreshNotices } from '@/components/GlobalHeader/NoticeIconView';
-import { ModuleFieldType, ModuleModal } from '../data';
+import type { ModuleFieldType, ModuleModal } from '../data';
 import { DateFormat, DateTimeFormatWithOutSecond } from '../moduleUtils';
 import { getPercentFormField } from '../form/formFactory';
 import { convertToFormRecord } from '../form/formUtils';

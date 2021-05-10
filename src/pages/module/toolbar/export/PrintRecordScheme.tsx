@@ -3,7 +3,7 @@ import { Button, Card, Menu, message, Space } from 'antd';
 import { PrinterOutlined } from '@ant-design/icons';
 import { API_HEAD } from '@/utils/request';
 import { setGlobalDrawerProps } from '@/layouts/BasicLayout';
-import { ModuleState, RecordPrintSchemeModal } from '../../data';
+import type { ModuleState, RecordPrintSchemeModal } from '../../data';
 import { getModuleInfo } from '../../modules';
 import { getRecordByKey } from '../../moduleUtils';
 

@@ -3,7 +3,7 @@ import { Button, Menu, message, Tooltip } from 'antd';
 import { FilePdfOutlined, FileTextOutlined, SelectOutlined } from '@ant-design/icons';
 import { getPdfjsUrl, onOpenInNewWindow, urlEncode } from '@/utils/utils';
 import { API_HEAD } from '@/utils/request';
-import { ModuleState } from '../../data';
+import type { ModuleState } from '../../data';
 import { downloadRecordExcel } from '../../service';
 import { getModuleInfo } from '../../modules';
 

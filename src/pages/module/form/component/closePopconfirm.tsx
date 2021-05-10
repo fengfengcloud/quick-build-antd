@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Popconfirm } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { TooltipPlacement } from 'antd/es/tooltip';
+import type { TooltipPlacement } from 'antd/es/tooltip';
 
 interface CreatePopconfirmProps {
   changed: boolean; // 窗口form中记录是否改变，

@@ -1,13 +1,13 @@
-import { Subscription, Reducer, Effect } from 'umi';
+import type { Subscription, Reducer, Effect } from 'umi';
 
-import { NoticeIconData } from '@/components/NoticeIcon';
+import type { NoticeIconData } from '@/components/NoticeIcon';
 import {
   notificationRead,
   notificationRemove,
   notificationClear,
   queryNotices,
 } from '@/services/user';
-import { ConnectState } from './connect.d';
+import type { ConnectState } from './connect.d';
 
 export interface NoticeItem extends NoticeIconData {
   id: string;

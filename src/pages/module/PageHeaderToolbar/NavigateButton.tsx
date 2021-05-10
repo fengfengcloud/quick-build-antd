@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip, Button } from 'antd';
 import { BsCursor, BsCursorFill } from 'react-icons/bs';
-import { ModuleState } from '../data';
+import type { ModuleState } from '../data';
 
 const NavigateButton = ({ moduleState, dispatch }: { moduleState: ModuleState; dispatch: any }) => {
   const { moduleName } = moduleState;

@@ -2,8 +2,8 @@ import React from 'react';
 import { Card, Form, Radio, Switch } from 'antd';
 import { BlockOutlined } from '@ant-design/icons';
 import { getMonetarysValueText } from '@/pages/module/grid/monetary';
-import { TextValue } from '@/pages/module/data';
-import { DefaultSettings as SettingModelState } from '../../../../../config/defaultSettings';
+import type { TextValue } from '@/pages/module/data';
+import type { DefaultSettings as SettingModelState } from '../../../../../config/defaultSettings';
 
 interface FavoriteViewProps {
   dispatch: Function;

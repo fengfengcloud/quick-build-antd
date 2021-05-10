@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { connect, ConnectProps, history } from 'umi';
+import type { ConnectProps } from 'umi';
+import { connect, history } from 'umi';
 import { Tag, message } from 'antd';
 import groupBy from 'lodash/groupBy';
 import moment from 'moment';
-import { NoticeItem } from '@/models/global';
-import { currentUser as currUser, CurrentUser } from '@/models/user';
-import { ConnectState } from '@/models/connect';
-import { ParentFilterModal } from '@/pages/module/data';
+import type { NoticeItem } from '@/models/global';
+import type { CurrentUser } from '@/models/user';
+import { currentUser as currUser } from '@/models/user';
+import type { ConnectState } from '@/models/connect';
+import type { ParentFilterModal } from '@/pages/module/data';
 import { getModuleUrlFormSysMenu } from '@/layouts/BasicLayout';
 import NoticeIcon from '../NoticeIcon';
 import styles from './index.less';
@@ -74,9 +76,7 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
     message.warn('已删除一条通知！');
   };
 
-  getNoticeData = (): {
-    [key: string]: NoticeItem[];
-  } => {
+  getNoticeData = (): Record<string, NoticeItem[]> => {
     const { notices = [] } = this.props;
 
     if (!notices || notices.length === 0 || !Array.isArray(notices)) {
@@ -118,10 +118,8 @@ class GlobalHeaderRight extends Component<GlobalHeaderRightProps> {
     return groupBy(newNotices, 'type');
   };
 
-  getUnreadData = (noticeData: { [key: string]: NoticeItem[] }) => {
-    const unreadMsg: {
-      [key: string]: number;
-    } = {};
+  getUnreadData = (noticeData: Record<string, NoticeItem[]>) => {
+    const unreadMsg: Record<string, number> = {};
     Object.keys(noticeData).forEach((key) => {
       const value = noticeData[key];
 

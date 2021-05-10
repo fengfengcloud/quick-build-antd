@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, message, Form, Select, Input, Button } from 'antd';
 import { setGlobalModalProps } from '@/layouts/BasicLayout';
 import { serialize } from 'object-to-formdata';
-import { ActionParamsModal } from './systemAction';
+import type { ActionParamsModal } from './systemAction';
 
 /**
  * 测试数据源是否能连接成功

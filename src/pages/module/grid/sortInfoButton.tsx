@@ -1,13 +1,13 @@
 import React from 'react';
 import { Dropdown, Menu, Button } from 'antd';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import {
   SortAscendingOutlined,
   SortDescendingOutlined,
   DownOutlined,
   CheckOutlined,
 } from '@ant-design/icons';
-import { ModuleState, ModuleModal, SortModal } from '../data';
+import type { ModuleState, ModuleModal, SortModal } from '../data';
 import { getModuleInfo, getSortSchemes } from '../modules';
 
 const hiddenIcon = <CheckOutlined style={{ visibility: 'hidden' }} />;

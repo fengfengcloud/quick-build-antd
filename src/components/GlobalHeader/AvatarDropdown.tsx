@@ -1,9 +1,10 @@
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Menu, notification, Spin } from 'antd';
 import React from 'react';
-import { history, ConnectProps, connect } from 'umi';
-import { ConnectState } from '@/models/connect';
-import { CurrentUser } from '@/models/user';
+import type { ConnectProps } from 'umi';
+import { history, connect } from 'umi';
+import type { ConnectState } from '@/models/connect';
+import type { CurrentUser } from '@/models/user';
 import { API_HEAD } from '@/utils/request';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';

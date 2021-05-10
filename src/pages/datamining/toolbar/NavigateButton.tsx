@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip, Button } from 'antd';
 import { BsCursor, BsCursorFill } from 'react-icons/bs';
-import { DataminingModal } from '../data';
+import type { DataminingModal } from '../data';
 import { ACT_TOGGLE_NAVIGATE_REGION } from '../constants';
 
 const NavigateButton = ({ state, dispatch }: { state: DataminingModal; dispatch: any }) => {
