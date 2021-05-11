@@ -272,6 +272,17 @@ export const fetchFormDetails = async (params: any) => {
 };
 
 /**
+ * 保存当前的form方案中设置的字段
+ * @param params
+ * @returns
+ */
+export const saveFormSchemeDetails = async (params: any) => {
+  return request(`${API_HEAD}/platform/scheme/form/updatedetails.do`, {
+    params,
+  });
+};
+
+/**
  * 下载grid表单的excel或pdf文件
  * @param params 
  *          moduleName: moduleName,

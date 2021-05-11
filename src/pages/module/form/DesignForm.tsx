@@ -5,11 +5,14 @@ import {
   getAllleafRowids,
 } from '@/pages/datamining/utils';
 import { apply, uuid } from '@/utils/utils';
-import { DownOutlined, FileOutlined } from '@ant-design/icons';
-import { Card, Col, message, Row, Tree } from 'antd';
+import { EditOutlined, FileOutlined, SaveOutlined } from '@ant-design/icons';
+import { Card, Col, message, Modal, Row, Space, Tree } from 'antd';
 import type { Key } from 'antd/es/table/interface';
-import { fetchFormDetails, fetchModuleFields } from '../service';
+import { fetchFormDetails, fetchModuleFields, saveFormSchemeDetails } from '../service';
 import { ModuleHierarchyChart } from '../widget/ModuleHierarchyChart';
+import { FormFieldDesignForm } from './DesignFormField';
+import './designForm.css';
+import { getAllTreeRecord } from '../moduleUtils';
 
 interface DesignFormProps {
   formScheme: any;
@@ -20,34 +23,89 @@ const getTitle = (node: any, text?: string) => {
   return text || node.text;
 };
 
-const changeTextToTitle = (object: any) => {
-  if (Array.isArray(object)) {
-    object.forEach((o: any) => changeTextToTitle(o));
-  } else if (Object.prototype.toString.call(object) === '[object Object]') {
-    if (!object.title) apply(object, { title: getTitle(object) });
-    if (object.children) {
-      object.children.forEach((child: any) => {
-        apply(child, {
-          parent: object,
-        });
+const farray = [
+  'xtype',
+  'layout',
+  'region',
+  'rows',
+  'cols',
+  'widths',
+  'rowspan',
+  'colspan',
+  'separatelabel',
+  'hiddenlabel',
+  'width',
+  'height',
+  'fieldahead',
+  'subdataobjecttitle',
+  'collapsible',
+  'collapsed',
+  'othersetting',
+  'remark',
+  'showdetailtip',
+];
+
+const getChildNodesArray = (pnode: any) => {
+  const result: any[] = [];
+  pnode.children.forEach((node: any) => {
+    const nodedata: any = {
+      text: node.text,
+    };
+    if (node.udftitle) nodedata.title = node.udftitle;
+    if (!node.children && node.itemId) nodedata.itemId = node.itemId;
+    farray.forEach((f) => {
+      if (node[f]) nodedata[f] = node[f];
+    });
+    if (node.children && node.children.length) nodedata.children = getChildNodesArray(node);
+    result.push(nodedata);
+  });
+  return result;
+};
+
+const saveFormScheme = (details: any[], formScheme: any) => {
+  saveFormSchemeDetails({
+    dataObjectId: formScheme['FDataobject.objectid'],
+    formSchemeId: formScheme.formschemeid,
+    formSchemeName: formScheme.schemename,
+    schemeDefine: JSON.stringify(getChildNodesArray(details[0])),
+  }).then((response) => {
+    if (response.success) {
+      message.success(`表单方案『${formScheme.schemename}』已保存。`);
+    } else {
+      Modal.error({
+        title: `表单方案保存失败！`,
+        width: 500,
+        content: response.msg,
       });
-      changeTextToTitle(object.children);
+    }
+  });
+};
+
+interface callbackFunc {
+  (record: any, pos: number, data: any[]): void;
+}
+/**
+ * 在树形结构中找到key的记录，并执行相应的callback
+ * @param data
+ * @param key
+ * @param callback
+ */
+const loop = (data: any[], key: string, callback: callbackFunc) => {
+  for (let i = 0; i < data.length; i += 1) {
+    if (data[i].key === key) {
+      callback(data[i], i, data);
+      return;
+    }
+    if (data[i].children) {
+      loop(data[i].children, key, callback);
     }
   }
 };
 
-/**
- * 在重新加载了可被选择的字段以后，把已经选中的都加进去。
- */
-const syncCanSelected = (canSelectTree: any[], details: any[]): string[] => {
-  const canSelectTreeItems = getAllleafRowids(canSelectTree, 'itemId');
-  const detailItems = getAllleafRowids(details, 'itemId');
-  return canSelectTreeItems.filter((key) => detailItems.find((dkey) => dkey === key));
-};
-
 export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
   const { formschemeid } = formScheme;
-  const hRef: any = useRef();
+  const hierarchyRef: any = useRef();
+  const form: any = useRef();
   const [canSelectTree, setCanSelectTree] = useState<any[]>([]);
   const [canSelectTreeCheckedkey, setCanSelectTreeCheckedkey] = useState<string[]>([]);
   const [canSelectTreeExpandKey, setCanSelectTreeExpandKey] = useState<string[]>([]);
@@ -56,12 +114,14 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
   const [detailsExpandKey, setDetailsExpandKey] = useState<string[]>([]);
   const [detailsSelectedKey, setDetailsSelectedKey] = useState<string[]>([]);
   const [currModule, setCurrModule] = useState<any>({});
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [editRecord, setEditRecord] = useState<Record<string, undefined>>({});
+
   const fetchSelectedModuleFields = (node: any, selectedKeys?: string[]) => {
     if (node === currModule) {
       setCanSelectTreeSelectedKey(selectedKeys || []);
       return;
     }
-
     setCurrModule(node);
     if (node.moduleName)
       fetchModuleFields({
@@ -100,12 +160,80 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
             });
           }
         });
+        setCanSelectTreeCheckedkey([]);
         setCanSelectTreeExpandKey(ekeys);
         setCanSelectTree(response);
         setCanSelectTreeSelectedKey(selectedKeys || detailsSelectedKey);
       });
-    const { children, ...other } = node;
-    message.info(JSON.stringify(other));
+    // const { children, ...other } = node;
+    // message.info(JSON.stringify(other));
+  };
+
+  const deleteNode = () => {
+    if (detailsSelectedKey.length) {
+      if (detailsSelectedKey[0] === 'root') {
+        message.warn('不能删除根节点！');
+        return;
+      }
+      const allDetails: any[] = getAllTreeRecord(details[0].children);
+      const deleted = allDetails.find((rec) => rec.key === detailsSelectedKey[0]);
+      if (deleted) {
+        if (deleted.children && deleted.children.length) {
+          message.warn('请先删除当前节点的所有子节点！');
+          return;
+        }
+        if (deleted.itemId) {
+          message.warn('请在可供选择的字段中取消勾选！');
+          return;
+        }
+        const arr = deleted.parent.children;
+        arr.splice(
+          arr.findIndex((item: any) => item === deleted),
+          1,
+        );
+        setDetailsSelectedKey([]);
+        setDetails([...details]);
+      }
+    } else {
+      message.warn('请先选择一个节点！');
+    }
+  };
+
+  const getEditTitle = (node: any, text?: string) => {
+    return (
+      <>
+        <span className={node.cls}>{text || node.udftitle || node.text}</span>
+        <EditOutlined
+          className="editbutton"
+          onClick={() => {
+            setEditRecord(node);
+            setModalVisible(true);
+          }}
+        />
+      </>
+    );
+  };
+
+  // 从后台传过来的数据中，有title的表示是修改过后的，如果只有text,那就是默认的
+  const changeTextToTitle = (object: any) => {
+    if (Array.isArray(object)) {
+      object.forEach((o: any) => changeTextToTitle(o));
+    } else if (Object.prototype.toString.call(object) === '[object Object]') {
+      if (object.key !== 'root') {
+        if (object.title) {
+          apply(object, { udftitle: object.title });
+        }
+        apply(object, { title: getEditTitle(object) });
+      }
+      if (object.children) {
+        object.children.forEach((child: any) => {
+          apply(child, {
+            parent: object,
+          });
+        });
+        changeTextToTitle(object.children);
+      }
+    }
   };
 
   // 选择或取消选择后更新已设置的字段
@@ -127,14 +255,15 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
             key: node.itemId,
             itemId: node.itemId,
             text,
-            title: getTitle(node, text),
             iconCls: node.iconCls,
             cls: node.cls,
             icon: node.icon,
             leaf: true,
           };
+          snode.title = getEditTitle(snode, text);
+
           let snodeParent = (details[0].children as any[]).find(
-            (d) => d.title === node.parent.title,
+            (d) => d.text === node.parent.text && !d.itemId,
           );
           if (snodeParent) {
             if (!snodeParent.children) snodeParent.children = [];
@@ -144,13 +273,14 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
             snodeParent = {
               key: uuid(),
               text: node.parent.title,
-              title: node.parent.title,
-              tf_title: node.parent.title,
+              udftitle: node.parent.title,
               leaf: false,
               expanded: true,
-              tf_displayGroup: true,
+              xtype: 'fieldset',
               children: [snode],
+              parent: details[0],
             };
+            snodeParent.title = getEditTitle(snodeParent);
             snode.parent = snodeParent;
             detailsExpandKey.push(snodeParent.key);
             details[0].children.push(snodeParent);
@@ -163,7 +293,6 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
       .forEach((crec) => {
         const deleted = getAllLeafRecords(details).find((rec) => rec.itemId === crec.itemId);
         if (deleted) {
-          console.log(deleted);
           const arr = deleted.parent.children as [];
           arr.splice(
             arr.findIndex((item: any) => item.itemId === deleted.itemId),
@@ -175,7 +304,11 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
   };
 
   useEffect(() => {
-    setCanSelectTreeCheckedkey(syncCanSelected(canSelectTree, details));
+    // 在重新加载了可被选择的字段以后，把已经选中的都加进去。
+    const canSelectTreeItems = getAllleafRowids(canSelectTree, 'itemId');
+    const detailItems = getAllleafRowids(details, 'itemId');
+    const keys = canSelectTreeItems.filter((key) => detailItems.find((dkey) => dkey === key));
+    setCanSelectTreeCheckedkey(keys);
   }, [canSelectTree]);
 
   useEffect(() => {
@@ -197,74 +330,171 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
   }, []);
 
   return (
-    <Row gutter={16} style={{ height: 'calc(100% )' }}>
-      <Col span={12}>
-        <ModuleHierarchyChart
-          moduleName={formScheme['FDataobject.objectid']}
-          onClick={(node: any) => {
-            fetchSelectedModuleFields(node);
-          }}
-          ref={hRef}
-        />
-      </Col>
-      <Col span={5}>
-        <Card title="可供选择的字段" size="small">
-          <Tree
-            style={{ height: 'calc(100vh - 149px)', overflow: 'auto' }}
-            switcherIcon={<DownOutlined />}
-            checkable
-            showIcon
-            icon={(props: any) =>
-              props.iconCls ? <span className={props.iconCls}></span> : <FileOutlined />
-            }
-            treeData={canSelectTree}
-            checkedKeys={canSelectTreeCheckedkey}
-            onCheck={(checked, info) => {
-              syncSelected(checked as Key[], info);
+    <>
+      <Row gutter={16} style={{ height: 'calc(100% )' }}>
+        <Col span={12}>
+          <ModuleHierarchyChart
+            moduleName={formScheme['FDataobject.objectid']}
+            onClick={(node: any) => {
+              fetchSelectedModuleFields(node);
             }}
-            expandedKeys={canSelectTreeExpandKey}
-            onExpand={(expandKeys) => setCanSelectTreeExpandKey(expandKeys as string[])}
-            selectedKeys={canSelectTreeSelectedKey}
-            onSelect={(selectedKeys, info) => {
-              setCanSelectTreeSelectedKey(selectedKeys as string[]);
-              setDetailsSelectedKey(selectedKeys as string[]);
-              // 如果是选中的
-              console.log(selectedKeys);
-              console.log(info);
-            }}
-          ></Tree>
-        </Card>
-      </Col>
-      <Col span={7}>
-        <Card title="已经设置的分组和字段" size="small">
-          <Tree
-            style={{ height: 'calc(100vh - 149px)', overflow: 'auto' }}
-            switcherIcon={<DownOutlined />}
-            checkable={false}
-            showLine={false}
-            showIcon
-            icon={(props: any) =>
-              props.iconCls ? <span className={props.iconCls}></span> : <FileOutlined />
-            }
-            draggable
-            treeData={details}
-            expandedKeys={detailsExpandKey}
-            onExpand={(expandKeys) => setDetailsExpandKey(expandKeys as string[])}
-            selectedKeys={detailsSelectedKey}
-            onSelect={(selectedKeys, info) => {
-              setDetailsSelectedKey(selectedKeys as string[]);
-              const { itemId } = info.node as any;
-              if (info.selected && itemId) {
-                const path = itemId.substring(0, itemId.indexOf('|'));
-                fetchSelectedModuleFields(
-                  hRef.current.getNodeFromItemId(path),
-                  selectedKeys as string[],
-                );
+            ref={hierarchyRef}
+          />
+        </Col>
+        <Col span={5}>
+          <Card title="可供选择的字段" size="small">
+            <Tree
+              style={{ height: 'calc(100vh - 149px)', overflow: 'auto' }}
+              checkable
+              showIcon
+              icon={(props: any) =>
+                props.iconCls ? <span className={props.iconCls}></span> : <FileOutlined />
               }
-            }}
-          ></Tree>
-        </Card>
-      </Col>
-    </Row>
+              treeData={canSelectTree}
+              checkedKeys={canSelectTreeCheckedkey}
+              onCheck={(checked, info) => {
+                syncSelected(checked as Key[], info);
+              }}
+              expandedKeys={canSelectTreeExpandKey}
+              onExpand={(expandKeys) => setCanSelectTreeExpandKey(expandKeys as string[])}
+              selectedKeys={canSelectTreeSelectedKey}
+              onSelect={(selectedKeys) => {
+                setCanSelectTreeSelectedKey(selectedKeys as string[]);
+                setDetailsSelectedKey(selectedKeys as string[]);
+              }}
+            ></Tree>
+          </Card>
+        </Col>
+        <Col span={7}>
+          <Card
+            title="已经设置的分组和字段"
+            size="small"
+            extra={
+              <Space>
+                <a
+                  href="#"
+                  onClick={() => {
+                    const newNode: any = {
+                      key: uuid(),
+                      udftitle: '新增的字段组',
+                      xtype: 'fieldset',
+                      parent: details[0],
+                    };
+                    newNode.title = getEditTitle(newNode);
+                    details[0].children.push(newNode);
+                    setDetails([...details]);
+                  }}
+                >
+                  新增
+                </a>
+                <a href="#" onClick={() => deleteNode()}>
+                  删除
+                </a>
+                <span></span>
+                <a href="#" onClick={() => saveFormScheme(details, formScheme)}>
+                  保存
+                </a>
+              </Space>
+            }
+          >
+            <Tree
+              className="selectedgroupandfield"
+              style={{ height: 'calc(100vh - 149px)', overflow: 'auto' }}
+              checkable={false}
+              showLine={false}
+              showIcon
+              icon={(props: any) =>
+                props.iconCls ? <span className={props.iconCls}></span> : <FileOutlined />
+              }
+              draggable
+              treeData={details}
+              expandedKeys={detailsExpandKey}
+              onExpand={(expandKeys) => setDetailsExpandKey(expandKeys as string[])}
+              selectedKeys={detailsSelectedKey}
+              onSelect={(selectedKeys, info) => {
+                setDetailsSelectedKey(selectedKeys as string[]);
+                const { itemId } = info.node as any;
+                if (info.selected && itemId) {
+                  const path = itemId.substring(0, itemId.indexOf('|'));
+                  fetchSelectedModuleFields(
+                    hierarchyRef.current.getNodeFromItemId(path),
+                    selectedKeys as string[],
+                  );
+                }
+              }}
+              // onDragEnter = {(info) => {console.log(info)}}
+              onDrop={(info: any) => {
+                const oinfo = {
+                  dragText: info.dragNode.udftitle || info.dragNode.text || info.dragNode.title,
+                  targetText: info.node.udftitle || info.node.text || info.node.title,
+                  dropPosition: info.dropPosition,
+                  dropToGap: info.dropToGap,
+                };
+                let msg: string = '';
+                console.log(msg);
+                console.log(info);
+                console.log(oinfo);
+                const targetKey = info.node.key as string;
+                // 放在目标节点的下面
+                if ((info.dropToGap && targetKey !== 'root') || info.node.itemId) {
+                  msg = `把 ${oinfo.dragText} 放到 ${oinfo.targetText} 下面`;
+                  loop(details, targetKey, (targetRecord, targetPos) => {
+                    loop(details, info.dragNode.key as string, (dragRecord, dragPos) => {
+                      dragRecord.parent.children.splice(dragPos, 1);
+                      apply(dragRecord, { parent: targetRecord.parent });
+                      targetRecord.parent.children.splice(targetPos + 1, 0, dragRecord);
+                    });
+                  });
+                } else {
+                  // 放在目标节点的子节点的第一个位置
+                  msg = `把 ${oinfo.dragText} 放到 ${oinfo.targetText} 的子节点下面第一个`;
+                  loop(details, targetKey, (targetRecord) => {
+                    loop(details, info.dragNode.key as string, (dragRecord, dragPos) => {
+                      dragRecord.parent.children.splice(dragPos, 1);
+                      apply(dragRecord, { parent: targetRecord });
+                      if (!targetRecord.children) {
+                        apply(targetRecord, { children: [] });
+                        setDetailsExpandKey([...detailsExpandKey, targetRecord.key]);
+                      }
+                      targetRecord.children.unshift(dragRecord);
+                    });
+                  });
+                }
+                setDetails([...details]);
+              }}
+            />
+          </Card>
+        </Col>
+      </Row>
+      <Modal
+        width={820}
+        title={`编辑表单字段：${editRecord.udftitle || editRecord.text}`}
+        visible={modalVisible}
+        onCancel={() => {
+          setModalVisible(false);
+        }}
+        okText={
+          <>
+            <SaveOutlined /> 保存
+          </>
+        }
+        onOk={() => {
+          setModalVisible(false);
+          apply(editRecord, form.current.getValues());
+          // 如果不是字段
+          if (!editRecord.itemId) {
+            apply(editRecord, {
+              text: editRecord.udftitle,
+            });
+          }
+          apply(editRecord, {
+            title: getEditTitle(editRecord),
+          });
+          setDetails([...details]);
+        }}
+      >
+        <FormFieldDesignForm ref={form} init={{ ...editRecord }} />
+      </Modal>
+    </>
   );
 };
