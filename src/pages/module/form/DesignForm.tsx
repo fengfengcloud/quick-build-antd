@@ -261,7 +261,6 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
             leaf: true,
           };
           snode.title = getEditTitle(snode, text);
-
           let snodeParent = (details[0].children as any[]).find(
             (d) => d.text === node.parent.text && !d.itemId,
           );
@@ -272,8 +271,8 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
           } else {
             snodeParent = {
               key: uuid(),
-              text: node.parent.title,
-              udftitle: node.parent.title,
+              text: node.parent.text || node.parent.title,
+              udftitle: node.parent.text || node.parent.title,
               leaf: false,
               expanded: true,
               xtype: 'fieldset',
