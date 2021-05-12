@@ -155,7 +155,7 @@ export const FormFieldDesignForm: React.FC<Prpos> = forwardRef(({ init, moduleNa
         </Col>
 
         <Col span={24}>
-          <Form.Item label="关联模块" name="fieldahead">
+          <Form.Item label="关联子模块" name="fieldahead">
             <Input
               readOnly
               addonAfter={
@@ -172,7 +172,7 @@ export const FormFieldDesignForm: React.FC<Prpos> = forwardRef(({ init, moduleNa
           </Form.Item>
         </Col>
         <Col span={24}>
-          <Form.Item label="关联模块" name="subdataobjecttitle">
+          <Form.Item label="关联子模块" name="subdataobjecttitle">
             <Input
               readOnly
               addonAfter={

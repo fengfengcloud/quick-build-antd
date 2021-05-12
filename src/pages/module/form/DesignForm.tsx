@@ -332,7 +332,7 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
   return (
     <>
       <Row gutter={16} style={{ height: 'calc(100% )' }}>
-        <Col span={12}>
+        <Col lg={12} md={24} sm={24} xs={24}>
           <ModuleHierarchyChart
             moduleName={moduleName}
             onClick={(node: any) => {
@@ -341,7 +341,7 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
             ref={hierarchyRef}
           />
         </Col>
-        <Col span={5}>
+        <Col lg={5} md={12} sm={12} xs={24}>
           <Card title="可供选择的字段" size="small">
             <Tree
               style={{ height: 'calc(100vh - 149px)', overflow: 'auto' }}
@@ -365,7 +365,7 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
             ></Tree>
           </Card>
         </Col>
-        <Col span={7}>
+        <Col lg={7} md={12} sm={12} xs={24}>
           <Card
             title="已经设置的分组和字段"
             size="small"
@@ -479,6 +479,17 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
           </>
         }
         onOk={() => {
+          const { othersetting } = form.current.getValues();
+          if (othersetting) {
+            try {
+              // eslint-disable-next-line
+              eval(`({${othersetting}})`);
+            } catch (e) {
+              // eslint-disable-next-line
+              alert(`附加设置解析错误：{${othersetting}}`);
+              return;
+            }
+          }
           setModalVisible(false);
           apply(editRecord, form.current.getValues());
           // 如果不是字段
