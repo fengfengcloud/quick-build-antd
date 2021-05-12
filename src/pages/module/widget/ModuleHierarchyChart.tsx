@@ -13,7 +13,8 @@ interface PropTypes {
 
 interface ModuleHierarchyChartProps {
   moduleName: string;
-  onClick: Function;
+  onClick?: Function; // 单击了某个模块
+  onSelect?: Function; // 需要选中返回
   ref: any;
 }
 
@@ -31,7 +32,7 @@ const changeTextToName = (object: any) => {
 };
 
 export const ModuleHierarchyChart: React.FC<ModuleHierarchyChartProps> = forwardRef(
-  ({ moduleName, onClick }, ref) => {
+  ({ moduleName, onClick, onSelect }, ref) => {
     const [parentTree, setParentTree] = useState<any>({});
     const [childTree, setChildTree] = useState<any>({});
     const [activeKey, setActiveKey] = useState<'parent' | 'child'>('parent');
@@ -39,7 +40,7 @@ export const ModuleHierarchyChart: React.FC<ModuleHierarchyChartProps> = forward
 
     const ChartNode: React.FC<PropTypes> = ({ nodeData }) => {
       const { isBase, isParent, isChild, disabled, itemId } = nodeData;
-      const currentClassName = itemId === currModule.itemId ? 'current' : '';
+      const currentClassName = itemId === currModule.itemId ? ' current' : '';
       const name = nodeData.iconCls ? (
         <span className={nodeData.iconCls}>{` ${nodeData.name}`}</span>
       ) : (
@@ -48,17 +49,17 @@ export const ModuleHierarchyChart: React.FC<ModuleHierarchyChartProps> = forward
       if (isBase) {
         return (
           <div>
-            <div className={currentClassName || 'base'}>{name}</div>
+            <div className={`base${currentClassName}`}>{name}</div>
             <div className="type">{nodeData.title}</div>
           </div>
         );
       }
       let className = 'disabled';
       if (isParent && !disabled) {
-        className = currentClassName || 'parent';
+        className = `parent${currentClassName}`;
       }
       if (isChild && !disabled) {
-        className = currentClassName || 'child';
+        className = `child${currentClassName}`;
       }
       return (
         <div>
@@ -119,7 +120,12 @@ export const ModuleHierarchyChart: React.FC<ModuleHierarchyChartProps> = forward
               <span>
                 当前选中模块：
                 {
-                  <Button type="link" style={{ padding: 0 }}>
+                  <Button
+                    type={onSelect ? 'primary' : 'link'}
+                    onClick={() => {
+                      if (onSelect) onSelect(currModule);
+                    }}
+                  >
                     {currModule.qtip}
                   </Button>
                 }
@@ -148,7 +154,7 @@ export const ModuleHierarchyChart: React.FC<ModuleHierarchyChartProps> = forward
               onClickNode={(node: any) => {
                 if (node.disabled) return;
                 setCurrModule(node);
-                onClick(node);
+                if (onClick) onClick(node);
               }}
             />
           </TabPane>
@@ -164,7 +170,7 @@ export const ModuleHierarchyChart: React.FC<ModuleHierarchyChartProps> = forward
               onClickNode={(node: any) => {
                 if (node.disabled) return;
                 setCurrModule(node);
-                onClick(node);
+                if (onClick) onClick(node);
               }}
             />
           </TabPane>

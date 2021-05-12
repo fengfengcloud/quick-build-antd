@@ -103,6 +103,7 @@ const loop = (data: any[], key: string, callback: callbackFunc) => {
 };
 
 export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
+  const moduleName = formScheme['FDataobject.objectid'];
   const { formschemeid } = formScheme;
   const hierarchyRef: any = useRef();
   const form: any = useRef();
@@ -324,7 +325,7 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
       changeTextToTitle(ds);
       setDetailsExpandKey(getAllhasChildrenRowids(ds, 'key'));
       setDetails(ds);
-      fetchSelectedModuleFields({ moduleName: formScheme['FDataobject.objectid'] });
+      fetchSelectedModuleFields({ moduleName });
     });
   }, []);
 
@@ -333,7 +334,7 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
       <Row gutter={16} style={{ height: 'calc(100% )' }}>
         <Col span={12}>
           <ModuleHierarchyChart
-            moduleName={formScheme['FDataobject.objectid']}
+            moduleName={moduleName}
             onClick={(node: any) => {
               fetchSelectedModuleFields(node);
             }}
@@ -492,7 +493,7 @@ export const DesignForm: React.FC<DesignFormProps> = ({ formScheme }) => {
           setDetails([...details]);
         }}
       >
-        <FormFieldDesignForm ref={form} init={{ ...editRecord }} />
+        <FormFieldDesignForm ref={form} moduleName={moduleName} init={{ ...editRecord }} />
       </Modal>
     </>
   );

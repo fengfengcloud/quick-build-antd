@@ -25,15 +25,6 @@
   padding: 2px;
 }
 
-.orgchart.moduleChart .oc-node .current {
-  box-sizing: border-box;
-  background-color: #ff4d4f;
-  color: #fff;
-  min-width: 120px;
-  height: 26px;
-  padding: 2px;
-}
-
 .orgchart.moduleChart .oc-node .disabled {
   box-sizing: border-box;
   background-color: gray;
@@ -62,6 +53,10 @@
   padding: 2px;
 }
 
+.orgchart.moduleChart .oc-node .base.current, .orgchart.moduleChart .oc-node .parent.current, .orgchart.moduleChart .oc-node .child.current {
+  background-color: #ff4d4f !important;
+}
+
 .orgchart.moduleChart .oc-node .type {
   box-sizing: border-box;
   color: #215a88;
@@ -73,23 +68,23 @@
 }
 
 .manytomanycolor {
-	color: #726930;
-	/* 	font-style: italic;
+  color: #726930;
+  /* 	font-style: italic;
  */
 }
 
 .datecolor {
-	color: #a40;
+  color: #a40;
 }
 
 .numbercolor {
-	color: #00C;
+  color: #00C;
 }
 
 .intcolor {
-	color: #00C;
+  color: #00C;
 }
 
 .booleancolor {
-	color: #005831;
+  color: #005831;
 }

@@ -1,6 +1,8 @@
 import React, { forwardRef, useEffect, useImperativeHandle } from 'react';
-import { AutoComplete, Checkbox, Col, Form, Input, InputNumber, Row, Select } from 'antd';
+import { AutoComplete, Checkbox, Col, Form, Input, InputNumber, message, Row, Select } from 'antd';
 import { getDictionary } from '../dictionary/dictionarys';
+import { CloseOutlined } from '@ant-design/icons';
+import { SelectChildModule } from './component/SelectChildModule';
 
 const xtypeOptions = [
   {
@@ -30,11 +32,12 @@ const xtypeOptions = [
 ];
 
 interface Prpos {
+  moduleName: string;
   init: any;
   ref: any;
 }
 
-export const FormFieldDesignForm: React.FC<Prpos> = forwardRef(({ init }, ref) => {
+export const FormFieldDesignForm: React.FC<Prpos> = forwardRef(({ init, moduleName }, ref) => {
   const [form] = Form.useForm();
   useEffect(() => {
     form.resetFields();
@@ -153,12 +156,42 @@ export const FormFieldDesignForm: React.FC<Prpos> = forwardRef(({ init }, ref) =
 
         <Col span={24}>
           <Form.Item label="关联模块" name="fieldahead">
-            <Input />
+            <Input
+              readOnly
+              addonAfter={
+                <CloseOutlined
+                  onClick={() => {
+                    form.setFieldsValue({
+                      subdataobjecttitle: undefined,
+                      fieldahead: undefined,
+                    });
+                  }}
+                />
+              }
+            />
           </Form.Item>
         </Col>
         <Col span={24}>
           <Form.Item label="关联模块" name="subdataobjecttitle">
-            <Input />
+            <Input
+              readOnly
+              addonAfter={
+                <SelectChildModule
+                  moduleName={moduleName}
+                  title="选择子模块"
+                  callback={(node: any) => {
+                    if (node.itemId && node.itemId.indexOf('.with.') !== -1) {
+                      form.setFieldsValue({
+                        subdataobjecttitle: node.qtip,
+                        fieldahead: node.itemId,
+                      });
+                    } else {
+                      message.warn('请选择当前模块的子模块！');
+                    }
+                  }}
+                />
+              }
+            />
           </Form.Item>
         </Col>
 
